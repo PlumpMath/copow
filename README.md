@@ -1,6 +1,6 @@
 # Some new ideas for PoW
 
-## And a [new repo for that on bitbucket](https://bitbucket.org/pythononwheels/copow_hg)
+## And a [new repo for that on bitbucket](https://bitbucket.org/pythononwheels/copow)
 
 ## Still in the early beginnings but current work in progress. 
 I work currently more on this one than on standard PoW...
