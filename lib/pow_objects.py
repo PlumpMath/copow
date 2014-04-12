@@ -29,14 +29,29 @@ class Migration(object):
         drop_table                  =>      Done
         remove_column               =>      Done
         remove_index                =>      Done
-        rename_column               =>      Done
+        rename_column               =>      Not Done
     """
 
     def __init__(self):   
-        self.collection = None
-        self._db_conn = DBConn()
-        self.db = self._db_conn.get_db()
-        
+       self.collection = None
+       self._db_conn = DBConn()
+       self.db = self._db_conn.get_db()
+    
+    def add_column( self, model, name, attrs={}):
+        model.load_schema()
+        mdoel.add_column(name, attrs) 
+        model.create_schema()
+
+    def remove_column(self,name, filter={}):
+        model.load_schema()
+        mdoel.remove_column(name, filter) 
+        model.create_schema()
+
+    def remove_index(self,name):
+        model.load_schema()
+        model.remove_index(name)
+        model.create_schema()
+   
     def create_table(self, model):
         """ created a collection 
             (its not neccessary to do that explicitly 
