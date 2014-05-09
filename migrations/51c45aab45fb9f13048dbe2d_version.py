@@ -11,9 +11,9 @@
 import sys
 import os
 
-import copow.lib.powlib
-from copow.lib.pow_objects import Migration
-from models.version import Version
+import #APPNAME.lib.powlib
+from #APPNAME.lib.pow_objects import Migration
+from #APPNAME.models.version import Version
 
 migration = Migration()
 

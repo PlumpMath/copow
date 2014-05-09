@@ -9,8 +9,8 @@ import sqlite3, sys, os, datetime
 import string
 import sys
 
-from copow.lib import powlib
-from  copow.config import config 
+from #APPNAME.lib import powlib
+from  #APPNAME.config import config 
 
 APPNAME = "#APPNAME"
 def main():

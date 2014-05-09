@@ -1,6 +1,6 @@
 from werkzeug.wrappers import Request, Response
-import copow.config.config as config
-import copow.lib.db_conn as db_conn
+import #APPNAME.config.config as config
+import #APPNAME.lib.db_conn as db_conn
 
 APPNAME = "#APPNAME"
 

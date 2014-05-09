@@ -11,9 +11,9 @@
 import sys
 import os
 
-import copow.lib.powlib
-import copow.lib.migration
-from copow.lib.migration import Column
+import #APPNAME.lib.powlib
+import #APPNAME.lib.migration
+from #APPNAME.lib.migration import Column
 from #APPNAME.models.#MODEL1 import #UPMODEL1 
 from #APPNAME.models.#MODEL2 import #UPMODEL2
 

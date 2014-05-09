@@ -11,7 +11,7 @@ import sys
 import os
 import unittest
 from #APPNAME.models import #MODELNAME
-from copow.lib import powlib
+from #APPNAME.lib import powlib
 
 
 class #CLASSNAME(unittest.TestCase):

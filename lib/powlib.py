@@ -160,40 +160,46 @@ def check_create_file( path, filename ):
     return ret
 
 
-def check_copy_file( src, dest, force=True, replace_list=None):
+def check_copy_file( src, dest,  force=True, replace=None):
     """
         checks if file exists and copies if not (force overwrites that)
-        src = src file
-        dest = dest DIR
+        src = src file including path
+        dest = dest DIR only
         force = force overwrite existing file
         if replace_list != [] this function also replaces strings in the files
         replace = [(string_to_find, string_replacement),....]
     """
     ret = False
-
-    if os.path.isfile(os.path.normpath(dest +"/" + src )) and force == False:
-        ret = False
-        src_path, src_file = os.path.split(src)
-        print(" exists ...\t", src_file)
-        return ret
+    src_path, src_file = os.path.split(src)
+    dest_file = src_file
+    dest_path = dest
+    #print("src: ", src)
+    dest_abs = os.path.abspath(os.path.normpath(os.path.join(dest_path, dest_file)))
+    #print("dest_abs: ", dest_abs)
+    if os.path.isfile(dest_abs) and force == False:
+        #src_path, src_file = os.path.split(src)
+        print(" exists and skipping (force==False) ...\t", dest_abs)
+        return False
     else:
         if not os.path.isdir( os.path.normpath(src) ):
             try:
-                shutil.copy(src,dest)
-                if replace_list:
-                    dest = os.path.normpath(os.path.abspath(os.path.join(dest, src)))
-                    replace_string_in_file(dest,replace_list)
-                ret = True
+                shutil.copy(src,dest_abs)
+                #if dest:
+                #    print ("src: ", src)
+                #    print("dest:", dest)
+                if replace:
+                    #dest = os.path.normpath(os.path.abspath(os.path.join(dest, src)))
+                    replace_string_in_file(dest_abs,replace)
                 print(" copied" + "...\t", src)
+                return True
             except IOError as xxx_todo_changeme:
                 (errno, strerror) = xxx_todo_changeme.args
-                print(" I/O error...(%s): %s. File: %s" % (errno, strerror, src))
-                ret = False
-                return ret
+                print(" I/O error...(%s): %s. File: %s" % (errno, strerror, src, dest_abs))
+                return False
         else:
             print(" skipped...DIR\t", src)
 
-    return ret
+    return True
 
 def replace_string_in_file( absfilename, replace_list=[] ):
     """
@@ -202,14 +208,14 @@ def replace_string_in_file( absfilename, replace_list=[] ):
         replace_list = [(string_to_find, string_replacement),....]
     """
     # set correct Appname in pow_router.wsgi
-    f = open(os.path.join(absfilename), "r")
+    f = open(absfilename, "r")
     instr = f.read()
     for tupel in replace_list:
         origstr = tupel[0]
         repstr = tupel[1]
         instr = instr.replace(origstr, repstr)
     f.close()
-    f = open(os.path.join(absfilename), "w")
+    f = open(absfilename, "w")
     f.write(instr)
     f.close()
     return

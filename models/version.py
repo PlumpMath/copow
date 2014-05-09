@@ -5,9 +5,9 @@
 # 
 #
 
-from copow.lib.db_conn import DBConn
-from copow.migrations.schemas.version_schema import version as schema
-from copow.models.basemodels.baseversion import BaseVersion
+from #APPNAME.lib.db_conn import DBConn
+from #APPNAME.migrations.schemas.version_schema import version as schema
+from #APPNAME.models.basemodels.baseversion import BaseVersion
 
 class Version(BaseVersion):
 	

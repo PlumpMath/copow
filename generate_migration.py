@@ -14,8 +14,8 @@ import string
 
 from #APPNAME.models import App
 
-import copow.lib.powlib
-from copow.config import config
+import #APPNAME.lib.powlib
+from #APPNAME.config import config
 from bson.objectid import ObjectId
 
 PARTS_DIR = config.base["parts_dir"]

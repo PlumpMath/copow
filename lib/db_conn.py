@@ -6,7 +6,7 @@
 # to execute __main__
 #
 from pymongo import MongoClient
-#from copow.config import dbconfig
+#from #APPNAME.config import dbconfig
 import importlib
 
 class DBConn(object):

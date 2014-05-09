@@ -11,10 +11,10 @@ import string
 import re
 import time,datetime
 
-from copow.lib import powlib
-from copow.config import db_config 
-from copow.config import config as pow
-from copow.lib import db_conn
+from #APPNAME.lib import powlib
+from #APPNAME.config import db_config 
+from #APPNAME.config import config as pow
+from #APPNAME.lib import db_conn
 
 class Migration(object):
     

@@ -7,10 +7,10 @@
 # 
 
 import os
-import copow.lib.powlib
-import copow.lib.db_conn
-import copow.config.db.py
-import copow.config.config.py
+import #APPNAME.lib.powlib
+import #APPNAME.lib.db_conn
+import #APPNAME.config.db.py
+import #APPNAME.config.config.py
 
 import #APPNAME.models.App
 

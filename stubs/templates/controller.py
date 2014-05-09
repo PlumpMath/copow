@@ -12,11 +12,11 @@ import os
 import os.path
 import json
 
-from copow.lib.db_conn import DBConn
-#from cowpow.migrations.schemas.#MODEL_SCHEMA import #MODELNAME as schema
+from #APPNAME.lib.db_conn import DBConn
+#from #APPNAME.migrations.schemas.#MODEL_SCHEMA import #MODELNAME as schema
 from #APPNAME.migrations.schemas import #MODEL_SCHEMA_schema as schema_module
 import #APPNAME.migrations.schemas.#MODEL_SCHEMA_schema
-from copow.lib import powlib
+from #APPNAME.lib import powlib
 
 def #CONTROLLERNAME_list():
 		""" respresents the folowing REST/CRUD Terminology:

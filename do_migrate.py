@@ -16,9 +16,9 @@ import datetime
 #sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./controllers" )))  # lint:ok
 #sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./migrations" )))  # lint:ok
 
-import copow.lib.powlib
+import #APPNAME.lib.powlib
 from #APPNAME.models import App
-from copow.lib.pow_objects import PowTable
+from #APPNAME.lib.pow_objects import PowTable
 
 # setting the right defaults
 MODE_CREATE = 1

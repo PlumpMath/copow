@@ -63,6 +63,17 @@ def main():
     duration = end - start
     print(" -- generated_app in(" + str(duration) + ")")
 
+def copy_file_and_set_appname(filename, appname, odir):
+    infile = open(filename)
+    instr = infile.read()
+    infile.close()
+    instr = instr.replace("#APPNAME", appname )  # lint:ok
+    opath = os.path.join(odir,filename)
+    ofile = open(os.path.normpath(opath, "w"))
+    ofile.write(instr)
+    ofile.close()
+    print(" copied and replaced APPNAME for: %s" % (os.path.normpath(opath)))
+
 
 def render_db_config(appname, appbase):
     """ Creates the db.cfg file for this application
@@ -143,12 +154,12 @@ def gen_app(appname, appdir, force=False):
                        ("models", "models"),
                        ("models/basemodels", "models/basemodels"),
                        ("stubs/templates", "stubs/templates"),
-                       ("public/doc", "/public/doc"),
-                       ("public/ico", "/public/ico"),
-                       ("public/img", "/public/img"),
-                       ("public/img/bs", "/public/img/bs"),
-                       ("public/css", "/public/css"),
-                       ("public/css/bs", "/public/css/bs"),
+                       ("public/doc", "public/doc"),
+                       ("public/ico", "public/ico"),
+                       ("public/img", "public/img"),
+                       ("public/img/bs", "public/img/bs"),
+                       ("public/css", "public/css"),
+                       ("public/css/bs", "public/css/bs"),
                        ("public/js", "public/js"),
                        ("public/js/bs", "public/js/bs"),
                        ("controllers", "controllers"),
@@ -169,8 +180,10 @@ def gen_app(appname, appdir, force=False):
               fname, fext = os.path.splitext(source_file)
               if not fext in exclude_patterns and not source_file in exclude_files:  # lint:ok
                   powlib.check_copy_file(
-                      os.path.join(source_dir, source_file),
-                      os.path.join(appbase + "/" + dest_dir,source_file)
+                      os.path.join(source_dir, source_file), os.path.join(appbase,dest_dir),
+                      #os.path.join(appbase + "/" + dest_dir,source_file),
+                      replace=[("#APPNAME",appname)]
+                      
                   )
               else:
                   print(" excluded: EXCL", source_file)
@@ -186,16 +199,17 @@ def gen_app(appname, appdir, force=False):
     print("------------------------------------------")
     print("| copying the generators                  |")
     print("------------------------------------------")
-    powlib.check_copy_file("generate_model.py", appbase, replace_list=[("#APPNAME",appname)])
-    powlib.check_copy_file("do_migrate.py", appbase, replace_list=[("#APPNAME",appname)])
-    powlib.check_copy_file("generate_controller.py", appbase, replace_list=[("#APPNAME",appname)])
-    powlib.check_copy_file("generate_migration.py", appbase, replace_list=[("#APPNAME",appname)])
+    powlib.check_copy_file("generate_model.py", appbase, replace=[("#APPNAME",appname)])
+    powlib.check_copy_file("do_migrate.py", appbase, replace=[("#APPNAME",appname)])
+    powlib.check_copy_file("generate_controller.py", appbase, replace=[("#APPNAME",appname)])
+    powlib.check_copy_file("generate_migration.py", appbase, replace=[("#APPNAME",appname)])
     #powlib.check_copy_file("scripts/generate_scaffold.py", appbase)
     #powlib.check_copy_file("scripts/generate_mvc.py", appbase)
-    powlib.check_copy_file("simple_server.py", appbase, replace_list=[("#APPNAME",appname)])
+    #powlib.check_copy_file("simple_server.py", appbase, replace=[("#APPNAME",appname)])
+    powlib.check_copy_file("tornado_server.py", appbase, replace=[("#APPNAME",appname)])
     #powlib.check_copy_file("scripts/pow_router.wsgi", appbase)
-    powlib.check_copy_file("pow_console.py", appbase, replace_list=[("#APPNAME",appname)] )
-    powlib.check_copy_file("init_copow_dbs.py", appbase, replace_list=[("#APPNAME",appname)] )
+    powlib.check_copy_file("pow_console.py", appbase, replace=[("#APPNAME",appname)] )
+    powlib.check_copy_file("init_copow_dbs.py", appbase, replace=[("#APPNAME",appname)] )
     #powlib.check_copy_file("scripts/runtests.py", appbase)
 
     #powlib.replace_string_in_file(

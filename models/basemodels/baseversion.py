@@ -11,12 +11,12 @@ import os
 import os.path
 import json
 
-from copow.lib.db_conn import DBConn
-#from cowpow.migrations.schemas.version import version as schema
-from copow.migrations.schemas import version_schema as schema_module
-import copow.migrations.schemas.version_schema
-from copow.lib import powlib
-from copow.lib.powlib import _log
+from #APPNAME.lib.db_conn import DBConn
+#from #APPNAME.migrations.schemas.version import version as schema
+from #APPNAME.migrations.schemas import version_schema as schema_module
+import #APPNAME.migrations.schemas.version_schema
+from #APPNAME.lib import powlib
+from #APPNAME.lib.powlib import _log
 
 newline = powlib.newline
 tab = powlib.tab

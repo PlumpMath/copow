@@ -11,9 +11,9 @@
 import sys
 import os
 
-import copow.lib.powlib
-from copow.lib.pow_objects import Migration
-from models.app import App
+import ##APPNAME.lib.powlib
+from #APPNAME.lib.pow_objects import Migration
+from #APPNAME.models.app import App
 
 migration = Migration()
 

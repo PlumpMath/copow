@@ -11,8 +11,8 @@ import string
 import datetime
 
 
-import copow.lib.powlib
-from copow.config import config
+import #APPNAME.lib.powlib
+from #APPNAME.config import config
 from #APPNAME.models import App
 
 # setting the right defaults

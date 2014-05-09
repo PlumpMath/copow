@@ -5,7 +5,7 @@
 # 
 #
 
-from copow.lib.db_conn import DBConn
+from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.migrations.schemas.#MODEL_SCHEMA_schema import #MODEL_SCHEMA as schema
 from #APPNAME.models.basemodels.base#MODELNAME import Base#MODELCLASS
 

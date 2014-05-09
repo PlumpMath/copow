@@ -4,24 +4,18 @@ import tornado.options
 import tornado.web
 import os
 import os.path
+import sys
+
+import #APPNAME.config.routes 
+import #APPNAME.config.settings
+
+#sys.path.append(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../config" )) 
 
 from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
 
-class HelloHandler(tornado.web.RequestHandler):
-	"""docstring """
-	def get(self):
-		greeting = self.get_argument("greeting", "Hello")
-		self.write(greeting + ", friendly user!")
-
-settings = {
-    "static_path": os.path.join(os.path.dirname(__file__), "public")
-    }
-
-copow_handlers = [
-	(r"/hello",HelloHandler)
-	]
-
+copow_handlers = #APPNAME.config.routes.handlers
+settings = #APPNAME.config.settings.webserver
 
 if __name__ == "__main__":
 	print (os.path.join(os.path.dirname(__file__)))
