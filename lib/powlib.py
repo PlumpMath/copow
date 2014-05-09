@@ -6,7 +6,7 @@ import os
 import re
 import logging
 import datetime
-from .db_conn import DBConn
+#from .db_conn import DBConn
 import string
 import shutil
 

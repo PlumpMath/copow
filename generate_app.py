@@ -10,7 +10,7 @@ import sqlite3, sys, os, datetime
 import string
 import shutil
 
-import copow.lib.powlib as powlib
+import lib.powlib as powlib
 #import copow.generate_model as generate_model
 
 
@@ -172,13 +172,14 @@ def gen_app(appname, appdir, force=False):
     print("------------------------------------------")
     print("| copying files                          |")
     print("------------------------------------------")
-    exclude_patterns = [".pyc", ".pyo", ".DS_STORE"]
-    exclude_files = ["db.cfg", "__init__.py"]
+    exclude_patterns = [".pyc", ".pyo", ".DS_STORE", ".DS_Store"]
+    exclude_files = ["db.cfg", "__init__.py", ".DS_STORE", ".DS_Store"]
     for source_dir, dest_dir in deep_copy_list:
         try:
           for source_file in os.listdir(source_dir):
               fname, fext = os.path.splitext(source_file)
               if not fext in exclude_patterns and not source_file in exclude_files:  # lint:ok
+                  #print("working on: ", source_file)
                   powlib.check_copy_file(
                       os.path.join(source_dir, source_file), os.path.join(appbase,dest_dir),
                       #os.path.join(appbase + "/" + dest_dir,source_file),
@@ -261,10 +262,10 @@ def gen_app(appname, appdir, force=False):
     print("------------------------------------------")
     print("| Next steps:                            |")
     print("------------------------------------------")
-    apppath = os.path.abspath(os.path.normpath(os.path.join("./",appname)))
+    app_path = os.path.abspath(os.path.normpath(appdir))
     print(" 1. add your app: %s to the PYTHONPATH" % (appname))
-    print(r"  -> Windows  : set PYHTONPATH=%PYTHONPATH%;" + "%s" % (apppath))
-    print("  -> Unix/Mac : export PYTHONPATH=$PYTHONPATH;%s" % (apppath))
+    print(r"  -> Windows  : set PYHTONPATH=%PYTHONPATH%;" + "%s" % (app_path))
+    print("  -> Unix/Mac : export PYTHONPATH=%s:$PYTHONPATH" % (app_path))
     print(" 2. read first steps on www.pythononwheels.org/copow")
     print(" 3. have fun ;)")
     print("--------------------------------------------------------")
