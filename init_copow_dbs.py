@@ -9,12 +9,13 @@
 import os
 import #APPNAME.lib.powlib
 import #APPNAME.lib.db_conn
-import #APPNAME.config.db.py
-import #APPNAME.config.config.py
+import #APPNAME.config.db
+import #APPNAME.config.settings
 
-import #APPNAME.models.App
+import #APPNAME.models.app
+import #APPNAME.models.version
 
-APPNAME = #APPANME
+APPNAME = #APPNAME
 
 if __name__ == "__main__":
 	print
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     	#
     	# setting up the version information
     	#
-    	v = Version()
+    	v = version.Version()
 	    v.set_environment(env)
 	    # "short_name"     :      { "type" : "Text" },   
     	# "long_name"      :      { "type" : "Text" },
@@ -39,7 +40,7 @@ if __name__ == "__main__":
 	    #
 	    # setting up the app-db
 	    # 
-	    a = App()
+	    a = app.App()
 	    a.set_environment(env)	
 
 	   	a.name = "#APPNAME"
