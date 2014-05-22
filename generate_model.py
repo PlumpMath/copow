@@ -116,7 +116,16 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=config.base["par
         ofile.close()
     
     ### generate BaseModel if neccessary
-    
+    # render_basemodel(baseclassname, modelname, collection_name, classname, output_path, parts_dir, properties)
+
+    # render a basic testcase 
+    render_test_stub(modelname, classname, parts_dir)
+    #render_schema(modelname)
+    return 
+
+def render_basemodel( baseclassname, modelname, collection_name, classname, output_path, parts_dir, properties):
+    """deprecated:  renders the according basemodel"""
+
     filename = os.path.normpath(os.path.join(output_path + "/basemodels/", "base" + modelname +".py"))
     #print "filename: %s" % (filename)
     if os.path.isfile( filename ) and force != True:
@@ -147,11 +156,9 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=config.base["par
         print(" --", filename + " (created)")
         ofile.write( ostr )
         ofile.close()
+        return
         
-    # render a basic testcase 
-    render_test_stub(modelname, classname, parts_dir)
-    #render_schema(modelname)
-    return 
+   
 
 def reset_model(modelname):
     """ overwrites the generated Model, BaseModel and 

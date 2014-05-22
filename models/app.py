@@ -8,9 +8,9 @@
 from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.migrations.schemas.app_schema import app as schema
 #from #APPNAME.models.basemodels.baseapp import BaseApp
-from #APPNAME.models.basemodels.base import Base
+from #APPNAME.models.basemodels.base import BaseModel
 
-class App(Base):
+class App(BaseModel):
 	
     def __init__(self, data=None, schema={}):
         """ Basic instance setup"""
