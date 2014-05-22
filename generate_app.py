@@ -210,7 +210,8 @@ def gen_app(appname, appdir, force=False):
     powlib.check_copy_file("tornado_server.py", appbase, replace=[("#APPNAME",appname)])
     #powlib.check_copy_file("scripts/pow_router.wsgi", appbase)
     powlib.check_copy_file("pow_console.py", appbase, replace=[("#APPNAME",appname)] )
-    powlib.check_copy_file("init_copow_dbs.py", appbase, replace=[("#APPNAME",appname)] )
+    powlib.check_copy_file("init_copow_dbs.py", appbase, 
+                           replace=[("#APPNAME",appname),("#APPPATH",appbase)] )
     powlib.check_copy_file(os.path.join("./stubs/templates/","base.py"), 
                            os.path.normpath(os.path.join(appbase, "models/basemodels")), 
                            replace=[("#APPNAME",appname)] )
