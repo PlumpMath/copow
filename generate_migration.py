@@ -12,13 +12,16 @@ import sys
 import datetime
 import string
 
-from #APPNAME.models import App
+from #APPNAME.models.app import App
+from #APPNAME.models.version import Version
 
-import #APPNAME.lib.powlib
-from #APPNAME.config import config
+import #APPNAME.lib.powlib as powlib
+import #APPNAME.config.settings as settings 
+
 from bson.objectid import ObjectId
 
-PARTS_DIR = config.base["parts_dir"]
+
+PARTS_DIR = settings.base["parts_dir"]
 
     
 def main():
@@ -52,7 +55,7 @@ def main():
     start = None
     end = None 
     start = datetime.datetime.now()
-    print "generating migration...."
+    print("generating migration....")
     
     (options, args) = parser.parse_args()
     #print options
@@ -71,14 +74,14 @@ def main():
     if options.model.startswith("rel_") and ( options.model.count("_") == 2 ):
         # if the name is of the form: rel_name1_name2 it is assumed that you want to
         # generate a relation between name1 and name2. So the mig is especially customized for that.
-        print "assuming you want to create a relation migration..."
+        print("assuming you want to create a relation migration...")
         
         render_relation_migration(options.model, parts_dir)
         end = datetime.datetime.now()
         duration = None
         duration = end - start 
 
-        print "generated_migration in("+ str(duration) +")"
+        print("generated_migration in("+ str(duration) +")")
         return        
             
     else:
@@ -86,15 +89,15 @@ def main():
         if options.job:
             render_migration_job(options.job, options.table)
         else: 
-            print "    --- for model: %s" % (options.model)
+            print("    --- for model: %s" % (options.model))
             render_migration(options.model, options.comment)
     
     end = datetime.datetime.now()
     duration = None
     duration = end - start 
     
-    print "generated_migration in("+ str(duration) +")"
-    print
+    print("generated_migration in("+ str(duration) +")")
+    print()
     return
 
 def render_relation_migration(name, parts_dir=PARTS_DIR , prefix_dir = "./"):
@@ -113,9 +116,9 @@ def render_relation_migration(name, parts_dir=PARTS_DIR , prefix_dir = "./"):
     model1 = splittxt[1]
     model2 = splittxt[2]
     
-    print " -- generate_migration: relation migration for models: " + model1 +  " & " + model2
-    print " -- following the naming convention rel_model1_model2"
-    print " -- you gave:", name
+    print(" -- generate_migration: relation migration for models: " + model1 +  " & " + model2)
+    print(" -- following the naming convention rel_model1_model2")
+    print(" -- you gave:", name)
     
     # add the auto generated (but can be safely edited) warning to the outputfile
     
@@ -140,7 +143,7 @@ def render_relation_migration(name, parts_dir=PARTS_DIR , prefix_dir = "./"):
                                 prefix_dir,
                                 ostr
                                 )
-    print  " -- created file:" + str(os.path.normpath(os.path.join(prefix_dir,filename)))
+    print(" -- created file:" + str(os.path.normpath(os.path.join(prefix_dir,filename))))
     return
     
 
@@ -152,31 +155,38 @@ def write_migration(name, comment, prefix_dir="./", ostr=""):
     :param name:    Name of the new migration. 
     :param ostr:    Content that will be written to the new migration.
     """
-    version = ObjectId()
+    oid = ObjectId()
     # you can see the time part with: version.generation_time
-    print "version: %s  : gen_time: %s " % (version, version.generation_time.strftime("%Y/%m/%d %H:%M:%S"))
+    print(("oid: %s  : gen_time: %s " % (oid, powlib.get_time_from_objectid(oid))))
     
     # will be saved in the versions table and used to load the module by do_migrate
-    filename = str(version) + "_" + name + ".py"
+    filename = str(oid) + "_" + name + ".py"
     
     #update the app table with the new version
-    update_app_and_version(filename, version, comment )
+    update_app_and_version(name, filename, oid, comment )
     
     ofile = open(  os.path.normpath(os.path.join(prefix_dir + "/migrations/", filename)) , "w") 
     ofile.write(ostr)
     ofile.close()
-    print "written %s " % (filename)
+    print(( "written %s " % (filename)))
     return filename
     
 
     
-def update_app_and_version(filename, version, comment=""):
+def update_app_and_version(short_name, long_name, oid, comment=""):
     """
     update the app table with the new version
     update the version table with:
         filename, version and comment (if any).
     """
-    pass
+    v = Version()
+    v.short_name = short_name
+    v.long_name = long_name
+    v.comment = comment
+    v.environment = settings.base["environment"]
+    v.created = powlib.get_time_from_objectid(oid)
+    v.save()
+    
     return 
     
 def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = "None", 
@@ -191,7 +201,7 @@ def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = "None",
     """
     
     # add the auto generated (but can be safely edited) warning to the outputfile
-    print os.path.normpath(parts_dir + "migration.py")
+    #print os.path.normpath(parts_dir + "migration.py")
     infile = open (os.path.normpath(parts_dir + "migration.py"), "r")
     ostr = infile.read()
     infile.close()
@@ -208,14 +218,14 @@ def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = "None",
     #
     # Add / Replace the column definitions with the given ones by -d (if there were any)
     # 
-    if col_defs != "None":
-        ostr = transform_col_defs( ostr, col_defs )
+    #if col_defs != "None":
+    #    ostr = transform_col_defs( ostr, col_defs )
 
     # generate the new version
     #version = get_new_version()
     #verstring = powlib.version_to_string(version)
 
-    print "generate_migration for model: " + modelname
+    print("generate_migration for model: " + modelname)
 
     # really write the migration now
     write_migration(modelname, comment, prefix_dir, ostr)
@@ -230,7 +240,7 @@ def render_migration_job(filename, tablename):
         They can be executed with python migrate.py -f <migrationname>
         You can set the table by adding the -t <tablename> option
         """
-        print " -- creating migration job:"
+        print(" -- creating migration job:")
         infile = open(os.path.normpath( PARTS_DIR + "migration_job.part"), "r")
         instr = infile.read()
         infile.close()

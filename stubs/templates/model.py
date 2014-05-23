@@ -23,8 +23,8 @@ class #MODELCLASS(Base):
         #self.related_models = {}
         if schema:
             self.schema = schema
-            if schema.has_key("#MODELNAME_relations""):
-                self.relations = schema["#MODELNAME_relations""]
+            if schema.has_key("#MODELNAME_relations"):
+                self.relations = schema["#MODELNAME_relations"]
             else:
                 self.relations = {}
         else:

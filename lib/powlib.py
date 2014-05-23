@@ -23,9 +23,9 @@ schema_types = {
     "int"       :   0,
     "float"     :   0.0,
     "list"      :   [],
-    "blob"      :   None,
-    "object"    :   None
-
+    "binary"    :   None,
+    "object"    :   None,
+    "date"      :   None
 }
 
 #
@@ -53,6 +53,10 @@ def regex_rules(rules=rule_tuple):
     for line in rules:
         pattern, search, replace = line
         yield lambda word: re.search(pattern, word) and re.sub(search, replace, word)
+
+
+def get_time_from_objectid(oid, FORMAT_STRING="%Y/%m/%d %H:%M:%S"):
+    return oid.generation_time.strftime(FORMAT_STRING)
 
 def plural(noun):
     #print noun

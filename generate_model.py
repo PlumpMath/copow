@@ -9,10 +9,10 @@ import sqlite3, sys, os, datetime
 import string
 import sys
 
-from #APPNAME.lib import powlib
-from  #APPNAME.config import config 
+from atest.lib import powlib
+from  atest.config import settings 
 
-APPNAME = "#APPNAME"
+APPNAME = "atest"
 def main():
     """ Executes the render methods to generate a model, 
     basemodel and basic tests according to the given options """
@@ -34,6 +34,13 @@ def main():
                        help="forces overrides of existing files",
                        default=False)
 
+    parser.add_option( "-a", "--attributes",  
+                       action="store",
+                       type="string",
+                       dest="attributes",
+                       help="defines the attributes included in the model.",
+                       default ="None")
+
     parser.add_option( "-p", "--path",
                        action="store",
                        dest="path",
@@ -50,18 +57,39 @@ def main():
        else:
            parser.error("You must at least specify an appname by giving -n <name>.")
 
-    model_dir = os.path.normpath(options.path)
-    parts_dir = config.base["parts_dir"]
-    modelname = options.name
+    attributes = options.attributes
+    # EVOLUTION ;) 
+    # converting attributes to a list of tuples.
+    #l = []
+    #for elem in attributes.split(","):
+    #    t1 = elem.split(":")
+    #    l.append(t1)
+    #print(l)
+    
+    #attribute_list = []
+    #for elem in attributes.split(","):
+    #    attribute_list.append(tuple(elem.split(":")))
+
+    attribute_list = [tuple(elem.split(":")) for elem in attributes.split(",")]
+    #print(attribute_list)
+    #print("attributes: ", attributes)
+    
+    output_path = os.path.normpath(options.path)
+    parts_dir = settings.base["parts_dir"]
+    modelnames = options.name
     start = None
     end = None
     
     print(options)
     #print "options.name:  ", options.name
     
-    for modelname in options.name:
+    name_list = modelnames[0].split(",")
+    for modelname in name_list:
         start = datetime.datetime.now()
-        render_model(modelname, options.force, parts_dir, model_dir)
+        render_model( modelname=modelname, force=options.force, 
+                      parts_dir=parts_dir, output_path=output_path,
+                      properties=attribute_list
+                    )
         end = datetime.datetime.now()
         duration = None
         duration = end - start 
@@ -72,7 +100,7 @@ def main():
     return
 
     
-def render_model(modelname="NONE_GIVEN", force=False, parts_dir=config.base["parts_dir"], 
+def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["parts_dir"], 
                  output_path="./models/", properties=[], comment=""):
     """
     Renders the generated Model Class in path/models.
@@ -165,7 +193,7 @@ def reset_model(modelname):
     Test with empty / newly generated versions."""
     return render_model(modelname, True, "", properties=None, nomig=True)
 
-def render_test_stub (modelname, classname, PARTS_DIR = config.base["parts_dir"] ):
+def render_test_stub (modelname, classname, PARTS_DIR = settings.base["parts_dir"] ):
     """ renders the basic testcase for a PoW Model """
     #print "rendering Testcase for:", classname, " ", " ", modelname
     print(" -- generating TestCase...", end=' ')
@@ -173,21 +201,21 @@ def render_test_stub (modelname, classname, PARTS_DIR = config.base["parts_dir"]
     
     infile = open( os.path.normpath( PARTS_DIR +  "test_model.py"), "r")
     test_name = "test" + modelname + ".py"
-    ofile = open( os.path.normpath( config.base["model_test_dir"] + test_name ), "w")
+    ofile = open( os.path.normpath( settings.base["model_test_dir"] + test_name ), "w")
     ostr = infile.read()
     ostr = ostr.replace("#CLASSNAME", "Test" +  classname )
     ostr = ostr.replace("#DATE", d.strftime("%Y/%m/%d %H:%M:%S") )
     ofile.write(ostr)
     infile.close()
     ofile.close()
-    print(" %s...(created)" % (config.base["model_test_dir"] + test_name))
+    print(" %s...(created)" % (settings.base["model_test_dir"] + test_name))
     
     return
 
 def render_schema(modelname):
     print(" -- generating schema...", end=' ')
     d = datetime.datetime.now()
-    PARTS_DIR = config.base["parts_dir"]
+    PARTS_DIR = settings.base["parts_dir"]
 
     infile = open( os.path.normpath( PARTS_DIR +  "schema.py"), "r")
     outdir = "migrations/schemas/"

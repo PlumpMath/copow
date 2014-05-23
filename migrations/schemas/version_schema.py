@@ -8,8 +8,9 @@
 version = {
 	"short_name"     :      { "type" : "Text" },   
     "long_name"      :      { "type" : "Text" },
-    "environment"           :      { "type" : "Text" },
-    "comment"        :      { "type" : "Text" }
+    "environment"    :      { "type" : "Text" },
+    "comment"        :      { "type" : "Text" },
+    "created"        :      { "type" : "date" }     
 }
 
 

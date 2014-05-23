@@ -270,8 +270,9 @@ def gen_app(appname, appdir, force=False):
     print("| Next steps:                            |")
     print("------------------------------------------")
     app_path = os.path.abspath(os.path.normpath(appdir))
+
     print(" 1. add your app: %s to the PYTHONPATH" % (appname))
-    print(r"  -> Windows  : set PYHTONPATH=%PYTHONPATH%;" + "%s" % (app_path))
+    print('  -> Windows  : set PYHTONPATH=',app_path, ';%PYTHONPATH%',sep="")
     print("  -> Unix/Mac : export PYTHONPATH=%s:$PYTHONPATH" % (app_path))
     print(" 2. read first steps on www.pythononwheels.org/copow")
     print(" 3. have fun ;)")
