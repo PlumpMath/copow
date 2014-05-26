@@ -137,12 +137,17 @@ class BaseModel(object):
     def save(self):
         """ Saves the object. Results in insert if object wasnt in the db before,
             results in update otherwise"""
-        self._id = self.collection.save(self.to_json())
+        d = self.to_json()
+        d["last_updated"] = powlib.get_time()
+        self._id = self.collection.save(d)
         return self._id
 
     def insert(self):
         """ Uses pymongo insert directly"""
-        self._id = self.collection.insert(self.to_json())
+        d = self.to_json()
+        d["last_updated"] = powlib.get_time()
+        d["created"] = powlib.get_time()
+        self._id = self.collection.insert(d)
         return self._id
         
     def create(self):

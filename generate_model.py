@@ -8,6 +8,7 @@ from optparse import OptionParser
 import sqlite3, sys, os, datetime
 import string
 import sys
+import generate_migration
 
 from atest.lib import powlib
 from  atest.config import settings 
@@ -33,7 +34,10 @@ def main():
                        dest="force",
                        help="forces overrides of existing files",
                        default=False)
-
+    # attributes are in the form:
+    # name:type,name1:type1,....
+    # attributes are later converted to a list of tuples:
+    # [ (name, type), (name1,type1),... ]
     parser.add_option( "-a", "--attributes",  
                        action="store",
                        type="string",
@@ -58,18 +62,12 @@ def main():
            parser.error("You must at least specify an appname by giving -n <name>.")
 
     attributes = options.attributes
-    # EVOLUTION ;) 
-    # converting attributes to a list of tuples.
-    #l = []
-    #for elem in attributes.split(","):
-    #    t1 = elem.split(":")
-    #    l.append(t1)
-    #print(l)
     
-    #attribute_list = []
-    #for elem in attributes.split(","):
-    #    attribute_list.append(tuple(elem.split(":")))
 
+    # attributes are in the form:
+    # name:type,name1:type1,....
+    # attributes are later converted to a list of tuples:
+    # [ (name, type), (name1,type1),... ]
     attribute_list = [tuple(elem.split(":")) for elem in attributes.split(",")]
     #print(attribute_list)
     #print("attributes: ", attributes)
@@ -88,7 +86,7 @@ def main():
         start = datetime.datetime.now()
         render_model( modelname=modelname, force=options.force, 
                       parts_dir=parts_dir, output_path=output_path,
-                      properties=attribute_list
+                      attributes=attribute_list
                     )
         end = datetime.datetime.now()
         duration = None
@@ -101,7 +99,7 @@ def main():
 
     
 def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["parts_dir"], 
-                 output_path="./models/", properties=[], comment=""):
+                 output_path="./models/", attributes=[], comment=""):
     """
     Renders the generated Model Class in path/models.
     Renders the according BaseModel in path/models/basemodels.
@@ -145,6 +143,9 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["p
     
     ### generate BaseModel if neccessary
     # render_basemodel(baseclassname, modelname, collection_name, classname, output_path, parts_dir, properties)
+
+    # render the according migration (and schema)
+    generate_migration.render_migration( modelname, comment="", col_defs = None, parts_dir=settings.base["parts_dir"], prefix_dir = "./")
 
     # render a basic testcase 
     render_test_stub(modelname, classname, parts_dir)

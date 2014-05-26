@@ -6,9 +6,9 @@
 # 
 
 #MODELNAME = {
-    "title"     :       {   "type"      :   "Text" },
-    "content"   :       {   "type"      :   "Text" },
-    "author"    :       {   "type"      :   "Text" }
+    #"title"     :       {   "type"      :   "Text" },
+    #"content"   :       {   "type"      :   "Text" },
+    #"author"    :       {   "type"      :   "Text" }
 }
 
 

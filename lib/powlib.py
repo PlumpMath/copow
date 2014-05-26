@@ -9,6 +9,7 @@ import datetime
 #from .db_conn import DBConn
 import string
 import shutil
+from bson.objectid import ObjectId
 
 newline = os.linesep
 tab = "    "
@@ -57,6 +58,10 @@ def regex_rules(rules=rule_tuple):
 
 def get_time_from_objectid(oid, FORMAT_STRING="%Y/%m/%d %H:%M:%S"):
     return oid.generation_time.strftime(FORMAT_STRING)
+
+def get_time():
+    return get_time_from_objectid(ObjectID())
+
 
 def plural(noun):
     #print noun
@@ -139,11 +144,11 @@ def check_create_dir( path ):
     ret = False
     #print "checking for " + path +"...\t" ,
     if os.path.isdir( os.path.normpath(path) ):
-        print(" exists" +"...\t", end=' ')
+        print(" exists" +"...\t")
         ret=False
     else:
         os.mkdir( os.path.normpath(path) )
-        print(" created" +"...\t", end=' ')
+        print(" created" +"...\t")
         ret=True
     print(os.path.normpath(path))
     return ret
@@ -153,12 +158,12 @@ def check_create_file( path, filename ):
     ret = False
     #print "checking for " + os.path.normpath(os.path.join(path, filename)) + "...\t" ,
     if os.path.isfile( os.path.normpath(os.path.join(path, filename))):
-        print(" exists" +"...\t", end=' ')
+        print(" exists" +"...\t")
         ret = False
     else:
         file = open(os.path.normpath(os.path.join(path, filename)),"w")
         file.close()
-        print(" created" +"...\t", end=' ')
+        print(" created" +"...\t")
         ret = True
     print(os.path.normpath(os.path.join(path, filename)))
     return ret

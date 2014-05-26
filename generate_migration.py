@@ -173,29 +173,43 @@ def write_migration(name, comment, prefix_dir="./", ostr=""):
     
 
     
-def update_app_and_version(short_name, long_name, oid, comment=""):
+def update_app_and_version(short_name, long_name, oid, comment="" ):
     """
     update the app table with the new version
     update the version table with:
         filename, version and comment (if any).
     """
+    a = App()
+
+
     v = Version()
     v.short_name = short_name
     v.long_name = long_name
     v.comment = comment
     v.environment = settings.base["environment"]
     v.created = powlib.get_time_from_objectid(oid)
+    v.last_updated = v.created
+
+    new_version = a.maxversion + 1 
+    print("\t... creating version: ", new_version)
+    v.version = new_version
+
     v.save()
+    
+    a.maxversion = v.version
+    
+    a.save()
+
     
     return 
     
-def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = "None", 
+def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = None,
                       parts_dir=PARTS_DIR, prefix_dir = "./"):
     """
     Renders a database migration file.
     :param model:       Modelname for this migration (typically defining the model's base table)
     :param comment:     a Comment for this migration
-    :param col_defs:    pre defined column definitions of the form NAME TYPE OPTIONS, NAME1 TYPE1 OPTIONS1, ...
+    :param col_defs:    pre defined column definitions of the form [(name,type),(name1,type1),...]
     :param parts_dir:   A relative path to the stubs/partials dir from the executing script.
     :param prefix_dir:  A prefix path to be added to migrations making prefix_dir/migrations the target dir
     """
@@ -218,8 +232,9 @@ def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = "None",
     #
     # Add / Replace the column definitions with the given ones by -d (if there were any)
     # 
-    #if col_defs != "None":
-    #    ostr = transform_col_defs( ostr, col_defs )
+    
+    if col_defs:
+        print("#TODO: handling of preset colum_definitions is not implemented yet!")
 
     # generate the new version
     #version = get_new_version()

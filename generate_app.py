@@ -210,7 +210,7 @@ def gen_app(appname, appdir, force=False):
     powlib.check_copy_file("tornado_server.py", appbase, replace=[("#APPNAME",appname)])
     #powlib.check_copy_file("scripts/pow_router.wsgi", appbase)
     powlib.check_copy_file("pow_console.py", appbase, replace=[("#APPNAME",appname)] )
-    powlib.check_copy_file("init_copow_dbs.py", appbase, 
+    powlib.check_copy_file("init_dbs.py", appbase, 
                            replace=[("#APPNAME",appname),("#APPPATH",appbase)] )
     powlib.check_copy_file(os.path.join("./stubs/templates/","base.py"), 
                            os.path.normpath(os.path.join(appbase, "models/basemodels")), 
@@ -234,7 +234,7 @@ def gen_app(appname, appdir, force=False):
     # copy the initial db's
     #
     # NOTHING TO DO FOR MONGODB here
-
+    app_path = os.path.abspath(os.path.normpath(appdir))
     #
     # initiate the db.cfg file
     #
@@ -243,6 +243,14 @@ def gen_app(appname, appdir, force=False):
     print("| rendering the DB config file           |")
     print("------------------------------------------")
     render_db_config(appname, appbase )
+
+
+    #print() 
+    #print("------------------------------------------")
+    #print("| Creating the DB config file            |")
+    #print("------------------------------------------")
+    #print("... Executing: %s ", os.path.join(appbase, "init_dbs.py"))
+    #os.system(os.path.join(appbase, "init_dbs.py"))
 
     #print 
     #print "------------------------------------------"
@@ -269,13 +277,14 @@ def gen_app(appname, appdir, force=False):
     print("------------------------------------------")
     print("| Next steps:                            |")
     print("------------------------------------------")
-    app_path = os.path.abspath(os.path.normpath(appdir))
+    
 
     print(" 1. add your app: %s to the PYTHONPATH" % (appname))
     print('  -> Windows  : set PYHTONPATH=',app_path, ';%PYTHONPATH%',sep="")
     print("  -> Unix/Mac : export PYTHONPATH=%s:$PYTHONPATH" % (app_path))
-    print(" 2. read first steps on www.pythononwheels.org/copow")
-    print(" 3. have fun ;)")
+    print(" 2. execute python %s/init_db.py" % (app_path))
+    print(" 3. read first steps on www.pythononwheels.org/copow")
+    print(" 4. have fun ;)")
     print("--------------------------------------------------------")
     return
 
