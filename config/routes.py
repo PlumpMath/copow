@@ -10,7 +10,7 @@
 #   HTTP POST       => will call controller.create(something)
 #   HTTP PUT        => will call controller.edit(something)
 #   HTTP DELETE     => will call controller.delete(something)
-# and a call to domain:port/controller/
+#   and a call to domain:port/controller/
 #   Where something is usually an ID
 #   HTTP get        => will call controller.list()
 #   HTTP POST       => will call Nothing, yet.
@@ -19,9 +19,14 @@
 #
 # 
 
-import #APPNAME.controllers.hello
+import #APPNAME.controllers.welcome_controller
+import #APPNAME.controllers.login_controller
+import #APPNAME.controllers.logout_controller
 # Add your routes below.
-# Detaisl about formatting routes: 
+# Details about formatting routes: 
 handlers = [
-        (r"/hello", #APPNAME.controllers.hello.HelloController) 
+        (r'/welcome', #APPNAME.controllers.welcome_controller.WelcomeController),
+        (r'/login', #APPNAME.controllers.login_controller.LoginController),
+        (r'/logout', #APPNAME.controllers.logout_controller.LogoutController),
+        (r'.*', #APPNAME.controllers.welcome_controller.DispatchController)
         ]

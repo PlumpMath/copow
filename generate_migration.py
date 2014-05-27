@@ -12,11 +12,11 @@ import sys
 import datetime
 import string
 
-from #APPNAME.models.app import App
-from #APPNAME.models.version import Version
+from atest.models.app import App
+from atest.models.version import Version
 
-import #APPNAME.lib.powlib as powlib
-import #APPNAME.config.settings as settings 
+import atest.lib.powlib as powlib
+import atest.config.settings as settings 
 
 from bson.objectid import ObjectId
 
@@ -157,7 +157,7 @@ def write_migration(name, comment, prefix_dir="./", ostr=""):
     """
     oid = ObjectId()
     # you can see the time part with: version.generation_time
-    print(("oid: %s  : gen_time: %s " % (oid, powlib.get_time_from_objectid(oid))))
+    print((" -- oid: %s  : gen_time: %s " % (oid, powlib.get_time_from_objectid(oid))))
     
     # will be saved in the versions table and used to load the module by do_migrate
     filename = str(oid) + "_" + name + ".py"
@@ -180,7 +180,7 @@ def update_app_and_version(short_name, long_name, oid, comment="" ):
         filename, version and comment (if any).
     """
     a = App()
-
+    a = a.find_one()
 
     v = Version()
     v.short_name = short_name
@@ -191,7 +191,7 @@ def update_app_and_version(short_name, long_name, oid, comment="" ):
     v.last_updated = v.created
 
     new_version = a.maxversion + 1 
-    print("\t... creating version: ", new_version)
+    print(" -- creating version: ", new_version)
     v.version = new_version
 
     v.save()

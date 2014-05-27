@@ -58,9 +58,9 @@ class BaseModel(object):
             #from atest.migrations.schemas.version_schema import version_relations as relations
             which = "atest.migrations.schemas." + self.modelname + "_schema"
             schema = imp.reload(eval(which))
-            print(schema)
-            print(self.modelname), 
-            print(schema.__dict__.keys)
+            #print(schema)
+            #print(self.modelname), 
+            #print(schema.__dict__.keys)
             self.schema = schema.__dict__[self.modelname]
             self.relations = schema.__dict__[self.modelname + "_relations"]
         except Exception as e:
@@ -71,7 +71,7 @@ class BaseModel(object):
         """ sets the accessor methods for the schema """
         # add the property and initialize it according to the type
         for column, attrs in list(self.schema.items()):
-            print("column : %s" % (column))
+            #print("column : %s" % (column))
             #type = string.lower(attrs["type"])
             att_type = attrs["type"].lower()
             if att_type in powlib.schema_types:
@@ -119,20 +119,25 @@ class BaseModel(object):
             Uses find_one internally. """
         res = self.collection.find_one({ field : value })
         for column in res:
-            setattr(self, column, res[column])
+            if column in self.schema.keys():
+                setattr(self, column, res[column])
+            else:
+                raise Exception( "POWError: model %s has no column %s" % (self.modelname, column) )
         return self
 
     def find_all(self, *args, **kwargs):
         """ Find all matching models. Returns an iterable."""
+        return self.find(*args,**kwargs)
+    
+    def find(self, *args, **kwargs):
+        """ Find all matching models. Returns an iterable."""
         res = self.collection.find(*args, **kwargs)
         return res
-    
+
     def find_one(self, *args, **kwargs):
         """ Uses pymongo  find_one directly"""
         ret = self.collection.find_one(*args, **kwargs)
-        if ret:
-           self.__dict__ = ret.__dict__
-        return self
+        return ret
 
     def save(self):
         """ Saves the object. Results in insert if object wasnt in the db before,
@@ -179,6 +184,16 @@ class BaseModel(object):
         _log(type, '%s - - [%s] %s\n' % (self.modelname,
                                          "NOW ;)",
                                          message % args))
+
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        ostr = ""
+        for key,val in self.to_json():
+            ostr += key + " -> " + val + os.newline 
+        return ostr
 
     def has_many(self, rel_model, embedd=True, one_to_one=False):
         """ creates an (currently embedded) one:many relation between this (self) and model.

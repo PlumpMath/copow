@@ -116,14 +116,14 @@ def gen_app(appname, appdir, force=False):
                 {"name" : "models", "subdirs": [("basemodels", True)], "init" : True},
                 {"name" : "controllers", "subdirs" :  [], "init" : True},
                 {"name" : "public", "subdirs" : [
+                            ("bootstrap", False),
+                            ("bootstrap/css", False),
+                            ("bootstrap/fonts", False),
+                            ("bootstrap/js", False),
+                            ("ico", False), 
                             ("img", False),
-                            ("img/bs", False),
-                            ("ico", False),
                             ("css", False),
-                            ("css/bs", False),
-                            ("js", False),
-                            ("js/bs", False),
-                            ("doc", False)], "init"  : False},
+                            ("js", False)], "init"  : False},
                 {"name" : "stubs", "subdirs" : [("templates", True)], "init" : True},
                 {"name" : "views", "subdirs" : [("layouts", False)], "init" : False},
                 {"name" : "test", "subdirs" : [("models", True), ("controllers", True)], "init" : True},
@@ -153,15 +153,15 @@ def gen_app(appname, appdir, force=False):
                        ("migrations/schemas", "migrations/schemas"),
                        ("models", "models"),
                        ("models/basemodels", "models/basemodels"),
-                       ("stubs/templates", "stubs/templates"),
-                       ("public/doc", "public/doc"),
+                       ("stubs/templates", "stubs/templates"),                       
+                       ("public/bootstrap", "public/bootstrap"),
+                       ("public/bootstrap/css", "public/bootstrap/css"),
+                       ("public/bootstrap/js", "public/bootstrap/js"),
+                       ("public/bootstrap/fonts", "public/bootstrap/fonts"),
                        ("public/ico", "public/ico"),
                        ("public/img", "public/img"),
-                       ("public/img/bs", "public/img/bs"),
                        ("public/css", "public/css"),
-                       ("public/css/bs", "public/css/bs"),
-                       ("public/js", "public/js"),
-                       ("public/js/bs", "public/js/bs"),
+                       ("public/js", "public/js"),                       
                        ("controllers", "controllers"),
                        ("views", "views"),
                        ("views/layouts", "views/layouts"),
@@ -174,21 +174,29 @@ def gen_app(appname, appdir, force=False):
     print("------------------------------------------")
     exclude_patterns = [".pyc", ".pyo", ".DS_STORE", ".DS_Store"]
     exclude_files = ["db.cfg", "__init__.py", ".DS_STORE", ".DS_Store"]
+    copy_only_dirs = [ "public" ]
     for source_dir, dest_dir in deep_copy_list:
         try:
-          for source_file in os.listdir(source_dir):
-              fname, fext = os.path.splitext(source_file)
-              if not fext in exclude_patterns and not source_file in exclude_files:  # lint:ok
-                  #print("working on: ", source_file)
-                  powlib.check_copy_file(
-                      os.path.join(source_dir, source_file), os.path.join(appbase,dest_dir),
-                      #os.path.join(appbase + "/" + dest_dir,source_file),
-                      replace=[("#APPNAME",appname)]
-                      
-                  )
-              else:
-                  print(" excluded: EXCL", source_file)
-                  continue
+            for adir in copy_only_dirs:
+                #print(" comparing %s : %s" %(source_dir, adir))
+                if source_dir.find(adir) >=0:
+                    repl = None
+                    print(" copying only: ", source_dir)
+                else:
+                    repl = [("#APPNAME",appname)]
+            for source_file in os.listdir(source_dir):
+                fname, fext = os.path.splitext(source_file)
+                if not fext in exclude_patterns and not source_file in exclude_files:  # lint:ok
+                    #print("working on file: ", source_file)
+                    #print("working on dir: ", source_dir)    
+                    powlib.check_copy_file(
+                        os.path.join(source_dir, source_file), os.path.join(appbase,dest_dir),
+                        #os.path.join(appbase + "/" + dest_dir,source_file),
+                        replace=repl
+                    )
+                else:
+                    print(" excluded: EXCL", source_file)
+                    continue
         except Exception as e:
           print(" Error:    ERR  Errno: #%s file: %s " % (e.errno, e.filename))
           pass
@@ -245,13 +253,13 @@ def gen_app(appname, appdir, force=False):
     render_db_config(appname, appbase )
 
 
-    #print() 
-    #print("------------------------------------------")
-    #print("| Creating the DB config file            |")
-    #print("------------------------------------------")
-    #print("... Executing: %s ", os.path.join(appbase, "init_dbs.py"))
+    print() 
+    print("------------------------------------------")
+    print("| Creating the DB config file            |")
+    print("------------------------------------------")
+    print("... Executing: %s ", os.path.join(appbase, "init_dbs.py"))
     #os.system(os.path.join(appbase, "init_dbs.py"))
-
+    #exec(compile(open(os.path.join(appbase, "init_dbs.py"), "rb").read(), filename, 'exec'), globals, locals)
     #print 
     #print "------------------------------------------"
     #print "| generating the copow models            |"

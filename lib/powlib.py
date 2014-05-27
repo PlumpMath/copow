@@ -60,7 +60,7 @@ def get_time_from_objectid(oid, FORMAT_STRING="%Y/%m/%d %H:%M:%S"):
     return oid.generation_time.strftime(FORMAT_STRING)
 
 def get_time():
-    return get_time_from_objectid(ObjectID())
+    return get_time_from_objectid(ObjectId())
 
 
 def plural(noun):
@@ -217,6 +217,7 @@ def replace_string_in_file( absfilename, replace_list=[] ):
         replace_list = [(string_to_find, string_replacement),....]
     """
     # set correct Appname in pow_router.wsgi
+    #print("replacing in:", absfilename)
     f = open(absfilename, "r")
     instr = f.read()
     for tupel in replace_list:

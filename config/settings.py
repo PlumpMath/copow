@@ -2,6 +2,9 @@
 #
 # All the copow 'global' configutration goes here
 #
+import os
+import os.path
+
 base = {
 	
 	"server"		:	"localhost",
@@ -26,13 +29,12 @@ logging=  {
 webserver = {
     #  Setting debug=True is equivalent to autoreload=True, compiled_template_cache=False, 
     #                     static_hash_cache=False, serve_traceback=True.
-    "debug"     :   True
-    #default_handler_class and default_handler_args: This handler will be used if no other 
-    # match is found; use this to implement custom 404 pages (new in Tornado 3.2).
-
-    # cookie_secret: Used by RequestHandler.get_secure_cookie and set_secure_cookie to sign cookies.
-    
-    # login_url: The authenticated decorator will redirect to this url if the 
-    #   user is not logged in. Can be further customized by overriding RequestHandler.get_login_url
+    "debug"         :   True,    
+    "template_path" : os.path.abspath(os.path.normpath(os.path.join(os.path.dirname(__file__), "../views"))),
+    "static_path"   : os.path.abspath(os.path.normpath(os.path.join(os.path.dirname(__file__), "../public"))),
+    "cookie_secret" : "bZJc2207WbQLKos6GkHn/1104wQt8S0R0kRvJ5/gaga",
+    #"xsrf_cookies" : True,
+    "login_url"     : "/login",
+    #"base_handler_class"    :   "#APPNAME.controllers.welcome_controller.WelcomeController"
     
 }
