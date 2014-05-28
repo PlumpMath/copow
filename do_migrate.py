@@ -16,9 +16,6 @@ import datetime
 #sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./controllers" )))  # lint:ok
 #sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./migrations" )))  # lint:ok
 
-import #APPNAME.lib.powlib
-from #APPNAME.models import App
-from #APPNAME.lib.pow_objects import PowTable
 
 # setting the right defaults
 MODE_CREATE = 1
@@ -33,7 +30,7 @@ def main():
                       action="store",
                       type="string",
                       dest="direction",
-                      help="migrate up or down",
+                      help="migrate [up | down]",
                       default="None")
     parser.add_option("-v", "--version",
                       action="store",
@@ -41,26 +38,17 @@ def main():
                       dest="version",
                       help="migrates to version ver",
                       default="None")
-    parser.add_option("-e", "--erase",
-                      action="store_true",
-                      dest="erase",
-                      help="erases version ver",
-                      default="False")
+    #parser.add_option("-e", "--erase",
+    #                  action="store_true",
+    #                  dest="erase",
+    #                  help="erases version ver",
+    #                  default="False")
     parser.add_option("-i", "--info",
                       action="store_true",
                       dest="info",
                       help="shows migration information",
                       default="False")
-    parser.add_option("-j", "--job",
-                      action="store",
-                      type="string", dest="job",
-                      help="executes a migration job",
-                      default="None")
-    parser.add_option("-m", "--method",
-                      action="store", type="string",
-                      dest="method",
-                      help="execute the given method. Only in with -j",
-                      default="None")
+    
     parser.add_option("-s", "--set-currentversion",
                       action="store",
                       type="string",
@@ -76,67 +64,78 @@ def main():
     end = None
     start = datetime.datetime.now()
 
+    # only show current version information
     if options.info:
         show_info()
-        return
-
-    if options.version == "None":
-        ver = None
-    else:
-        ver = int(options.version)
-
-    if options.erase:
-        if not ver:
-            print "You must give a version to erase with -v"
-            return
-        else:
-            do_erase(ver)
-
-    if options.job != "None":
-        # execute a migration job:
-        do_job(options.job, options.method)
-
-    if options.set_curr_version != "None":
-        # set the current version 
+    # only set the current version 
+    elif options.set_curr_version != "None":
         set_currentversion(options.set_curr_version)
+    # migrate into direction
+    elif options.direction != "None":
+        do_migrate_to_direction(options.direction)
+    # migrate to version
+    elif options.version != "None":
+        ver = int(options.version)
+        do_migrate_to_version(ver)
 
-    # nothing else to do, so do_migrate
-    do_migrate(options.direction, options.version)
+    else:
+        #Error
+        print("You must give a valid option to do_migrate. See do_migrate.py --help ")
+        sys.exit()
 
     end = datetime.datetime.now()
     duration = None
     duration = end - start
-    print "migrated in(" + str(duration) + ")"
+    print("migrated in(" + str(duration) + ")")
 
 
-def do_job(options, filename, method):
-    print "migrating"
-    return
 
-
-def do_migrate(to_version, direction):
+def do_migrate_to_direction(to_direction):
     #powlib.load_module("App")
-    print "..migrating "
-    print "    -- to version: %s" % (to_version)
+    
+    if to_direction not in ["up", "down"]:
+        print("ERROR: unknown direction: %s" % (to_direction))
+        sys.exit()
+
+    v = version.Version()
+    a = app.App()
+
+    print("..migrating ")
+    if to_direction == "up":
+        # check if current_version == maxversion => Error. Cannot migrate higher than max.
+        if a.currentversion == a.maxversion:
+            print("ERROR: cannot migrate higher that max.")
+            sys.exit()
+        else:
+            
+            print("    -- Up: %s" % (to_direction))
+
+def do_migrate_to_version(to_version):
+    #powlib.load_module("App")
+    print("..migrating ")
+    print("    -- to version: %s" % (to_version))
     
 
     return
 
 
 def set_currentversion(ver):
-    print "migrating "
-    return
-
-
-def do_erase():
+    print("migrating ")
     return
 
 
 def show_info():
-    print "showing migration information for"
+    a = app.App()
+    a = a.find_one()
+    print("showing migration information for")
     #print " -- Appname: " + app.name
-    print " -- currentversion is : " + str(app.currentversion)
-    print " -- max version is : " + str(app.maxversion)
+    print(" -- currentversion is : " + str(a.currentversion))
+    print(" -- max version is : " + str(a.maxversion))
+    print("listing all versions:")
+    v = version.Version()
+    version_list = v.find_all()
+    for elem in version_list:
+        print elem
 
 
 

@@ -22,11 +22,25 @@
 import #APPNAME.controllers.welcome_controller
 import #APPNAME.controllers.login_controller
 import #APPNAME.controllers.logout_controller
+import #APPNAME.controllers.dispatch_controller
+import #APPNAME.controllers.error_controller
+
 # Add your routes below.
 # Details about formatting routes: 
 handlers = [
         (r'/welcome', #APPNAME.controllers.welcome_controller.WelcomeController),
+        (r'/features', #APPNAME.controllers.welcome_controller.WelcomeController),
+        (r'/next-steps', #APPNAME.controllers.welcome_controller.WelcomeController),
+        (r'/twitter', #APPNAME.controllers.welcome_controller.WelcomeController),
         (r'/login', #APPNAME.controllers.login_controller.LoginController),
         (r'/logout', #APPNAME.controllers.logout_controller.LogoutController),
-        (r'.*', #APPNAME.controllers.welcome_controller.DispatchController)
+        #
+        # REST Handling via Dispatcher
+        #
+        (r'/(w+)/', #APPNAME.controllers.dispatch_controller.DispatchController),
+        (r'/(w+)/([0-9]+)', #APPNAME.controllers.dispatch_controller.DispatchController),
+        #
+        # Anything else => ERROR
+        #
+        (r'.*', #APPNAME.controllers.error_controller.ErrorController)
         ]

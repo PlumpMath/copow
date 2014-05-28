@@ -27,6 +27,12 @@ tab = powlib.tab
 class BaseModel(object):
     
     #def __init__(self, data=None, schema=None):
+    def __setitem__(self, key, value):    
+        if key in self.schema.keys():
+            setattr(self, key, value)
+        else:
+            raise Exception( "POWError: model %s has no column %s" % (self.modelname, column) )
+        return 
 
     def set_data(self, data):
         """ set the data for this model from given dictionary data"""
@@ -83,6 +89,8 @@ class BaseModel(object):
                 raise Exception("no or unknown type given in schema: version_schema.py")
         #self.setup_relations()
 
+    
+
 
     def generate_accessor_methods(self):
         """generates the convenient getAttribute() and setAttribute Methods
@@ -129,9 +137,15 @@ class BaseModel(object):
         """ Find all matching models. Returns an iterable."""
         return self.find(*args,**kwargs)
     
-    def find(self, *args, **kwargs):
-        """ Find all matching models. Returns an iterable."""
-        res = self.collection.find(*args, **kwargs)
+    def find(self, *args, sort=None, **kwargs):
+        """ Find all matching models. Returns an iterable.
+            sorting can be done by giving for exmaple: 
+            sort=[("field", pymongo.ASCENDING), ("field2", pymongoDESCENDING),..]
+        """
+        if sort:
+            res = self.collection.find(*args, **kwargs).sort(sort)
+        else:
+            res = self.collection.find(*args, **kwargs)
         return res
 
     def find_one(self, *args, **kwargs):

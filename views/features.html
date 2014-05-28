@@ -1,0 +1,49 @@
+{% extends "main.html" %}
+
+{# is rendered in the content block of main.html view view #}
+
+{% block content %}
+
+    <link rel="stylesheet" href="{{ static_url("css/features.css") }}">
+
+      <div class="row marketing">
+        <div class="col-lg-6">
+          <h4>Integrated Webserver</h4>
+          <p>copow is based on <a href="http://http://www.tornadoweb.org/">tornado</a>. The brilliant, asynchronous 
+            web framework for python. So it comes with their beautiful webserver on board.</p>
+
+          <h4>mongoDB</h4>
+          <p>MongoDB support, connection seamlessly included without coding</p>
+
+          <h4>ansynchronous</h4>
+          <p>Async is a great hype (at least since node.js) these days. I liked the idea as well and got convinced 
+            after reading the great presentation from <a href="http://www.dabaez.com">dabaez</a> on <a href="http://www.dabeaz.com/coroutines/Coroutines.pdf">coroutines.</a>
+            Tornado has async web-handlers and lets you build async apps. But it all depends on you coding async as well ;).
+          </p>
+        </div>
+
+        <div class="col-lg-6">
+          <h4>generative</h4>
+          <p>generate all you models, controllers and views. Saves your time and lets you focus on your app</p>
+
+          <h4>convention over configuration</h4>
+          <p>If you keep the standard naming convention almost anything is working without explicit configutation.
+            For example there are no routing configurations neccessary at all for RESTful routes.
+          </p>
+
+          <h4>Everything tied together</h4>
+          <p>makingg MongoDB, Tornado and MVC feel like ONE package the fluently work for you!
+            Literally minutes to go for your first DB based MVC, RESTful Webapp.
+          </p>
+        </div>
+
+        <div class="col-lg-12">
+          <span>&nbsp;</span>
+          <a href="/next-steps" role="button" class="btn btn-success btn-lg">
+            <span class="glyphicon glyphicon-hand-right"></span> Next steps ...
+          </a>
+        </div>
+      </div>    
+
+{% end %}
+
