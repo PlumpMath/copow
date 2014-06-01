@@ -82,14 +82,40 @@ class BaseModel(object):
             att_type = attrs["type"].lower()
             if att_type in powlib.schema_types:
                 #print "setting up property for: %s" % (column)
-                #setting the according attribvute and the default value, if any.
+                #setting the according attribute and the default value, if any.
                 setattr(self, column, powlib.schema_types[att_type])
                 setattr(self, column+"_type", att_type)
             else:
                 raise Exception("no or unknown type given in schema: version_schema.py")
+            if attrs.has_key("index"):
+                att_index = attrs["index"]
+                setattr(self, column+"_has_index", True)
+            else:
+                setattr(self, column+"_has_index", False)
+            if attrs.has_key("default"):
+                att_default = attrs["default"]
+                setattr(self, column+"_dafault", att_default)
+            if attrs.has_key("validation"):
+                # this is just a quick indication if there is any validation or
+                # not. If so, the real validation is loaded. So quick test, long loading 
+                # only if True. 
+                att_validation = attrs["validation"]
+                setattr(self, column+"_has_validation", True)
+            else:
+                setattr(self, column+"_has_validation", False)
+            
         #self.setup_relations()
 
     
+    def is_valid(self):
+        for column in self.schema.keys():
+            ## TODO
+            if getattr(self,column + "_has_validation"):
+                # validate this column
+            else:
+                # do  nothing
+                pass
+            return True
 
 
     def generate_accessor_methods(self):

@@ -20,7 +20,7 @@ migration = Migration()
 def up(self):
     """ up method will be executed when running do_migrate -d up"""
     app = App( schema  = {
-            "oid"            :      { "type" : "Text" },
+            "oid"                :      { "type" : "Text" },
             "name"               :      { "type" : "Text" },   
             "path"               :      { "type" : "Text" },
             "lastversion"        :      { "type" : "Text" },
