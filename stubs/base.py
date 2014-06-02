@@ -28,10 +28,16 @@ class BaseModel(object):
     
     #def __init__(self, data=None, schema=None):
     def __setitem__(self, key, value):    
-        if key in self.schema.keys():
-            setattr(self, key, value)
+        """ sets the objects attributes according to the search/find result
+            Uses the as_class parameter of the find methods. 
+            See http://dirolf.com/2010/06/17/pymongo-1.7-released.html
+        """
+        print("in __setitem__")
+        if key in self.schema.keys() or key == "_id":
+            #print("object: ", self ," in __setitem__ for: ", key)
+            setattr(self, key, value) 
         else:
-            raise Exception( "POWError: model %s has no column %s" % (self.modelname, column) )
+            raise Exception( "POWError: model %s has no column %s" % (self.modelname, key) )
         return 
 
     def set_data(self, data):
@@ -87,15 +93,15 @@ class BaseModel(object):
                 setattr(self, column+"_type", att_type)
             else:
                 raise Exception("no or unknown type given in schema: version_schema.py")
-            if attrs.has_key("index"):
+            if "index" in attrs:
                 att_index = attrs["index"]
                 setattr(self, column+"_has_index", True)
             else:
                 setattr(self, column+"_has_index", False)
-            if attrs.has_key("default"):
+            if "default" in attrs:
                 att_default = attrs["default"]
                 setattr(self, column+"_dafault", att_default)
-            if attrs.has_key("validation"):
+            if "validation" in attrs:
                 # this is just a quick indication if there is any validation or
                 # not. If so, the real validation is loaded. So quick test, long loading 
                 # only if True. 
@@ -112,6 +118,7 @@ class BaseModel(object):
             ## TODO
             if getattr(self,column + "_has_validation"):
                 # validate this column
+                pass
             else:
                 # do  nothing
                 pass
@@ -176,7 +183,7 @@ class BaseModel(object):
 
     def find_one(self, *args, **kwargs):
         """ Uses pymongo  find_one directly"""
-        ret = self.collection.find_one(*args, **kwargs)
+        ret = self.collection.find_one(*args, as_class=self.__class__, **kwargs)
         return ret
 
     def save(self):
@@ -202,7 +209,8 @@ class BaseModel(object):
     def update(self, *args, **kwargs):
         """  Pure: pymongo update. Can update any document in the collection (not only self)
             Syntax: db.test.update({"x": "y"}, {"$set": {"a": "c"}}) """
-        ret = self.collection.update(*args, **kwargs)
+        #ret = self.collection.update(*args, **kwargs)
+        ret = self.collection.update({"_id": self._id}, self.to_json())
         return ret
     
     def update_self(self, val):
@@ -210,7 +218,8 @@ class BaseModel(object):
             val must be a dict { key : val1, key : val2 ...}
             always multi=False
         """
-        ret = self.collection.update({"_id": self._id}, {"$set": val}, multi=False)
+        #ret = self.collection.update({"_id": self._id}, {"$set": val}, multi=False)
+        ret = self.collection.update({"_id": self._id})
         return ret
 
     def to_json(self):
@@ -231,8 +240,9 @@ class BaseModel(object):
 
     def __str__(self):
         ostr = ""
-        for key,val in self.to_json():
-            ostr += key + " -> " + val + os.newline 
+        adict = self.to_json()
+        for key in adict:
+            ostr += key + " -> " + str(adict[key]) + os.linesep 
         return ostr
 
     def has_many(self, rel_model, embedd=True, one_to_one=False):

@@ -198,7 +198,7 @@ def update_app_and_version(short_name, long_name, oid, comment="" ):
     
     a.maxversion = v.version
     
-    a.save()
+    a.update()
 
     
     return 
