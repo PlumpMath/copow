@@ -11,7 +11,7 @@ import os
 import os.path
 import json
 import imp
-
+import pymongo
 
 from atest.lib.db_conn import DBConn
 #from atest.migrations.schemas.version import version as schema
@@ -32,9 +32,9 @@ class BaseModel(object):
             Uses the as_class parameter of the find methods. 
             See http://dirolf.com/2010/06/17/pymongo-1.7-released.html
         """
-        print("in __setitem__")
+        #print("in __setitem__")
         if key in self.schema.keys() or key == "_id":
-            #print("object: ", self ," in __setitem__ for: ", key)
+            #print("object: ", self ," in __setitem__ for: ", key, " --> ", str(value))
             setattr(self, key, value) 
         else:
             raise Exception( "POWError: model %s has no column %s" % (self.modelname, key) )
@@ -124,11 +124,20 @@ class BaseModel(object):
                 pass
             return True
 
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        ostr = ""
+        adict = self.to_json()
+        for key in adict:
+            ostr += key + " -> " + str(adict[key]) + os.linesep 
+        return ostr
 
     def generate_accessor_methods(self):
         """generates the convenient getAttribute() and setAttribute Methods
         and sets them as accessors for this models Attributes """
-        for item in list(self._schema.keys()):
+        for item in list(self.schema.keys()):
             mstr = ""
             self.has_accessor_methods = True
             #getter
@@ -137,10 +146,10 @@ class BaseModel(object):
             setter = method_name
             tmp_meth_name = "foo"
             mstr +=     "def foo(self):" + newline
-            mstr += tab + "return self." + str(item) + newline
-            #print mstr
-            exec(mstr)
+            mstr += tab + "return self." + str(item) + os.linesep
+            exec(mstr,globals())
             self.__dict__[method_name] = types.MethodType(foo,self)
+            #setattr(self, method_name, foo)
             
             
             # setter
@@ -151,8 +160,9 @@ class BaseModel(object):
             mstr +=     "def foo(self, value):" + newline
             mstr += tab + "self." + str(item) + " = value " + newline
             #print mstr
-            exec(mstr)
+            exec(mstr,globals())
             self.__dict__[method_name] = types.MethodType(foo,self)
+            #setattr(self, method_name, foo)
         
 
     def find_by(self, field, value):
@@ -169,22 +179,36 @@ class BaseModel(object):
     def find_all(self, *args, **kwargs):
         """ Find all matching models. Returns an iterable."""
         return self.find(*args,**kwargs)
+
     
-    def find(self, *args, sort=None, **kwargs):
+    def find(self, *args, sort=False, **kwargs):
         """ Find all matching models. Returns an iterable.
             sorting can be done by giving for exmaple: 
             sort=[("field", pymongo.ASCENDING), ("field2", pymongoDESCENDING),..]
         """
         if sort:
-            res = self.collection.find(*args, **kwargs).sort(sort)
+            c = self.collection.find(*args, as_class=self.__class__, **kwargs).sort(sort)
         else:
-            res = self.collection.find(*args, **kwargs)
-        return res
+            c = self.collection.find(*args, as_class=self.__class__, **kwargs)
+        if c.__class__ == pymongo.cursor.Cursor:
+            if c.count() == 1:
+                # if it is only one result in the cursor, return the cursor but also 
+                # set this (self) object's values as the result.
+                self.set_values(c[0].to_json())
+        return c
+
 
     def find_one(self, *args, **kwargs):
         """ Uses pymongo  find_one directly"""
-        ret = self.collection.find_one(*args, as_class=self.__class__, **kwargs)
+        #ret = self.collection.find_one(*args, as_class=self.__class__, **kwargs)
+        ret = self.collection.find_one(*args, **kwargs)
+        self.set_values(ret)
         return ret
+    
+    def set_values(self, dictionary):
+        for elem in dictionary:
+            self.__setitem__(elem, dictionary[elem])
+        return
 
     def save(self):
         """ Saves the object. Results in insert if object wasnt in the db before,
@@ -213,15 +237,6 @@ class BaseModel(object):
         ret = self.collection.update({"_id": self._id}, self.to_json())
         return ret
     
-    def update_self(self, val):
-        """ Same as : update({"_id": self._id}, val) 
-            val must be a dict { key : val1, key : val2 ...}
-            always multi=False
-        """
-        #ret = self.collection.update({"_id": self._id}, {"$set": val}, multi=False)
-        ret = self.collection.update({"_id": self._id})
-        return ret
-
     def to_json(self):
         """ returns a json representation of the schema"""
         d = {}
@@ -234,16 +249,6 @@ class BaseModel(object):
                                          "NOW ;)",
                                          message % args))
 
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __str__(self):
-        ostr = ""
-        adict = self.to_json()
-        for key in adict:
-            ostr += key + " -> " + str(adict[key]) + os.linesep 
-        return ostr
 
     def has_many(self, rel_model, embedd=True, one_to_one=False):
         """ creates an (currently embedded) one:many relation between this (self) and model.
