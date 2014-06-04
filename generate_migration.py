@@ -12,11 +12,11 @@ import sys
 import datetime
 import string
 
-from atest.models.app import App
-from atest.models.version import Version
+from #APPNAME.models.app import App
+from #APPNAME.models.version import Version
 
-import atest.lib.powlib as powlib
-import atest.config.settings as settings 
+import #APPNAME.lib.powlib as powlib
+import #APPNAME.config.settings as settings 
 
 from bson.objectid import ObjectId
 

@@ -10,12 +10,11 @@ from optparse import OptionParser
 import sys
 import datetime
 
+from #APPNAME.models import app
+from #APPNAME.models import Version
 
-#sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./lib" )))  # lint:ok
-#sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./models" )))  # lint:ok
-#sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./controllers" )))  # lint:ok
-#sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./migrations" )))  # lint:ok
-
+import #APPNAME.lib.powlib as powlib
+import #APPNAME.config.settings as settings 
 
 # setting the right defaults
 MODE_CREATE = 1
@@ -47,7 +46,7 @@ def main():
                       action="store_true",
                       dest="info",
                       help="shows migration information",
-                      default="False")
+                      default=False)
     
     parser.add_option("-s", "--set-currentversion",
                       action="store",
@@ -88,27 +87,47 @@ def main():
     duration = end - start
     print("migrated in(" + str(duration) + ")")
 
-
+def load_func( filename, function_name):
+    module = __import__("#APPNAME"+".migrations." + filename, globals(), locals(), [function_name], 0)        
+    func = imp.reload(module)
+    #schema = reload(schema_module)
+    print(module.__dict__)
+    print("func:")
+    print(func)
+    #self.relations = schema_module.__dict__[self.modelname + "_relations"]
 
 def do_migrate_to_direction(to_direction):
     #powlib.load_module("App")
-    
     if to_direction not in ["up", "down"]:
-        print("ERROR: unknown direction: %s" % (to_direction))
+        raise Exception("Wrong direction given. Only up or down are supported. No left or right ;)")
         sys.exit()
 
     v = version.Version()
     a = app.App()
+    a.find_one()
 
-    print("..migrating ")
+    print(" ...migrating ")
     if to_direction == "up":
         # check if current_version == maxversion => Error. Cannot migrate higher than max.
-        if a.currentversion == a.maxversion:
-            print("ERROR: cannot migrate higher that max.")
-            sys.exit()
+        if a.currentversion < a.maxversion:
+            # ok, migrating up
+            to_version = a.currentversion + 1
+            v = v.find_one({ "version" :  to_version })
+            print("  Trying to migrate to this version now: ")
+            print("-"*40)
+            print(v)
+            load_func(v.long_name, "up")
         else:
-            
-            print("    -- Up: %s" % (to_direction))
+            raise Exception("Cannot migrate up. You are already on maxversion")
+    elif to_direction == "down":
+        # check if currentversion > 2 :
+        if a.currentversion > 2:
+            # ok, migrate down
+        else:
+            # not ok, bailing out.
+            raise Exception(
+                "Cannot migrate down below version 2, since version 1 and 2 represent copow system collections")
+      
 
 def do_migrate_to_version(to_version):
     #powlib.load_module("App")

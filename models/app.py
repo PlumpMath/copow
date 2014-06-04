@@ -9,6 +9,7 @@ from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.migrations.schemas.app_schema import app as schema
 #from #APPNAME.models.basemodels.baseapp import BaseApp
 from #APPNAME.models.basemodels.base import BaseModel
+import #APPNAME.lib.powlib as powlib
 
 class App(BaseModel):
 	
@@ -16,6 +17,7 @@ class App(BaseModel):
         """ Basic instance setup"""
         self.collection_name = "apps"
         self.modelname = "app"
+        self.modelname_plural = powlib.pluralize(self.modelname)
         self._db_conn = DBConn()
         self.db = self._db_conn.get_db()
         self.collection = self.db[self.collection_name]

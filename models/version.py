@@ -8,6 +8,7 @@
 from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.migrations.schemas.version_schema import version as schema
 from #APPNAME.models.basemodels.base import BaseModel
+import #APPNAME.lib.powlib as powlib
 
 class Version(BaseModel):
     
@@ -16,6 +17,7 @@ class Version(BaseModel):
         """ Basic instance setup"""
         self.collection_name = "versions"
         self.modelname = "version"
+        self.modelname_plural = powlib.pluralize(self.modelname)
         self._db_conn = DBConn()
         self.db = self._db_conn.get_db()
         self.collection = self.db[self.collection_name]

@@ -6,14 +6,14 @@
 #
 
 import sys, datetime, os, getopt, shutil
-import ConfigParser
+import configparser
 import string
 import re
 import time,datetime
 
 from #APPNAME.lib import powlib
-from #APPNAME.config import db_config 
-from #APPNAME.config import config as pow
+from #APPNAME.config import db
+from #APPNAME.config import settings
 from #APPNAME.lib import db_conn
 
 class Migration(object):
@@ -79,9 +79,9 @@ class Migration(object):
         """
         # add the index to the db
         try:
-            table.add_index(*args, **kwargs):
+            table.add_index(*args, **kwargs)
             #adapt the schema
-            from 
+            pass
         except Exception as e:
             raise e    
         
@@ -106,75 +106,30 @@ class Migration(object):
         """
         
         # 0. check if model exists
-        module = importlib.import_module("copow.models." + cls.modelname)
+        module = importlib.import_module("#APPNAME.models." + cls.modelname)
         schema = reload(schema_module)
         relations = schema.__dict__[cls.modelname+"_relations"]
         # 1. check if relation is not already existing
         try: 
             if relations[cls.modelname] == "tree":
-                raise Exception( "POWError: model %s already is a tree relation " % (cls.modelname)
+                raise Exception( "POWError: model %s already is a tree relation " % (cls.modelname) )
                 return
         except Exception as e:
             # nothing to be done if key is not present.
             pass
 
         # 2. add the tree to relations      
-        print "making a tree relation"
+        print(" .. creating a tree relation")
         cls.relations[powlib.plural(cls.modelname)] = "tree"
         #3. add the according attributes to the class (cls)
         cls.schema["_id"] = { "type" : "string" }
         cls.schema["children"] = { "type" : "list" }
         # today only one parent is supported.
         cls.schema["parent"] = { "type" : "list" }
-
-        # write the new schema
-        try:
-            filepath = "./migrations/schemas/" + cls.modelname + "_schema.py"
-            filepath = os.path.abspath(os.path.normpath(filepath))
-            #print filepath
-            ofile = open(filepath, "w")
-            ostr = self.modelname + " = "
-            ostr += json.dumps(self.schema, indent=4) + powlib.newline 
-            ostr += self.modelname + "_relations = "
-            ostr += json.dumps(self.relations, indent=4)
-            #print ostr
-            ofile.write(ostr)
-            ofile.close()
-            self.setup_properties()
-        except Exception as e:
-            raise e
-        if one_to_one:    
-            self.log("info","%s now has one: %s" %(self.modelname, model.modelname))
-        else:
-            self.log("info","%s now has many: %s" %(self.modelname, powlib.pluralize(model.modelname)))
+        
+        cls.create_schema()
         
         return cls
 
 
-    def generate_tree_accessor_methods(cls, self):
-        """generates the convenient Methods and sets them as accessors for this models Attributes """
-        for item in self._schema.keys():
-            mstr = ""
-            self.has_accessor_methods = True
-            #getter
-            mstr = ""
-            method_name = "get_"+ item
-            setter = method_name
-            tmp_meth_name = "foo"
-            mstr +=     "def foo(self):" + newline
-            mstr += tab + "return self." + str(item) + newline
-            #print mstr
-            exec(mstr)
-            self.__dict__[method_name] = types.MethodType(foo,self)
-            
-            
-            # setter
-            mstr = ""
-            method_name = "set_"+ item
-            getter = method_name
-            tmp_meth_name = "foo"
-            mstr +=     "def foo(self, value):" + newline
-            mstr += tab + "self." + str(item) + " = value " + newline
-            #print mstr
-            exec(mstr)
-            self.__dict__[method_name] = types.MethodType(foo,self)
+   

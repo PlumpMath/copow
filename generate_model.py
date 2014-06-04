@@ -150,6 +150,13 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["p
     # render a basic testcase 
     render_test_stub(modelname, classname, parts_dir)
     #render_schema(modelname)
+
+    #create the empty schema:
+    #model = powlib.load_class("models." + modelname, classname)
+    #model.create_schema()
+    powlib.check_copy_file("./stubs/templates/schema.py", "migrations/schemas/", new_name=  modelname + "_schema.py", 
+        replace=[("#MODELNAME", modelname)])
+
     return 
 
 def render_basemodel( baseclassname, modelname, collection_name, classname, output_path, parts_dir, properties):

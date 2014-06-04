@@ -13,12 +13,12 @@ import json
 import imp
 import pymongo
 
-from atest.lib.db_conn import DBConn
-#from atest.migrations.schemas.version import version as schema
-from atest.migrations.schemas import version_schema as schema_module
-import atest.migrations.schemas.version_schema
-from atest.lib import powlib
-from atest.lib.powlib import _log
+from #APPNAME.lib.db_conn import DBConn
+#from #APPNAME.migrations.schemas.version import version as schema
+#from #APPNAME.migrations.schemas import version_schema as schema_module
+#import #APPNAME.migrations.schemas.version_schema
+from #APPNAME.lib import powlib
+from #APPNAME.lib.powlib import _log
 
 
 newline = powlib.newline
@@ -55,7 +55,7 @@ class BaseModel(object):
             print("setting up relation for: %s " % (rel_model))
             if self.relations[rel_model] == "has_many":
                 mod = importlib.import_module(
-                        "atest.models." + powlib.singularize(rel_model) 
+                        "#APPNAME.models." + powlib.singularize(rel_model) 
                         )
                 mod = mod.__dict__[powlib.p2c(rel_model)]
                 self.related_models[rel_model] = mod
@@ -68,13 +68,20 @@ class BaseModel(object):
             imports the schema and sets the according properties in this class/instance"""
             #from atest.migrations.schemas.version_schema import version as schema
             #from atest.migrations.schemas.version_schema import version_relations as relations
-            which = "atest.migrations.schemas." + self.modelname + "_schema"
-            schema = imp.reload(eval(which))
-            #print(schema)
+            #which = "atest.migrations.schemas." + self.modelname + "_schema"
+            schema_module = __import__("#APPNAME"+".migrations.schemas." + self.modelname + "_schema", 
+                globals(), locals(), [self.modelname], 0)
+            #app = eval("schema_module." + self.modelname)
+            #app_relations = eval("schema_module." + self.modelname + "_relations")
+            schema = imp.reload(schema_module)
+            #print("schema:", app)
+            #print("schema_relations:", app_relations)
+            #print("*"*20)
+            #print(schema_module)
             #print(self.modelname), 
-            #print(schema.__dict__.keys)
-            self.schema = schema.__dict__[self.modelname]
-            self.relations = schema.__dict__[self.modelname + "_relations"]
+            #print(schema_module.__dict__.keys())
+            self.schema = schema_module.__dict__[self.modelname]
+            self.relations = schema_module.__dict__[self.modelname + "_relations"]
         except Exception as e:
             print("Unexpected Error:", e, e.args)
             raise e
@@ -92,7 +99,7 @@ class BaseModel(object):
                 setattr(self, column, powlib.schema_types[att_type])
                 setattr(self, column+"_type", att_type)
             else:
-                raise Exception("no or unknown type given in schema: version_schema.py")
+                raise Exception("no or unknown type given in schema: version_schema.py. Type was: ", att_type)
             if "index" in attrs:
                 att_index = attrs["index"]
                 setattr(self, column+"_has_index", True)
@@ -133,6 +140,18 @@ class BaseModel(object):
         for key in adict:
             ostr += key + " -> " + str(adict[key]) + os.linesep 
         return ostr
+
+
+    def generate_method(self, method_name, method_str, replace = []):
+        """ generates a method for this object based on the 
+        given method_name and  method_str
+        param: replace is a list of 2-tuples [(old_str, replace_str),..] """    
+        for elem in replace:
+            method_str = method_str.replace(elem[0], elem[1])
+
+        exec(method_str,globals())
+        self.__dict__[method_name] = types.MethodType(foo,self)
+        #setattr(self, method_name, foo)
 
     def generate_accessor_methods(self):
         """generates the convenient getAttribute() and setAttribute Methods
@@ -177,7 +196,9 @@ class BaseModel(object):
         return self
 
     def find_all(self, *args, **kwargs):
-        """ Find all matching models. Returns an iterable."""
+        """ Find all matching models. Returns an iterable.
+            Uses model.find internally. More docu can be found there
+        """
         return self.find(*args,**kwargs)
 
     
@@ -185,58 +206,62 @@ class BaseModel(object):
         """ Find all matching models. Returns an iterable.
             sorting can be done by giving for exmaple: 
             sort=[("field", pymongo.ASCENDING), ("field2", pymongoDESCENDING),..]
+            returns: a pymongo.cursor.Cursor
         """
         if sort:
-            c = self.collection.find(*args, as_class=self.__class__, **kwargs).sort(sort)
+            cursor = self.collection.find(*args, as_class=self.__class__, **kwargs).sort(sort)
         else:
-            c = self.collection.find(*args, as_class=self.__class__, **kwargs)
-        if c.__class__ == pymongo.cursor.Cursor:
-            if c.count() == 1:
+            cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
+        if cursor.__class__ == pymongo.cursor.Cursor:
+            if cursor.count() == 1:
                 # if it is only one result in the cursor, return the cursor but also 
                 # set this (self) object's values as the result.
-                self.set_values(c[0].to_json())
-        return c
+                self.set_values(cursor[0].to_json())
+        return cursor
 
 
     def find_one(self, *args, **kwargs):
-        """ Uses pymongo  find_one directly"""
+        """ Updates this(self) object directly.
+            returns self (NOT a dict)
+        """
         #ret = self.collection.find_one(*args, as_class=self.__class__, **kwargs)
         ret = self.collection.find_one(*args, **kwargs)
         self.set_values(ret)
-        return ret
+        return self
     
     def set_values(self, dictionary):
         for elem in dictionary:
             self.__setitem__(elem, dictionary[elem])
         return
 
-    def save(self):
+    def save(self, safe=True):
         """ Saves the object. Results in insert if object wasnt in the db before,
             results in update otherwise"""
         d = self.to_json()
         d["last_updated"] = powlib.get_time()
-        self._id = self.collection.save(d)
+        self._id = self.collection.save(d,  safe=safe)
         return self._id
 
-    def insert(self):
+    def insert(self, safe=True):
         """ Uses pymongo insert directly"""
         d = self.to_json()
         d["last_updated"] = powlib.get_time()
         d["created"] = powlib.get_time()
-        self._id = self.collection.insert(d)
+        self._id = self.collection.insert(d, safe=safe)
         return self._id
         
     def create(self):
         """ Alias for insert()"""
         return self.insert()
 
-    def update(self, *args, **kwargs):
+    def update(self, *args, safe=True, multi=False, **kwargs):
         """  Pure: pymongo update. Can update any document in the collection (not only self)
             Syntax: db.test.update({"x": "y"}, {"$set": {"a": "c"}}) """
         #ret = self.collection.update(*args, **kwargs)
-        ret = self.collection.update({"_id": self._id}, self.to_json())
+        ret = self.collection.update({"_id": self._id}, self.to_json(), safe=safe, multi=False )
         return ret
     
+
     def to_json(self):
         """ returns a json representation of the schema"""
         d = {}
@@ -249,6 +274,17 @@ class BaseModel(object):
                                          "NOW ;)",
                                          message % args))
 
+    def reload_relations(self):
+        """
+            (re)load the models relations from the schema (as a module)
+            migrations/schemas/modelname_schema.py
+        """
+        schema_module = __import__("#APPNAME"+".migrations.schemas." + self.modelname + "_schema", 
+                globals(), locals(), [self.modelname], 0)        
+        schema = imp.reload(schema_module)
+        #schema = reload(schema_module)
+        self.relations = schema_module.__dict__[self.modelname + "_relations"]
+        return self.relations
 
     def has_many(self, rel_model, embedd=True, one_to_one=False):
         """ creates an (currently embedded) one:many relation between this (self) and model.
@@ -264,9 +300,11 @@ class BaseModel(object):
             rel_modelname = rel_model.modelname
         try:
             # 0. check if model exists
-            module = importlib.import_module("atest.models." + rel_modelname)
-            schema = reload(schema_module)
-            self.relations = schema.__dict__[self.modelname+"_relations"]
+            try:
+                module = importlib.import_module("#APPNAME.models." + rel_modelname)
+            except Exception as e:
+                raise e    
+            rel = self.reload_relations()
             # 1. check if relation is not already existing
             if powlib.plural(rel_modelname) in self.relations:
                 raise Exception( "POWError: model %s already has a relation to %s " % (self.modelname, rel_modelname) )
@@ -275,30 +313,20 @@ class BaseModel(object):
             if one_to_one:
                 print("making a 1:1 relation")
                 self.relations[powlib.plural(rel_modelname)] = "has_one"
-                self.schema[rel_modelname] = { "type" : "object" }
+                self.schema[rel_modelname] = { "type" : "dictionary" }
             else:
                 print("making a 1:many relation")
                 self.relations[powlib.plural(rel_modelname)] = "has_many"
                 self.schema[powlib.plural(rel_modelname)] = { "type" : "list" }
+
+                con = __import__('#APPNAME.lib.rel_modeL_methods', globals(), locals(), ["rel_methods"], 0)
+                find_one_str = con["find_one"]
+                self.generate_method(find_one, "find_one_" + self.modelname, [("#PLURAL_RELMODEL", self.modelname_plural)])
+
             try:
-                filepath = "./migrations/schemas/" + self.modelname + "_schema.py"
-                filepath = os.path.abspath(os.path.normpath(filepath))
-                #print filepath
-                ofile = open(filepath, "w")
-                ostr = self.modelname + " = "
-                ostr += json.dumps(self.schema, indent=4) + powlib.newline 
-                ostr += self.modelname + "_relations = "
-                ostr += json.dumps(self.relations, indent=4)
-                #print ostr
-                ofile.write(ostr)
-                ofile.close()
-                self.setup_properties()
+                self.create_schema()
             except Exception as e:
                 raise e
-            if one_to_one:    
-                self.log("info","%s now has one: %s" %(self.modelname, rel_modelname))
-            else:
-                self.log("info","%s now has many: %s" %(self.modelname, powlib.pluralize(rel_modelname)))
         except ImportError as error:
             # Display error message
             print("POWError: unable to import module: %s, error msg: %S " % (rel_modelname, error.message))
@@ -317,13 +345,10 @@ class BaseModel(object):
             rel_modelname = rel_model.modelname
         try:
             # 0. check if model exists
-            module = importlib.import_module("atest.models." + rel_modelname)
-            schema = reload(schema_module)
-            self.relations = schema.__dict__[self.modelname+"_relations"]
+            rel = self.reload_relations()
             # 1. check if relation is existing
             if powlib.plural(rel_modelname) not in self.relations:
                 raise Exception( "POWError: model %s already norelation to %s " % (self.modelname, rel_modelname) )
-                
             # 2. remove the relation 
             if self.relations[powlib.plural(rel_modelname)] == "has_one":
                 del self.relations[powlib.plural(rel_modelname)]
@@ -333,21 +358,9 @@ class BaseModel(object):
                 del self.schema[powlib.plural(rel_modelname)]
             # write the new schema and relation json.
             try:
-                filepath = "./migrations/schemas/" + self.modelname + "_schema.py"
-                filepath = os.path.abspath(os.path.normpath(filepath))
-                #print filepath
-                ofile = open(filepath, "w")
-                ostr = self.modelname + " = "
-                ostr += json.dumps(self.schema, indent=4) + powlib.newline 
-                ostr += self.modelname + "_relations = "
-                ostr += json.dumps(self.relations, indent=4)
-                #print ostr
-                ofile.write(ostr)
-                ofile.close()
-                self.setup_properties()
+                self.create_schema()
             except Exception as e:
                 raise e
-            self.log("info","remove relation: %s " % (rel_modelname))
             return
         except ImportError as error:
             # Display error message

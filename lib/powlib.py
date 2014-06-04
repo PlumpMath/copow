@@ -10,6 +10,7 @@ import datetime
 import string
 import shutil
 from bson.objectid import ObjectId
+import imp
 
 newline = os.linesep
 tab = "    "
@@ -49,6 +50,7 @@ rule_tuple = (
     ('(qu|[^aeiou])y$', 'y$', 'ies'),
     ('$', '$', 's')
     )
+
 def regex_rules(rules=rule_tuple):
     # also to pluralize
     for line in rules:
@@ -95,6 +97,20 @@ def p2c(name):
 def plural_to_classname(name):
     """ pluralname to classname. So posts becomes Post"""
     return string.capitalize(singularize(name))
+
+def load_class(path_to_module, cls):
+    """
+        param: path_to_module = path to the module without the Appname
+               so to load a model user just give: models.user
+        param: cls = classname to load
+        returns: the imported class
+
+    """
+    module = __import__("#APPNAME" + "." + path_to_module, globals(), locals(), [cls], 0)        
+    module= imp.reload(module)
+    ret = module.__dict__[cls]
+    acls = ret()
+    return acls
 
 def logtime_now():
     return 
@@ -169,7 +185,7 @@ def check_create_file( path, filename ):
     return ret
 
 
-def check_copy_file( src, dest,  force=True, replace=None):
+def check_copy_file( src, dest, new_name=None, force=True, replace=None):
     """
         checks if file exists and copies if not (force overwrites that)
         src = src file including path
@@ -180,7 +196,10 @@ def check_copy_file( src, dest,  force=True, replace=None):
     """
     ret = False
     src_path, src_file = os.path.split(src)
-    dest_file = src_file
+    if new_name:
+        dest_file = new_name
+    else:
+        dest_file = src_file
     dest_path = dest
     #print("src: ", src)
     dest_abs = os.path.abspath(os.path.normpath(os.path.join(dest_path, dest_file)))
