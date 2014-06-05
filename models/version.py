@@ -24,7 +24,7 @@ class Version(BaseModel):
         #self.related_models = {}
         if schema:
             self.schema = schema
-            if schema.has_key("version_relations"):
+            if "version_relations" in schema.keys():
                 self.relations = schema["version_relations"]
             else:
                 self.relations = {}

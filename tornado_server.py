@@ -15,12 +15,12 @@ from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
 
 copow_handlers = #APPNAME.config.routes.handlers
-settings = #APPNAME.config.settings.webserver
+copow_settings = #APPNAME.config.settings.webserver
 
 if __name__ == "__main__":
 	print (os.path.join(os.path.dirname(__file__)))
 	tornado.options.parse_command_line()
-	app = tornado.web.Application(handlers=copow_handlers, **settings)
+	app = tornado.web.Application(handlers=copow_handlers, settings=copow_settings)
 	http_server = tornado.httpserver.HTTPServer(app)
 	http_server.listen(options.port)
 	tornado.ioloop.IOLoop.instance().start()

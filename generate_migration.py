@@ -160,10 +160,11 @@ def write_migration(name, comment, prefix_dir="./", ostr=""):
     print((" -- oid: %s  : gen_time: %s " % (oid, powlib.get_time_from_objectid(oid))))
     
     # will be saved in the versions table and used to load the module by do_migrate
-    filename = str(oid) + "_" + name + ".py"
+    long_name =str(oid) + "_" + name 
+    filename = long_name + ".py"
     
     #update the app table with the new version
-    update_app_and_version(name, filename, oid, comment )
+    update_app_and_version(name, long_name, oid, comment )
     
     ofile = open(  os.path.normpath(os.path.join(prefix_dir + "/migrations/", filename)) , "w") 
     ofile.write(ostr)

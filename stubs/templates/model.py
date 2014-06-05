@@ -8,10 +8,11 @@
 from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.migrations.schemas.#MODEL_SCHEMA_schema import #MODEL_SCHEMA as schema
 #from #APPNAME.models.basemodels.base#MODELNAME import Base#MODELCLASS
-from #APPNAME.models.basemodels.base#MODELNAME import Base
-import #APPNAME.lib.powlib
+from #APPNAME.models.basemodels.base import BaseModel
+#import #APPNAME.lib.powlib
+from #APPNAME.lib import powlib
 
-class #MODELCLASS(Base):
+class #MODELCLASS(BaseModel):
     
     def __init__(self, data=None, schema={}):
         #super(#MODELCLASS, self).__init__(data)
@@ -25,7 +26,7 @@ class #MODELCLASS(Base):
         #self.related_models = {}
         if schema:
             self.schema = schema
-            if schema.has_key("#MODELNAME_relations"):
+            if "#MODELNAME_relations" in schema.keys():
                 self.relations = schema["#MODELNAME_relations"]
             else:
                 self.relations = {}

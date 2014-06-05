@@ -14,6 +14,11 @@ import config.settings
 
 import models.app as app
 import models.version as version
+import models.user as user
+import models.copow_log as copow_log
+
+import do_migrate
+
 from optparse import OptionParser
 
 APPNAME = "#APPNAME"
@@ -67,14 +72,23 @@ if __name__ == "__main__":
     v.version = 2
     v.save()
 
+    v.environment = env
+    v.short_name = "copow_log"
+    v.long_name = "5390626945fb9f1d3c184a15_copow_log"
+    v.comment ="copow log collextion"
+    v.version = 3
+    v.save()
+
     # setting up the app-db
     # 
     a = app.App()
     a.name = "#APPNAME"
     a.path = r"#APPPATH"
     a.lastversion = 0
-    a.maxversion = 2
+    a.maxversion = 3
     a.currentversion = 2
     a.save()
 
+    ## setting up the log db with a standard do_migrate
+    do_migrate.do_migrate_to_direction("up")
 

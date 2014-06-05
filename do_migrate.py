@@ -9,9 +9,9 @@ import os
 from optparse import OptionParser
 import sys
 import datetime
-
+import imp
 from #APPNAME.models import app
-from #APPNAME.models import Version
+from #APPNAME.models import version
 
 import #APPNAME.lib.powlib as powlib
 import #APPNAME.config.settings as settings 
@@ -88,13 +88,15 @@ def main():
     print("migrated in(" + str(duration) + ")")
 
 def load_func( filename, function_name):
-    module = __import__("#APPNAME"+".migrations." + filename, globals(), locals(), [function_name], 0)        
-    func = imp.reload(module)
+    print("Trying to load: ", filename, " -> ", function_name)
+    module = __import__("atest"+".migrations." + filename, globals(), locals(), [function_name], 0)        
+    module = imp.reload(module)
     #schema = reload(schema_module)
-    print(module.__dict__)
-    print("func:")
-    print(func)
-    #self.relations = schema_module.__dict__[self.modelname + "_relations"]
+    #print(module.__dict__)
+    func = module.__dict__[function_name]
+    #print("func:")
+    #print(func)
+    return func
 
 def do_migrate_to_direction(to_direction):
     #powlib.load_module("App")
@@ -113,16 +115,29 @@ def do_migrate_to_direction(to_direction):
             # ok, migrating up
             to_version = a.currentversion + 1
             v = v.find_one({ "version" :  to_version })
-            print("  Trying to migrate to this version now: ")
+            print("  Trying to migrate to this version now: ", str(to_version))
             print("-"*40)
-            print(v)
-            load_func(v.long_name, "up")
+            print(v.to_json())
+            up = load_func(v.long_name, "up")
+            #execute the up() function
+            up()
+            a.currentversion = to_version
+            a.update()
         else:
             raise Exception("Cannot migrate up. You are already on maxversion")
     elif to_direction == "down":
         # check if currentversion > 2 :
         if a.currentversion > 2:
             # ok, migrate down
+            to_version = a.currentversion - 1
+            v = v.find_one({ "version" :  a.currentversion })
+            print("  Trying to migrate to this version now: ", str(to_version))
+            print("-"*40)
+            down = load_func(v.long_name, "down")
+            #execute the up() function
+            down()
+            a.currentversion = to_version
+            a.update()
         else:
             # not ok, bailing out.
             raise Exception(
@@ -154,7 +169,7 @@ def show_info():
     v = version.Version()
     version_list = v.find_all()
     for elem in version_list:
-        print elem
+        print(elem)
 
 
 

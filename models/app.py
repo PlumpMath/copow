@@ -24,7 +24,7 @@ class App(BaseModel):
         #self.related_models = {}
         if schema:
             self.schema = schema
-            if schema.has_key("app_relations"):
+            if "app_relations" in schema.keys():
                 self.relations = schema["app_relations"]
             else:
                 self.relations = {}

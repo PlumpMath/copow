@@ -17,7 +17,7 @@ from #APPNAME.models.#MODELNAME import #UP_MODELNAME
 
 migration = Migration()
 
-def up(self):
+def up():
     """ up method will be executed when running do_migrate -d up"""
     #MODELNAME = #UP_MODELNAME( schema  = {
            #"title"      :      { "type" : "Text" },   
@@ -29,12 +29,12 @@ def up(self):
 
     # creates the tabke (collection) and the schema in migrations/schemas/
     migration.create_table(#MODELNAME)
+    print("  Successfully migrated #MODELNAME -> mehtod: up()")
     
-    
-def down(self):
+def down():
     """ down method will be executed when running do_migrate -d down"""
     # drops the table (collection) and removes the schema from migrations/schemas/
     #MODELNAME = #UP_MODELNAME()
     migration.drop_table(#MODELNAME)
-    
+    print("  Successfully migrated #MODELNAME -> mehtod: down()")
     

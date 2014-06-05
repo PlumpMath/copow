@@ -17,7 +17,7 @@ from #APPNAME.models.app import App
 
 migration = Migration()
 
-def up(self):
+def up():
     """ up method will be executed when running do_migrate -d up"""
     app = App( schema  = {
             "oid"                :      { "type" : "Text" },
@@ -33,7 +33,7 @@ def up(self):
     migration.create_table(app)
     
     
-def down(self):
+def down():
     """ down method will be executed when running do_migrate -d down"""
     # drops the table (collection) and removes the schema from migrations/schemas/
     app = App()

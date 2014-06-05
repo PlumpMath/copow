@@ -34,7 +34,7 @@ class Migration(object):
 
     def __init__(self):   
        self.collection = None
-       self._db_conn = DBConn()
+       self._db_conn = db_conn.DBConn()
        self.db = self._db_conn.get_db()
     
     def add_column( self, model, name, attrs={}):
@@ -52,7 +52,7 @@ class Migration(object):
         model.remove_index(name)
         model.create_schema()
    
-    def create_table(self, model):
+    def create_table(self, model, *args, **kwargs):
         """ created a collection 
             (its not neccessary to do that explicitly 
             but increases clarity
@@ -60,7 +60,7 @@ class Migration(object):
             :type model:    a copow model
         """
         model.create_schema()
-        model.create_table()
+        model.create_table(*args, **kwargs)
         return model
 
     def drop_table(self, model):

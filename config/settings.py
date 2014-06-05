@@ -6,19 +6,21 @@ import os
 import os.path
 
 base = {
-	
-	"server"		:	"localhost",
-	"port"			:	8080,
-	"environment"	:	"development",
-	# Standard Directories
-	"parts_dir"		:	"stubs/templates/",
-	"model_test_dir" :	"test/models/",
+    
+    "server"            :   "localhost",
+    "port"              :   8080,
+    "environment"       :   "development",
+    # Standard Directories
+    "parts_dir"         :   "stubs/templates/",
+    "model_test_dir"    :  "test/models/",
+    #authentication can be user or role (for now)
+    "authentication"   :   "user"
 }
 
 logging=  {
-	
-	"clear_log_at_startup"	: True,
-	"format"				: "#DATE,#TIME,#LEVEL,#MESSAGE"
+    
+    "clear_log_at_startup"  : True,
+    "format"                : "#DATE,#TIME,#LEVEL,#MESSAGE"
 }
 
 # for the webserver_settings

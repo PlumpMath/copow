@@ -226,7 +226,8 @@ class BaseModel(object):
         """
         #ret = self.collection.find_one(*args, as_class=self.__class__, **kwargs)
         ret = self.collection.find_one(*args, **kwargs)
-        self.set_values(ret)
+        if ret:
+            self.set_values(ret)
         return self
     
     def set_values(self, dictionary):
@@ -403,10 +404,12 @@ class BaseModel(object):
          print("not implemented yet")
          return False
 
-    def create_table(self):
+    def create_table(self, *args, **kwargs):
         """ creates this collection explicitly. Even this is
             not neccessary in mongoDB"""
-        return self.db.create_collection(self.collection_name)
+        #db.createCollection(name, {capped: <boolean>, autoIndexId: <boolean>, size: <number>, max: <number>} )
+        # exmaple: db.createCollection("log", { capped : true, size : 5242880, max : 5000 } )
+        return self.db.create_collection(self.collection_name, *args, **kwargs)
 
     def drop(self):
         """ drops this collection / table """
