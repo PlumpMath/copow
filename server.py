@@ -64,7 +64,8 @@ def init_controllers(app):
 			handler_list.append((tworest, controller))
 	#print(handler_list)
 	app.add_handlers(".*$", handler_list)
-	print("| routes apply to the folowing semantic: ")
+	print("-"*50)
+	print("| routes apply to the following semantic: ")
 	print("-"*50)
 	print("  -> GET 	/controller/ 	=>		controller.list()")
 	print("  -> GET 	/controller/id	=>		controller.show(id)")
@@ -74,7 +75,7 @@ def init_controllers(app):
 	print("  -> DELETE 	/controller/id	=>		controller.delete(id)")
 	print("  -> PUT 	/controller/	=>		controller.show(id)")
 	print("  -> PUT 	/controller/id	=>		controller.update(id)")
-	
+
 if __name__ == "__main__":
 	tornado.options.parse_command_line()
 	app = tornado.web.Application(handlers=copow_handlers, **copow_settings)

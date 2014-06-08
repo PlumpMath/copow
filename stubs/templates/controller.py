@@ -25,17 +25,18 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             REST semantic:  list all controller1 ressources
             calls           controller.list()     
 
-            If you want to handle things before any methiod call, just 
+            If you want to handle things before any method call, just 
             put it in the before() method.
 
             Access can be restricted by labeling the protected method
             with the @tornado.web.authenticated decorator.
 
-            In addition to the standard you can choose between user or 
-            role based authentication. See config/settings.base 
+            In addition to the tornado standard you can choose between user 
+            or role based authentication. See config/settings.base 
             authentication setting.
 
-            You can also user twitter google or facebook authentication.
+            You can also use twitter, google, facebook or other authentications
+            like oauth, oauth2 ... 
             Read the documentation for more details.
 
     """

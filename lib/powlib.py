@@ -160,11 +160,11 @@ def check_create_dir( path ):
     ret = False
     #print "checking for " + path +"...\t" ,
     if os.path.isdir( os.path.normpath(path) ):
-        print(" exists" +"...\t")
+        print(" exists" +"...\t",)
         ret=False
     else:
         os.mkdir( os.path.normpath(path) )
-        print(" created" +"...\t")
+        print(" created" +"...\t",)
         ret=True
     print(os.path.normpath(path))
     return ret

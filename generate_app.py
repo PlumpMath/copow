@@ -215,7 +215,7 @@ def gen_app(appname, appdir, force=False):
     #powlib.check_copy_file("scripts/generate_scaffold.py", appbase)
     #powlib.check_copy_file("scripts/generate_mvc.py", appbase)
     #powlib.check_copy_file("simple_server.py", appbase, replace=[("#APPNAME",appname)])
-    powlib.check_copy_file("tornado_server.py", appbase, replace=[("#APPNAME",appname)])
+    powlib.check_copy_file("server.py", appbase, replace=[("#APPNAME",appname)])
     #powlib.check_copy_file("scripts/pow_router.wsgi", appbase)
     powlib.check_copy_file("pow_console.py", appbase, replace=[("#APPNAME",appname)] )
     powlib.check_copy_file("init_dbs.py", appbase, 
@@ -290,7 +290,7 @@ def gen_app(appname, appdir, force=False):
     print(" 1. add your app: %s to the PYTHONPATH" % (appname))
     print('  -> Windows  : set PYHTONPATH=',app_path, ';%PYTHONPATH%',sep="")
     print("  -> Unix/Mac : export PYTHONPATH=%s:$PYTHONPATH" % (app_path))
-    print(" 2. execute python %s/init_db.py" % (app_path))
+    print(" 2. execute python %s/init_db.py" % (os.path.join(app_path, appname)))
     print(" 3. read first steps on www.pythononwheels.org/copow")
     print(" 4. have fun ;)")
     print("--------------------------------------------------------")
