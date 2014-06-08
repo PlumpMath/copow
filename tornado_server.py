@@ -41,16 +41,6 @@ def init_controllers(app):
 		"logout_controller",
 		"dispatch_controller"
 	]
-	print("| routes apply to the folowing semantic: ")
-	print("-"*50)
-	print("  -> GET 	/controller/ 	=>		controller.list()")
-	print("  -> GET 	/controller/id	=>		controller.show(id)")
-	print("  -> POST 	/controller/	=>		controller.create()")
-	print("  -> POST 	/controller/id	=>		HTTP 501, not implemented")
-	print("  -> DELETE 	/controller/	=>		controller.delete_all()")
-	print("  -> DELETE 	/controller/id	=>		controller.delete(id)")
-	print("  -> PUT 	/controller/	=>		controller.show(id)")
-	print("  -> PUT 	/controller/id	=>		controller.update(id)")
 	for f in os.listdir(path):
 		fname, fext = os.path.splitext(f)
 		if not fname.startswith("__") and fname not in exclude_list:
@@ -74,7 +64,17 @@ def init_controllers(app):
 			handler_list.append((tworest, controller))
 	#print(handler_list)
 	app.add_handlers(".*$", handler_list)
-
+	print("| routes apply to the folowing semantic: ")
+	print("-"*50)
+	print("  -> GET 	/controller/ 	=>		controller.list()")
+	print("  -> GET 	/controller/id	=>		controller.show(id)")
+	print("  -> POST 	/controller/	=>		controller.create()")
+	print("  -> POST 	/controller/id	=>		HTTP 501, not implemented")
+	print("  -> DELETE 	/controller/	=>		controller.delete_all()")
+	print("  -> DELETE 	/controller/id	=>		controller.delete(id)")
+	print("  -> PUT 	/controller/	=>		controller.show(id)")
+	print("  -> PUT 	/controller/id	=>		controller.update(id)")
+	
 if __name__ == "__main__":
 	tornado.options.parse_command_line()
 	app = tornado.web.Application(handlers=copow_handlers, **copow_settings)
