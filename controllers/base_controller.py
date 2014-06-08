@@ -5,30 +5,107 @@ import tornado.web
 import os
 
 class BaseController(tornado.web.RequestHandler):
-    """ copow base controller """
+    """ copow base controller 
+        Does the neccessary routing for the standard REST requests.
+        Automatically calls the right cotroller->CRUDMethod.
+        According to this mapping table:
+        **********
+        * ACTION:
+        **********
+        in General:
+        HTTP    Method      CRUD Action Description
+        -----------------------------------------------
+        POST    CREATE      Create a new resource
+        GET     RETRIEVE    Retrieve a representation of a resource
+        PUT     UPDATE      Update a resource
+        DELETE  DELETE      Delete a resource
+
+        PUT and DELETE must be handled with a POST request and an
+        addiotional HTTP Parameter: REQUEST_TYPE
+        set to PUT or DELETE accordingly.
+
+        Meaning a call to domain:port/controller/([someting]+)
+        Where something is usually an ID
+        HTTP GET        => will call controller.show(something)
+        HTTP POST       => will call Nothing. [returns HTTP 501]
+        HTTP PUT        => will call controller.edit(something)
+        HTTP DELETE     => will call controller.delete(something)
+        and a call to domain:port/controller/
+        HTTP GET        => will call controller.list()
+        HTTP POST       => will call controller.create()
+        HTTP PUT        => will call controller.replace_all() [returns HTTP 501 by default]
+        HTTP DELETE     => will call controller.delete_all()
+
+        ***********
+        * FORMAT:
+        ***********
+        Also all reuests can have an Accept: HTTP header field which must be parsed by the
+        controller itself.
+        Example:    Accept:      text/json
+    """
     
     def get(self, *args, **kwargs):
+        """
+            Meaning a call to domain:port/controller/([someting]+)
+            HTTP GET        => will call controller.show(something)
+            and a call to domain:port/controller/
+            HTTP GET        => will call controller.list()
+        """
         if args:
-            # it is show
-            method = "show"
-            which = args[0]
-            return self.show(which)
+            # GET /controller/id    => it is show
+            id = args[0]
+            return self.show(id)
         else:
-            # it is list:
-            method = "list"
-            which = "all"
+            # GET /controller/      => it is list:
+            id = "all"
             return self.list()
-        #self.render("test.html", method=method, which=which)
+        #self.render("test.html", method=method, id=id)
 
     def post(self, *args, **kwargs):
-        return self.update(*args,**kwargs)
+        """ 
+            Meaning a call to domain:port/controller/([someting]+)
+            HTTP POST       => will call Nothing, yet.
+            and a call to domain:port/controller/
+            HTTP POST       => will call controller.create()
+        """
+        if args:
+            # POST /controller/id   => [returns HTTP 501]
+            self.set_status(501)
+            self.render("error.html")
+        else:
+            # POST /controller/     => its create
+            id = args[0]
+            return self.create(id)
 
     def put():
-        pass
-
+        """
+            Meaning a call to domain:port/controller/([someting]+)
+            HTTP PUT        => will call controller.edit(something)
+            and a call to domain:port/controller/
+            HTTP PUT        => will call controller.replace_all() [returns HTTP 501]
+        """
+        if args:
+            # PUT /controller/id   => its update(id)
+            id = args[0]
+            return self.update(id)
+        else:
+            # PUT /controller/   => it is update_all()
+            return self.update_all()
+            
     def delete():
-        pass
-
+        """
+            Meaning a call to domain:port/controller/([someting]+)
+            HTTP DELETE     => will call controller.delete(something)
+            and a call to domain:port/controller/
+            HTTP DELETE     => will call controller.delete_all()
+        """
+        if args:
+            # DELETE /controller/id   => its delete(id)
+            id = args[0]
+            return self.delete(id)
+        else:
+            # DELETE /controller/   => it is delete_all()
+            return self.delete_all()
 
     ## error handler taken from: https://github.com/CarlosGabaldon/tornado_alley/blob/master/chasing_tornado.py
     def write_error(self, status_code, **kwargs):

@@ -22,7 +22,6 @@
 import #APPNAME.controllers.welcome_controller
 import #APPNAME.controllers.login_controller
 import #APPNAME.controllers.logout_controller
-import #APPNAME.controllers.dispatch_controller
 import #APPNAME.controllers.error_controller
 
 # Add your routes below.
@@ -37,10 +36,10 @@ handlers = [
         #
         # REST Handling via Dispatcher
         #
-        (r'/(w+)/', #APPNAME.controllers.dispatch_controller.DispatchController),
-        (r'/(w+)/([0-9]+)', #APPNAME.controllers.dispatch_controller.DispatchController),
+        #(r'/(w+)/', #APPNAME.controllers.dispatch_controller.DispatchController),
+        #(r'/(w+)/([0-9]+)', #APPNAME.controllers.dispatch_controller.DispatchController),
         #
         # Anything else => ERROR
         #
-        (r'.*', #APPNAME.controllers.error_controller.ErrorController)
+        #(r'.*', #APPNAME.controllers.error_controller.ErrorController)
         ]

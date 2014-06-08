@@ -20,44 +20,11 @@ copow_settings = #APPNAME.config.settings.webserver
 
 def init_controllers(app):
 	"""
-		automatically adds RESTful routes for eacg controller in controllers/
+		automatically generates RESTful routes for eacg controller in controllers/
 		which is named according to the convention: name_controller
 
 		Automatically calls the right cotroller->CRUDMethod.
-        According to this mapping table:
-        **********
-        * ACTION:
-        **********
-        in General:
-        HTTP    Method      CRUD Action Description
-        -----------------------------------------------
-        POST    CREATE      Create a new resource
-        GET     RETRIEVE    Retrieve a representation of a resource
-        PUT     UPDATE      Update a resource
-        DELETE  DELETE      Delete a resource
-
-        PUT and DELETE must be handled with a POST request and an
-        addiotional HTTP Parameter: REQUEST_TYPE
-        set to PUT or DELETE accordingly.
-
-        Meaning a call to domain:port/controller/([someting]+)
-        Where something is usually an ID
-        HTTP get        => will call controller.show(something)
-        HTTP POST       => will call controller.create(something)
-        HTTP PUT        => will call controller.edit(something)
-        HTTP DELETE     => will call controller.delete(something)
-        and a call to domain:port/controller/
-        HTTP get        => will call controller.list()
-        HTTP POST       => will call Nothing, yet.
-        HTTP PUT        => will call controller.replace_all() [empty by default]
-        HTTP DELETE     => will call controller.delete_all()
-
-        ***********
-        * FORMAT:
-        ***********
-        Also all reuests can have an Accept: HTTP header field which must be parsed by the
-        controller itself.
-        Example:    Accept:      text/json
+        See controllers/base_controller.py for more details.
 
         
 	"""
@@ -74,10 +41,21 @@ def init_controllers(app):
 		"logout_controller",
 		"dispatch_controller"
 	]
+	print("| routes apply to the folowing semantic: ")
+	print("-"*50)
+	print("  -> GET 	/controller/ 	=>		controller.list()")
+	print("  -> GET 	/controller/id	=>		controller.show(id)")
+	print("  -> POST 	/controller/	=>		controller.create()")
+	print("  -> POST 	/controller/id	=>		HTTP 501, not implemented")
+	print("  -> DELETE 	/controller/	=>		controller.delete_all()")
+	print("  -> DELETE 	/controller/id	=>		controller.delete(id)")
+	print("  -> PUT 	/controller/	=>		controller.show(id)")
+	print("  -> PUT 	/controller/id	=>		controller.update(id)")
 	for f in os.listdir(path):
 		fname, fext = os.path.splitext(f)
 		if not fname.startswith("__") and fname not in exclude_list:
 			print("  -> ", fname)
+			
 			# create RESTful routes for each controller.
 			# 1. load the controller
 			# convention for the controller module name is: name_controller

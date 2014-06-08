@@ -16,9 +16,9 @@ import tornado.web
 import os
 from atest.controllers.base_controller import BaseController
 
-class #CONTROLLERNAMEController(BaseController):
+class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
 
-     """    All copow Controllers are tornado.web.RequestHandlers
+    """     All copow Controllers are tornado.web.RequestHandlers
             RESTful routing is automatically added for all controllers.
 
             So e.g.:        GET  hostname:port/controller1
@@ -34,11 +34,11 @@ class #CONTROLLERNAMEController(BaseController):
             In addition to the standard you can choose between user or 
             role based authentication. See config/settings.base 
             authentication setting.
-            
+
             You can also user twitter google or facebook authentication.
             Read the documentation for more details.
 
-     """
+    """
     def prepare(self):
         """ called before any http get/pust method is called """
         pass
@@ -47,9 +47,9 @@ class #CONTROLLERNAMEController(BaseController):
             """ respresents the folowing REST/CRUD Terminology:
                 REST: HTTP/GET /#CONTROLLERNAME
                 CRUD: READ
-                show all #MODELNAMEs
+                show all #MODELNAME_PLURAL
             """
-            pass
+            return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request)
 
     def show(self, *args, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
@@ -57,7 +57,7 @@ class #CONTROLLERNAMEController(BaseController):
                 CRUD: READ
                 show one #MODELNAME
             """
-            pass
+            return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request)
 
     def create(self, *args, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
@@ -65,7 +65,7 @@ class #CONTROLLERNAMEController(BaseController):
                 CRUD: CREATE 
                 create really writes the new dataset #MODELNAME to DB
             """
-            pass        
+            return self.render("#CONTROLLER_LOWER_NAME_create.html", request=self.request)        
 
     def create_form(self, *args, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
@@ -73,7 +73,7 @@ class #CONTROLLERNAMEController(BaseController):
                 CRUD: CREATE 
                 returns the form to create a new #MODELNAME
             """
-            pass        
+            return self.render("#CONTROLLER_LOWER_NAME_create_form.html", request=self.request)        
 
     def update(self, *args, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
@@ -81,7 +81,7 @@ class #CONTROLLERNAMEController(BaseController):
                 CRUD: UPDATE 
                 update really updates the data in the db
             """
-            pass        
+            return self.render("#CONTROLLER_LOWER_NAME_update.html", request=self.request)        
 
     def update_form(*args, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
@@ -89,20 +89,34 @@ class #CONTROLLERNAMEController(BaseController):
                 CRUD: UPDATE 
                 returns the form to update a new #MODELNAME
             """
-            pass        
+            return self.render("#CONTROLLER_LOWER_NAME_update_form.html", request=self.request)        
+
+    def update_all(self, *args, **kwargs):
+            """ respresents the folowing REST/CRUD Terminology:
+                REST: HTTP/PUT /#CONTROLLERNAME
+                CRUD: update_all
+                update all #MODELNAME_PLURAL
+            """
+            self.set_status(501)
+            self.render("error.html")
+
 
     def delete_all(self, *args, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
                 REST: HTTP/DELETE /#CONTROLLERNAME
                 CRUD: DELETE
-                delete one #MODELNAME
+                delete all #MODELNAME_PLURAL
             """
-            pass
+            return self.render("#CONTROLLER_LOWER_NAME_delete_all.html", request=self.request)
 
     def delete(self, *args, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
                 REST: HTTP/DELETE /#CONTROLLERNAME/id
                 CRUD: DELETE
-                delete all #MODELNAMEs
+                delete a #MODELNAME
             """
-            pass
+            return self.render("#CONTROLLER_LOWER_NAME_delete.html", request=self.request)
+
+    
+
+
