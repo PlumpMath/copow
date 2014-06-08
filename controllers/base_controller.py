@@ -7,6 +7,29 @@ import os
 class BaseController(tornado.web.RequestHandler):
     """ copow base controller """
     
+    def get(self, *args, **kwargs):
+        if args:
+            # it is show
+            method = "show"
+            which = args[0]
+            return self.show(which)
+        else:
+            # it is list:
+            method = "list"
+            which = "all"
+            return self.list()
+        #self.render("test.html", method=method, which=which)
+
+    def post(self, *args, **kwargs):
+        return self.update(*args,**kwargs)
+
+    def put():
+        pass
+
+    def delete():
+        pass
+
+
     ## error handler taken from: https://github.com/CarlosGabaldon/tornado_alley/blob/master/chasing_tornado.py
     def write_error(self, status_code, **kwargs):
         import traceback

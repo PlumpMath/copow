@@ -62,7 +62,9 @@ def init_controllers(app):
         
 	"""
 	path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "controllers")
-	print("path ffor controllers: ", path)
+	print("-"*50)
+	print("| Creating RESTful routes for these controllers: ")
+	print("-"*50)
 	handler_list = []
 	exclude_list = [
 		"base_controller", 
@@ -75,7 +77,7 @@ def init_controllers(app):
 	for f in os.listdir(path):
 		fname, fext = os.path.splitext(f)
 		if not fname.startswith("__") and fname not in exclude_list:
-			print(fname)
+			print("  -> ", fname)
 			# create RESTful routes for each controller.
 			# 1. load the controller
 			# convention for the controller module name is: name_controller

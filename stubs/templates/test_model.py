@@ -1,6 +1,6 @@
 #
 #
-# The test stub file for your model Unit-Test
+# The copow/PythonOnWheels test stub file for your model Unit-Test
 # just a basic test added by default that will fail.
 # Please change the Unit test for this Model according to your needs.
 #

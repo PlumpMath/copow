@@ -1,5 +1,5 @@
 #
-# Example Hello Controller
+# Example Test Controller
 # 
 import tornado.web
 import os
@@ -11,15 +11,8 @@ class TestController(BaseController):
         """ called before any http get/pust method is called """
         pass
 
+    def update(self, *args,**kwargs):
+    	self.render("test.html", args=args, method="update", request=self.request)
 
-    def get(self, *args, **kwargs):
-        if args:
-            # it is show
-            method = "show"
-            which = args[0]
-        else:
-            # it is list:
-            method = "list"
-            which = "all"
-        self.render("test.html", method=method, which=which)
+    
         
