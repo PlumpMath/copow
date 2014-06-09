@@ -1,0 +1,29 @@
+<!-- copow / pythononwheels list template -->
+<!-- for scaffolding views -->
+<!-- www.pythononwheels.org -->
+
+
+
+{% extends "main.html" %}
+
+{# this will be rendered in the content block of main.html view view #}
+
+{% block content %}
+	<h2> this is the list view: </h2>
+	<table>
+		<thead>
+			{% for key in result[0].schema.keys() %}
+				<th>{{ escape(key) }}</th>
+			{% end %}
+		</thead>
+	{% for model in result %}
+		<tr>
+	        {% for att in model.schema.keys() %}
+	          <td>{{ escape(model.get(key)) }}</td>
+	        {% end %}
+    	</tr>
+    {% end %}
+    </table>
+
+{% end %}
+

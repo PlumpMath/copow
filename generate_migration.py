@@ -1,4 +1,4 @@
-#!python
+ #!python
 #  pow migration generator.
 #
 # options are: 
@@ -169,12 +169,12 @@ def write_migration(name, comment, prefix_dir="./", ostr=""):
     ofile = open(  os.path.normpath(os.path.join(prefix_dir + "/migrations/", filename)) , "w") 
     ofile.write(ostr)
     ofile.close()
-    print(( "written %s " % (filename)))
+    print(( " -- written %s " % (filename)))
     return filename
     
 
     
-def update_app_and_version(short_name, long_name, oid, comment="" ):
+def update_app_and_version(short_name, long_name, oid, comment="" ): 
     """
     update the app table with the new version
     update the version table with:
@@ -198,7 +198,7 @@ def update_app_and_version(short_name, long_name, oid, comment="" ):
     v.save()
     
     a.maxversion = v.version
-    
+    print(" -- setting maxversion: ", a.maxversion)
     a.update()
 
     
@@ -240,9 +240,9 @@ def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = None,
     # generate the new version
     #version = get_new_version()
     #verstring = powlib.version_to_string(version)
-
+    print("-"*50)
     print("generate_migration for model: " + modelname)
-
+    print("-"*50)
     # really write the migration now
     write_migration(modelname, comment, prefix_dir, ostr)
 

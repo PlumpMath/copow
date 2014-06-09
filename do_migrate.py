@@ -1,4 +1,4 @@
-#!python
+3#!python
 # do_migrate
 # execute db migrations and jobs.
 # also modify migrations (erase, set version etc)
@@ -88,7 +88,7 @@ def main():
     print("migrated in(" + str(duration) + ")")
 
 def load_func( filename, function_name):
-    print("Trying to load: ", filename, " -> ", function_name)
+    print("  Trying to load: ", filename, " -> ", function_name)
     module = __import__("atest"+".migrations." + filename, globals(), locals(), [function_name], 0)        
     module = imp.reload(module)
     #schema = reload(schema_module)
@@ -117,7 +117,7 @@ def do_migrate_to_direction(to_direction):
             v = v.find_one({ "version" :  to_version })
             print("  Trying to migrate to this version now: ", str(to_version))
             print("-"*40)
-            print(v.to_json())
+            print(v)
             up = load_func(v.long_name, "up")
             #execute the up() function
             up()
@@ -166,6 +166,7 @@ def show_info():
     print(" -- currentversion is : " + str(a.currentversion))
     print(" -- max version is : " + str(a.maxversion))
     print("listing all versions:")
+    print("-"*50)
     v = version.Version()
     version_list = v.find_all()
     for elem in version_list:

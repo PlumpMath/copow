@@ -7,10 +7,13 @@
 # 
 
 import os
+import sys
 import lib.powlib
 import lib.db_conn as db_conn
 import config.db
-import config.settings
+import config.settings as settings
+import config.db as dbconfig
+
 
 import models.app as app
 import models.version as version
@@ -46,11 +49,17 @@ if __name__ == "__main__":
     
     # check if db exists and drop it, if its already there
     conn = db_conn.DBConn().get_client()
-    if APPNAME in conn.database_names():
+    dbname = getattr(dbconfig, settings.base["environment"])["database"]
+    print("dbnames: ", conn.database_names(), "dbname to create: ", dbname)
+    
+    if dbname in conn.database_names():
         if options.force:
-            conn.drop_database[APPNAME]
+            print(" Dropping database: ", dbname)
+            conn.drop_database(dbname)
+            print(" Now recreating Database: ", dbname )
         else:
-            print("Database %s exists ..... use init_db.py -f to force dropping and recreating it.")
+            print(" ERROR! Database %s exists ....")
+            print(" use init_db.py -f to force dropping and recreating it.")
             sys.exit(0)
 
 

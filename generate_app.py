@@ -115,6 +115,7 @@ def gen_app(appname, appdir, force=False):
                 {"name" : "migrations", "subdirs" : [("schemas", True)], "init" : True},
                 {"name" : "models", "subdirs": [("basemodels", True)], "init" : True},
                 {"name" : "controllers", "subdirs" :  [], "init" : True},
+                {"name" : "ext", "subdirs" :  [], "init" : True},
                 {"name" : "public", "subdirs" : [
                             ("bootstrap", False),
                             ("bootstrap/css", False),
@@ -163,6 +164,7 @@ def gen_app(appname, appdir, force=False):
                        ("public/css", "public/css"),
                        ("public/js", "public/js"),                       
                        ("controllers", "controllers"),
+                       ("ext", "ext"),
                        ("views", "views"),
                        ("views/layouts", "views/layouts"),
                        ("plugins", "plugins")

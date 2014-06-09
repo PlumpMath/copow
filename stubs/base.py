@@ -141,6 +141,10 @@ class BaseModel(object):
             ostr += key + " -> " + str(adict[key]) + os.linesep 
         return ostr
 
+    def get(self, attribute_name=None):
+        """ returns the model attribute with the specified attribute_name"""
+        if attribute_name:
+            return getattr(self,attribute_name)
 
     def generate_method(self, method_name, method_str, replace = []):
         """ generates a method for this object based on the 

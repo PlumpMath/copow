@@ -12,6 +12,8 @@ from #APPNAME.models.basemodels.base import BaseModel
 #import #APPNAME.lib.powlib
 from #APPNAME.lib import powlib
 
+from #APPNAME.ext.paginate import will_paginate
+
 class #MODELCLASS(BaseModel):
     
     def __init__(self, data=None, schema={}):
@@ -38,4 +40,8 @@ class #MODELCLASS(BaseModel):
         if data:
             self.set_data(data)
 
-
+    # example for extension use
+    # @will_paginate(per_page=10)
+    # also look at the import above
+    def find(self, *args, sort=False, **kwargs):
+        return super(Post,self).find(*args,**kwargs)
