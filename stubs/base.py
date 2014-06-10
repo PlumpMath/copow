@@ -242,9 +242,10 @@ class BaseModel(object):
     def save(self, safe=True):
         """ Saves the object. Results in insert if object wasnt in the db before,
             results in update otherwise"""
-        d = self.to_json()
-        d["last_updated"] = powlib.get_time()
-        self._id = self.collection.save(d,  safe=safe)
+        #d = self.to_json()
+        #d["last_updated"] = powlib.get_time()
+        #self._id = self.collection.save(d,  safe=safe)
+        self._id = self.insert(safe=safe)
         return self._id
 
     def insert(self, safe=True):
@@ -424,14 +425,24 @@ class BaseModel(object):
         return self.collection.index_information()
     
     def create_schema(self, prefix_output_path=""):
-        """ created a schema for this model"""
+        """ create a schema for this model
+            Automatically add the following column:
+
+            last_updated    ->      by copow
+            create          ->      by copow
+            _id             ->      by mongodb
+
+        """
         try:
             filepath = prefix_output_path + "./migrations/schemas/" + self.modelname + "_schema.py"
             filepath = os.path.abspath(os.path.normpath(filepath))
             #print filepath
             ofile = open(filepath, "w")
             ostr = self.modelname + " = "
-            ostr += json.dumps(self.schema, indent=4) + powlib.newline 
+            schema = self.schema
+            schema["last_updated"] = { "type" :  "date"  }
+            schema["created"] = { "type" :  "date"  }
+            ostr += json.dumps(schema, indent=4) + powlib.newline 
             ostr += self.modelname + "_relations = "
             ostr += json.dumps(self.relations, indent=4)
             #print ostr

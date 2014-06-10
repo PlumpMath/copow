@@ -214,7 +214,7 @@ def gen_app(appname, appdir, force=False):
     powlib.check_copy_file("do_migrate.py", appbase, replace=[("#APPNAME",appname)])
     powlib.check_copy_file("generate_controller.py", appbase, replace=[("#APPNAME",appname)])
     powlib.check_copy_file("generate_migration.py", appbase, replace=[("#APPNAME",appname)])
-    #powlib.check_copy_file("scripts/generate_scaffold.py", appbase)
+    powlib.check_copy_file("generate_scaffold.py", appbase, replace=[("#APPNAME",appname)])
     #powlib.check_copy_file("scripts/generate_mvc.py", appbase)
     #powlib.check_copy_file("simple_server.py", appbase, replace=[("#APPNAME",appname)])
     powlib.check_copy_file("server.py", appbase, replace=[("#APPNAME",appname)])

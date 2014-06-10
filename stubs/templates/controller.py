@@ -14,7 +14,8 @@ import json
 
 import tornado.web
 import os
-from atest.controllers.base_controller import BaseController
+from #APPNAME.controllers.base_controller import BaseController
+from  #APPNAME.models.#MODELNAME import #MODELCLASSNAME
 
 class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
 
@@ -40,6 +41,11 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             Read the documentation for more details.
 
     """
+
+    def __init__(self, *args, **kwargs):
+        self.model = #MODELCLASSNAME()
+        super(#CONTROLLER_CAPITALIZED_NAMEController,self).__init__(*args,**kwargs)
+
     def prepare(self):
         """ called before any http get/pust method is called """
         pass
@@ -50,15 +56,17 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
                 CRUD: READ
                 show all #MODELNAME_PLURAL
             """
-            return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request)
+            result = self.model.find_all()
+            return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result=result)
 
-    def show(self, *args, **kwargs):
+    def show(self, *args, id=None, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
                 REST: HTTP/GET /#CONTROLLERNAME/id
                 CRUD: READ
                 show one #MODELNAME
             """
-            return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request)
+            result = self.model.find_one()
+            return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request, result=result)
 
     def create(self, *args, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
@@ -81,10 +89,11 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
                 REST: HTTP/POST /#CONTROLLERNAME 
                 CRUD: UPDATE 
                 update really updates the data in the db
+                data must be in json format
             """
             return self.render("#CONTROLLER_LOWER_NAME_update.html", request=self.request)        
 
-    def update_form(*args, **kwargs):
+    def update_form(self, *args, id=None, **kwargs):
             """ respresents the folowing REST/CRUD Terminology:
                 REST: HTTP/POST /#CONTROLLERNAME 
                 CRUD: UPDATE 

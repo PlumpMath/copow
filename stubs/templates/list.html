@@ -4,26 +4,31 @@
 
 
 
-{% extends "main.html" %}
+{% extends "main_layout.html" %}
 
 {# this will be rendered in the content block of main.html view view #}
 
 {% block content %}
-	<h2> this is the list view: </h2>
-	<table>
-		<thead>
-			{% for key in result[0].schema.keys() %}
-				<th>{{ escape(key) }}</th>
-			{% end %}
-		</thead>
-	{% for model in result %}
-		<tr>
-	        {% for att in model.schema.keys() %}
-	          <td>{{ escape(model.get(key)) }}</td>
-	        {% end %}
-    	</tr>
-    {% end %}
+
+    <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">this is the list view: </div>
+
+    <table class="table">
+        <thead>
+            {% for key in result[0].schema.keys() %}
+                <th>{{ escape(key) }}</th>
+            {% end %}
+        </thead>
+        <tbody>
+            {% for model in result %}
+                <tr>
+                    {% for att in model.schema.keys() %}
+                      <td>{{ escape(model.get(att)) }}</td>
+                    {% end %}
+                </tr>
+            {% end %}
+        </tbody>
     </table>
 
 {% end %}
-

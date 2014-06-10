@@ -62,20 +62,28 @@ def init_controllers(app):
 			handler_list.append((onerest, controller))
 			tworest = r"/"+controller_short_name+"/([0-9a-zA-Z]+)"
 			handler_list.append((tworest, controller))
+			#
+			# edit
+			handler_list.append(("/"+controller_short_name+"/([0-9a-zA-Z]+)/(update)", controller))
+
+
 	#print(handler_list)
 	app.add_handlers(".*$", handler_list)
 	print("-"*50)
 	print("| routes apply to the following semantic: ")
 	print("-"*50)
-	print("  -> GET 	/controller/ 	=>		controller.list()")
-	print("  -> GET 	/controller/id	=>		controller.show(id)")
-	print("  -> POST 	/controller/	=>		controller.create()")
-	print("  -> POST 	/controller/id	=>		HTTP 501, not implemented")
-	print("  -> DELETE 	/controller/	=>		controller.delete_all()")
-	print("  -> DELETE 	/controller/id	=>		controller.delete(id)")
-	print("  -> PUT 	/controller/	=>		controller.show(id)")
-	print("  -> PUT 	/controller/id	=>		controller.update(id)")
-
+	print("  -> GET 	/controller/ 			=>		controller.list()")
+	print("  -> GET 	/controller/id			=>		controller.show(id)")
+	print("  -> GET 	/controller/id/update	=>		controller.show(id)")
+	print("  -> POST 	/controller/			=>		controller.create()")
+	print("  -> POST 	/controller/id			=>		HTTP 501, not implemented.")
+	print("  -> DELETE 	/controller/			=>		controller.delete_all()")
+	print("  -> DELETE 	/controller/id			=>		controller.delete(id)")
+	print("  -> PUT 	/controller/			=>		controller.show(id)")
+	print("  -> PUT 	/controller/id			=>		controller.update(id)")
+	print("-"*50)
+	print("| The Standard REST methods require json as input format. (PUT & POST) ")
+	print("-"*50)
 if __name__ == "__main__":
 	tornado.options.parse_command_line()
 	app = tornado.web.Application(handlers=copow_handlers, **copow_settings)

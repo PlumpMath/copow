@@ -44,21 +44,32 @@ class BaseController(tornado.web.RequestHandler):
         Example:    Accept:      text/json
     """
     
-    def get(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super(BaseController,self).__init__(*args,**kwargs)
+
+    
+    def get(self, id=None, method=None):
         """
             Meaning a call to domain:port/controller/([someting]+)
             HTTP GET        => will call controller.show(something)
             and a call to domain:port/controller/
             HTTP GET        => will call controller.list()
         """
-        if args:
-            # GET /controller/id    => it is show
-            id = args[0]
-            return self.show(id)
+        if id:
+            if method == "update":
+                return self.update_form(id)
+            else:
+                return self.show(id)   
         else:
-            # GET /controller/      => it is list:
-            id = "all"
             return self.list()
+        #if args:
+            # GET /controller/id    => it is show
+            #id = args[0]
+            #return self.show(id)
+        #else:
+            # GET /controller/      => it is list:
+            #id = "all"
+            #return self.list()
         #self.render("test.html", method=method, id=id)
 
     def post(self, *args, **kwargs):

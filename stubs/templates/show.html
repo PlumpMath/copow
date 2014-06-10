@@ -1,0 +1,25 @@
+<!-- copow / pythononwheels list view template -->
+<!-- for scaffolding views -->
+<!-- www.pythononwheels.org -->
+
+
+
+{% extends "main_layout.html" %}
+
+{# this will be rendered in the content block of main.html view view #}
+
+{% block content %}
+    <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">this is the show view: </div>
+
+    <table class="table">
+        <tr>
+            {% for att in result.schema.keys() %}
+              <td>{{ att }}</td>
+              <td>{{ escape(result.get(att)) }}</td>
+            {% end %}
+        </tr>
+    </table>
+
+{% end %}

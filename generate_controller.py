@@ -88,6 +88,7 @@ def render_controller( name="NO_NAME_GIVEN", force=False,  parts_dir="", prefix_
     ostr = ostr.replace("#CONTROLLER_CAPITALIZED_NAME", name.capitalize())
     ostr = ostr.replace("#CONTROLLER_LOWER_NAME", name)
     ostr = ostr.replace("#MODELNAME_PLURAL", powlib.pluralize(name))
+    ostr = ostr.replace("#MODELCLASSNAME", name.capitalize())
     ostr = ostr.replace("#MODELNAME", name)
     filename = os.path.normpath ( 
         os.path.join( prefix_path + "./controllers/",  name + "_controller.py" ) )
