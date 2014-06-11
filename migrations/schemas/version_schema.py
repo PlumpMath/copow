@@ -13,7 +13,8 @@ version = {
     "version"       :    { "type"    : "int"  },
     
     "created"       :    { "type"    : "date" },
-    "last_updated"  :    { "type"    : "date" }
+    "last_updated"  :    { "type"    : "date" },
+    "_id"               :      { "type" : "id"  } 
 }
 
 

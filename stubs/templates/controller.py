@@ -16,6 +16,7 @@ import tornado.web
 import os
 from #APPNAME.controllers.base_controller import BaseController
 from  #APPNAME.models.#MODELNAME import #MODELCLASSNAME
+from bson.objectid import ObjectId
 
 class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
 
@@ -77,16 +78,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         return self.render("#CONTROLLER_LOWER_NAME_echo.html", request=self.request, 
             result=None, formats=result_formats)
 
-    def list(self, *args, **kwargs):
-        """ respresents the folowing REST/CRUD Terminology:
-            REST: HTTP/GET /#CONTROLLERNAME
-            CRUD: READ
-            show all #MODELNAME_PLURAL
-        """
-        result = self.model.find_all()
-        return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result=result)
-
-    def show(self, *args, id=None, **kwargs):
+    def show_html(self, *args, id=None, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/GET /#CONTROLLERNAME/id
             CRUD: READ
@@ -94,6 +86,40 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """
         result = self.model.find_one()
         return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request, result=result)
+
+    def show_json(self, *args, id=None, **kwargs):
+        """ respresents the folowing REST/CRUD Terminology:
+            REST: HTTP/GET /#CONTROLLERNAME/id
+            CRUD: READ
+            show one post
+        """
+        result = self.model.find({"_id" : ObjectId(id) })
+        #return result.to_json()
+        #print("result: ", result)
+        #print("result: ", result, " Num -> ", result.count())
+        self.write(str(result[0].to_json()))
+
+    def list_json(self, *args, **kwargs):
+        """ respresents the folowing REST/CRUD Terminology:
+            REST: HTTP/GET /#CONTROLLERNAME
+            CRUD: READ
+            show all posts
+        """
+        result = self.model.find_all()
+        res_list = ""
+        for mod in result:
+            res_list += str(mod.to_json()) + ","
+        # remove trailing comma before sending.
+        self.write( res_list[:-1] )
+
+    def list_html(self, *args, **kwargs):
+        """ respresents the folowing REST/CRUD Terminology:
+            REST: HTTP/GET /#CONTROLLERNAME
+            CRUD: READ
+            show all #MODELNAME_PLURAL
+        """
+        result = self.model.find_all()
+        return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result=result)
 
     def create(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:

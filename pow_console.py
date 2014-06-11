@@ -4,6 +4,7 @@
 ## eased my life. Console and the  recipe above ;)
 import code
 import sys,os, string, pdb
+from bson.objectid import ObjectId
 
 APPNAME = "#APPNAME"
 

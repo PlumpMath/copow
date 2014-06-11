@@ -12,8 +12,9 @@ app = {
    	"currentversion"    :      { "type" : "int" },
    	"maxversion"        :      { "type" : "int" },
 
-    "created"           :    { "type"    : "date" },
-    "last_updated"      :    { "type"    : "date" }
+    "created"           :      { "type" : "date" },
+    "last_updated"      :      { "type" : "date" },
+    "_id"               :      { "type" : "id"  } 
 }
 
 

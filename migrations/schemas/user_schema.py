@@ -13,6 +13,10 @@ user = {
     }, 
     "email": {
         "type": "Text"
-    }
-}
+    },
+    "_id" :   { 
+        "type" : "id"  
+    } 
+}
+
 user_relations = {}

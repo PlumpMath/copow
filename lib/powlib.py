@@ -27,7 +27,9 @@ schema_types = {
     "list"      :   [],
     "binary"    :   None,
     "object"    :   None,
-    "date"      :   None
+    "date"      :   None,
+    #"id"        :   ObjectId()
+    "id"        :   None
 }
 
 #

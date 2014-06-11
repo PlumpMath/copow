@@ -7,6 +7,10 @@ copow_log = {
     }, 
     "logstr": {
         "type": "Text"
+    },
+    "_id" :  { 
+        "type" : "id"  
     }
-}
+}
+
 copow_log_relations = {}

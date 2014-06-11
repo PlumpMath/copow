@@ -3,6 +3,8 @@
 # 
 import tornado.web
 import os
+import #APPNAME.config.settings as settings
+
 
 class BaseController(tornado.web.RequestHandler):
     """ copow base controller 
@@ -55,22 +57,26 @@ class BaseController(tornado.web.RequestHandler):
             and a call to domain:port/controller/
             HTTP GET        => will call controller.list()
         """
-        if id:
-            if self.method == "update":
-                return self.update_form(id)
-            else:
-                return self.show(id)   
-        else:
-            return self.list()
-        #if args:
-            # GET /controller/id    => it is show
-            #id = args[0]
-            #return self.show(id)
-        #else:
-            # GET /controller/      => it is list:
-            #id = "all"
-            #return self.list()
-        #self.render("test.html", method=method, id=id)
+        supported_result_formats = settings.base["result_formats"]
+        accepted_result_formats = self.request.headers.get("Accept").split(",")
+        for format in accepted_result_formats:
+            if format in supported_result_formats.keys():
+                # call the defined function (suffix)
+                print("requested result formats: ", accepted_result_formats)
+                print("returning: ", format)
+                if id:
+                    if self.method == "update":
+                        return self.update_form(id)
+                    else:
+                        #return self.show(id)   
+                        return getattr(self,"show"+supported_result_formats[format])(id=id)
+                else:
+                    #return self.list()
+                    return getattr(self,"list"+supported_result_formats[format])()
+                break
+        #raise tornado.web.HTTPError(406)
+        self.send_error(status_code=406, **kwargs)
+        
 
     def post(self, *args, **kwargs):
         """ 

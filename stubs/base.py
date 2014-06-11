@@ -141,10 +141,13 @@ class BaseModel(object):
             ostr += key + " -> " + str(adict[key]) + os.linesep 
         return ostr
 
-    def get(self, attribute_name=None):
+    def get(self, attribute_name=None, as_str=True):
         """ returns the model attribute with the specified attribute_name"""
         if attribute_name:
-            return getattr(self,attribute_name)
+            if as_str:
+                return str(getattr(self,attribute_name))
+            else:
+                return getattr(self,attribute_name)
 
     def generate_method(self, method_name, method_str, replace = []):
         """ generates a method for this object based on the 
@@ -212,6 +215,8 @@ class BaseModel(object):
             sort=[("field", pymongo.ASCENDING), ("field2", pymongoDESCENDING),..]
             returns: a pymongo.cursor.Cursor
         """
+        print("args: ", *args)
+        print("kwargs: ", **kwargs)
         if sort:
             cursor = self.collection.find(*args, as_class=self.__class__, **kwargs).sort(sort)
         else:
@@ -239,6 +244,18 @@ class BaseModel(object):
             self.__setitem__(elem, dictionary[elem])
         return
 
+    def clear(self):
+        """
+            erase the instance's values
+        """
+        for elem in self.schema.keys():
+            # get the according default type for the attribute 
+            # See: powlib.schema_types
+            default_value = powlib.schema_types[self.schema[elem]["type"].lower()]
+            setattr(self, elem, default_value)
+        print("erased values: ", self.to_json())
+        return
+    
     def save(self, safe=True):
         """ Saves the object. Results in insert if object wasnt in the db before,
             results in update otherwise"""
@@ -253,6 +270,7 @@ class BaseModel(object):
         d = self.to_json()
         d["last_updated"] = powlib.get_time()
         d["created"] = powlib.get_time()
+        del d["_id"]
         self._id = self.collection.insert(d, safe=safe)
         return self._id
         
@@ -442,6 +460,7 @@ class BaseModel(object):
             schema = self.schema
             schema["last_updated"] = { "type" :  "date"  }
             schema["created"] = { "type" :  "date"  }
+            schema["_id"] = { "type" :  "id"  }
             ostr += json.dumps(schema, indent=4) + powlib.newline 
             ostr += self.modelname + "_relations = "
             ostr += json.dumps(self.relations, indent=4)

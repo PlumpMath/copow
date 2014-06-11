@@ -14,7 +14,16 @@ base = {
     "parts_dir"         :   "stubs/templates/",
     "model_test_dir"    :  "test/models/",
     #authentication can be user or role (for now)
-    "authentication"   :   "user"
+    "authentication"   :   "user",
+    # supported result_formats of your Application.
+    # By default copow will invoke the method which fits
+    # the REST request and end in the tuple[1] name
+    # exmaple: Accept: "application/json"   + GET /controller  => controller.list_json()
+    # Only applies to methods that return values (show, list) ;)
+    # Order of the Accepted Header counts (1st come 1st served)
+    "result_formats"    :   {   "text/html"         :       "_html",
+                                "application/json"  :       "_json"
+                            }
 }
 
 logging=  {
