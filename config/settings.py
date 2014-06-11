@@ -23,7 +23,8 @@ base = {
     # Order of the Accepted Header counts (1st come 1st served)
     "result_formats"    :   {   "text/html"         :       "_html",
                                 "application/json"  :       "_json"
-                            }
+                            },
+    "format_dependend_methods"  :   ["list", "show"]
 }
 
 logging=  {

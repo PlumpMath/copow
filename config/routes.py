@@ -33,6 +33,7 @@ import #APPNAME.controllers.error_controller
 rest_routes = {
         r"/#controller"                                :     ("#controller_cls", dict(method="list", params=[])),
         r"/#controller/echo"                           :     ("#controller_cls", dict(method="echo", params=[])),
+        r"/#controller/create"                         :     ("#controller_cls", dict(method="create_form", params=[])),
         r"/#controller/([0-9a-zA-Z]+)"                 :     ("#controller_cls", dict(method="show", params=["id"])),
         r"/#controller/([0-9a-zA-Z]+)/update"          :     ("#controller_cls", dict(method="update_form", params=["id"]))
 }

@@ -29,7 +29,10 @@ schema_types = {
     "object"    :   None,
     "date"      :   None,
     #"id"        :   ObjectId()
-    "id"        :   None
+    "id"        :   None,
+    "dict"      :   {},
+    "bool"      :   False,
+    "set"       :   set()   
 }
 
 #

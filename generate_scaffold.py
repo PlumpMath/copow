@@ -68,7 +68,7 @@ def generate_scaffold( modelname, force=False ):
     """
     #views = ["create", "create_form","list", "show", "update", "update_form", "update_all", "delete" ]
     
-    views = ["list", "show", "echo"]
+    views = ["list", "show", "echo", "create_form"]
     
     for view in views:
         template_in_path = os.path.join(os.path.normpath(settings.base["parts_dir"]), view + ".html")

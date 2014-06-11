@@ -51,7 +51,7 @@ class BaseController(tornado.web.RequestHandler):
 
     
     def get(self, *args, **kwargs):
-       """
+        """
             Routing is done RESTful but accoring to the specification ikn routes.py
              r"/#controller/([0-9a-zA-Z]+)"                 :     ("#controller_cls", dict(method="show", params=["id"]))
 
@@ -75,20 +75,12 @@ class BaseController(tornado.web.RequestHandler):
         for format in accepted_result_formats:
             if format in supported_result_formats.keys():
                 # call the defined function (suffix)
-
                 print("requested result formats: ", accepted_result_formats)
                 print("returning: ", format)
-                return getattr(self,self.method + supported_result_formats[format])(*args, **kwargs)
-                # if self.params != []:
-                #     print("id: ", id)
-                #     if self.method == "update":
-                #         return self.update_form(id=id)
-                #     else:
-                #         #return self.show(id)   
-                #         return getattr(self,"show"+supported_result_formats[format])(id=id)
-                # else:
-                #     #return self.list()
-                #     return getattr(self,"list"+supported_result_formats[format])()
+                if self.method in settings.base["format_dependend_methods"]:
+                    return getattr(self,self.method + supported_result_formats[format])(*args, **kwargs)
+                else:
+                    return getattr(self,self.method)(*args, **kwargs)
                 break
         #raise tornado.web.HTTPError(406)
         self.send_error(status_code=406, **kwargs)
