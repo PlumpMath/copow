@@ -51,11 +51,16 @@ class BaseController(tornado.web.RequestHandler):
 
     
     def get(self, *args, **kwargs):
-        """
-            Meaning a call to domain:port/controller/([someting]+)
-            HTTP GET        => will call controller.show(something)
-            and a call to domain:port/controller/
-            HTTP GET        => will call controller.list()
+       """
+            Routing is done RESTful but accoring to the specification ikn routes.py
+             r"/#controller/([0-9a-zA-Z]+)"                 :     ("#controller_cls", dict(method="show", params=["id"]))
+
+             Will result in:
+             Accept Header = format
+             GET /controller-name/id            =>      calls controller.show_format(args, kwargs)
+                controller.show_format should eat the params parameter e.g. like this
+                def show_json(self, id, *args, **kwargs):
+                where format is defined in settings.py
         """
         print("get *args: ", args)
         print("get kwargs: ", kwargs)
