@@ -51,7 +51,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """ called before any http get/pust method is called """
         pass
 
-    def initialize(self, method=None):
+    def initialize(self, method=None, params=[]):
         """
             The paramter method is set to the value defined in the dict
             in routes->rest_routes.
@@ -61,8 +61,8 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             
         """
         self.method = method
-        self.method_params = params
-        print("self.method: ", self.method, "  ->  ", self.method_params)
+        self.params = params
+        #print("self.method: ", self.method, "  ->  ", self.params)
 
     def get(self, *args, **kwargs):
         #print("self.method: ", method)
@@ -93,13 +93,16 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         result = self.model.find_one()
         return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request, result=result)
 
-    def show_json(self, *args, id=None, **kwargs):
+    def show_json(self, oid, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/GET /#CONTROLLERNAME/id
             CRUD: READ
             show one post
         """
-        result = self.model.find({"_id" : ObjectId(id) })
+        print("get *args: ", args)
+        print("get kwargs: ", kwargs)
+        print("show_json oid: ", oid)
+        result = self.model.find({"_id" : ObjectId(str(oid)) })
         #return result.to_json()
         #print("result: ", result)
         #print("result: ", result, " Num -> ", result.count())

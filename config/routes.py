@@ -31,10 +31,10 @@ import #APPNAME.controllers.error_controller
 #    .#APPNAME.controllers.controllername_python.ClassName
 
 rest_routes = {
-        r"/#controller"                                :     ("#controller_cls", dict(method="list")),
-        r"/#controller/echo"                           :     ("#controller_cls", dict(method="echo")),
-        r"/#controller/([0-9a-zA-Z]+)"                 :     ("#controller_cls", dict(method="show", param=[id])),
-        r"/#controller/([0-9a-zA-Z]+)/update"          :     ("#controller_cls", dict(method="update_form", param=[id]))
+        r"/#controller"                                :     ("#controller_cls", dict(method="list", params=[])),
+        r"/#controller/echo"                           :     ("#controller_cls", dict(method="echo", params=[])),
+        r"/#controller/([0-9a-zA-Z]+)"                 :     ("#controller_cls", dict(method="show", params=["id"])),
+        r"/#controller/([0-9a-zA-Z]+)/update"          :     ("#controller_cls", dict(method="update_form", params=["id"]))
 }
 
 # Add your routes below.

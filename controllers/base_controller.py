@@ -50,7 +50,7 @@ class BaseController(tornado.web.RequestHandler):
         super(BaseController,self).__init__(*args,**kwargs)
 
     
-    def get(self, *args):
+    def get(self, *args, **kwargs):
         """
             Meaning a call to domain:port/controller/([someting]+)
             HTTP GET        => will call controller.show(something)
@@ -58,6 +58,9 @@ class BaseController(tornado.web.RequestHandler):
             HTTP GET        => will call controller.list()
         """
         print("get *args: ", args)
+        print("get kwargs: ", kwargs)
+        print("self.method: ", self.method)
+        print("self.params: ", self.params)
         # Which Output formats do we support ?
         supported_result_formats = settings.base["result_formats"]
         # Which Output formats does the client accept ?
@@ -67,17 +70,20 @@ class BaseController(tornado.web.RequestHandler):
         for format in accepted_result_formats:
             if format in supported_result_formats.keys():
                 # call the defined function (suffix)
+
                 print("requested result formats: ", accepted_result_formats)
                 print("returning: ", format)
-                if id:
-                    if self.method == "update":
-                        return self.update_form(id=id)
-                    else:
-                        #return self.show(id)   
-                        return getattr(self,"show"+supported_result_formats[format])(id=id)
-                else:
-                    #return self.list()
-                    return getattr(self,"list"+supported_result_formats[format])()
+                return getattr(self,self.method + supported_result_formats[format])(*args, **kwargs)
+                # if self.params != []:
+                #     print("id: ", id)
+                #     if self.method == "update":
+                #         return self.update_form(id=id)
+                #     else:
+                #         #return self.show(id)   
+                #         return getattr(self,"show"+supported_result_formats[format])(id=id)
+                # else:
+                #     #return self.list()
+                #     return getattr(self,"list"+supported_result_formats[format])()
                 break
         #raise tornado.web.HTTPError(406)
         self.send_error(status_code=406, **kwargs)
