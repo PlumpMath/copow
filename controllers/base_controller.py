@@ -50,15 +50,20 @@ class BaseController(tornado.web.RequestHandler):
         super(BaseController,self).__init__(*args,**kwargs)
 
     
-    def get(self, id=None):
+    def get(self, *args):
         """
             Meaning a call to domain:port/controller/([someting]+)
             HTTP GET        => will call controller.show(something)
             and a call to domain:port/controller/
             HTTP GET        => will call controller.list()
         """
+        print("get *args: ", args)
+        # Which Output formats do we support ?
         supported_result_formats = settings.base["result_formats"]
+        # Which Output formats does the client accept ?
         accepted_result_formats = self.request.headers.get("Accept").split(",")
+        
+        # try to match them. order matters. 1st come, 1st servec
         for format in accepted_result_formats:
             if format in supported_result_formats.keys():
                 # call the defined function (suffix)
@@ -66,7 +71,7 @@ class BaseController(tornado.web.RequestHandler):
                 print("returning: ", format)
                 if id:
                     if self.method == "update":
-                        return self.update_form(id)
+                        return self.update_form(id=id)
                     else:
                         #return self.show(id)   
                         return getattr(self,"show"+supported_result_formats[format])(id=id)

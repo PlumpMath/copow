@@ -52,11 +52,17 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         pass
 
     def initialize(self, method=None):
-        if method:
-            self.method = method
-        else:
-            self.method = "None"
-        print("self.method: ", self.method)
+        """
+            The paramter method is set to the value defined in the dict
+            in routes->rest_routes.
+            You can define your own parameters there.
+            This is specifically used to route the request (call the following method in the controller)
+            which is specified as the 3rd parameter in rest_routes.
+            
+        """
+        self.method = method
+        self.method_params = params
+        print("self.method: ", self.method, "  ->  ", self.method_params)
 
     def get(self, *args, **kwargs):
         #print("self.method: ", method)
