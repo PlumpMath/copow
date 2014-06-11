@@ -48,7 +48,7 @@ class BaseController(tornado.web.RequestHandler):
         super(BaseController,self).__init__(*args,**kwargs)
 
     
-    def get(self, id=None, method=None):
+    def get(self, id=None):
         """
             Meaning a call to domain:port/controller/([someting]+)
             HTTP GET        => will call controller.show(something)
@@ -56,7 +56,7 @@ class BaseController(tornado.web.RequestHandler):
             HTTP GET        => will call controller.list()
         """
         if id:
-            if method == "update":
+            if self.method == "update":
                 return self.update_form(id)
             else:
                 return self.show(id)   

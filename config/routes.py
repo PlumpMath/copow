@@ -24,8 +24,23 @@ import #APPNAME.controllers.login_controller
 import #APPNAME.controllers.logout_controller
 import #APPNAME.controllers.error_controller
 
+
+# default RESTful routes 
+#  #controller will be replaced by the controllername for any controller in ./controllers
+#  #controller_cls will be replaced by the actual class like:
+#    .#APPNAME.controllers.controllername_python.ClassName
+
+rest_routes = {
+        r"/#controller"                                :     ("#controller_cls", None),
+        r"/#controller/echo"                           :     ("#controller_cls", dict(method="echo")),
+        r"/#controller/([0-9a-zA-Z]+)"                 :     ("#controller_cls", None),
+        r"/#controller/([0-9a-zA-Z]+)/update"          :     ("#controller_cls", dict(method="update"))
+}
+
 # Add your routes below.
-# Details about formatting routes: 
+# Details about formatting routes can be found in the documentation
+
+# www.pythononwheels.org/copow/documentation/routes
 handlers = [
         (r'/welcome', #APPNAME.controllers.welcome_controller.WelcomeController),
         (r'/features', #APPNAME.controllers.welcome_controller.WelcomeController),

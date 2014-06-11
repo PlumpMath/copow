@@ -7,16 +7,16 @@ import os.path
 import sys
 import importlib
 
-import #APPNAME.config.routes 
-import #APPNAME.config.settings
+import #APPNAME.config.routes as routes
+import #APPNAME.config.settings as settings
 
 #sys.path.append(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../config" )) 
 
 from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
 
-copow_handlers = #APPNAME.config.routes.handlers
-copow_settings = #APPNAME.config.settings.webserver
+copow_handlers = routes.handlers
+copow_settings = settings.webserver
 
 def init_controllers(app):
 	"""
@@ -50,31 +50,48 @@ def init_controllers(app):
 			# 1. load the controller
 			# convention for the controller module name is: name_controller
 			controller_name = fname.split("_")[0].capitalize()+"Controller"
-			controller_short_name = fname.split("_")[0]
+			controller = fname.split("_")[0]
 			import_module_str = "atest.controllers." + fname
 			#print(import_module_str)
 			con = importlib.import_module(import_module_str)
 			#print(con)
-			controller = getattr(con, controller_name)
+			controller_cls = getattr(con, controller_name)
 			#print(controller)
 			# 1st REST 
-			onerest = r"/"+controller_short_name
-			handler_list.append((onerest, controller))
-			tworest = r"/"+controller_short_name+"/([0-9a-zA-Z]+)"
-			handler_list.append((tworest, controller))
+			#onerest = r"/"+controller
+			#handler_list.append((onerest, controller_cls))
+			#tworest = r"/"+controller+"/([0-9a-zA-Z]+)"
+			#handler_list.append((tworest, controller_cls))
 			#
 			# edit
-			handler_list.append(("/"+controller_short_name+"/([0-9a-zA-Z]+)/(update)", controller))
+			#handler_list.append(("/"+controller_short_name+"/([0-9a-zA-Z]+)/(update)", controller))
+			for route in routes.rest_routes.keys():
+				# route[0] = the controller to handle the Request 
+				# route[1] = an optional dict of paramenters passed to controller.initialize method.
+				# see: tornado.RequestHandler.initialize
+				abs_route = route.replace("#controller", controller)
+				if routes.rest_routes[route][0] == "#controller_cls":
+					if routes.rest_routes[route][1]:
+						handler_list.append((abs_route, controller_cls, routes.rest_routes[route][1]))
+					else:
+						handler_list.append((abs_route, controller_cls))
+				else:
+					# a specific class is defined in the rest_routes
+					# (for whatever reason ;) but anyway, load it.
+					if routes.rest_routes[route][1]:
+						handler_list.append((abs_route, routes.rest_routes[route],routes.rest_routes[route][1] ))
+					else:
+						handler_list.append((abs_route, routes.rest_routes[route]))
 
 
-	#print(handler_list)
+	print(handler_list)
 	app.add_handlers(".*$", handler_list)
 	print("-"*50)
 	print("| routes apply to the following semantic: ")
 	print("-"*50)
 	print("  -> GET 	/controller/ 			=>		controller.list()")
 	print("  -> GET 	/controller/id			=>		controller.show(id)")
-	print("  -> GET 	/controller/id/update	=>		controller.show(id)")
+	print("  -> GET 	/controller/id/update	=>		controller.update_form(id)")
 	print("  -> POST 	/controller/			=>		controller.create()")
 	print("  -> POST 	/controller/id			=>		HTTP 501, not implemented.")
 	print("  -> DELETE 	/controller/			=>		controller.delete_all()")
