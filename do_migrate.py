@@ -115,8 +115,9 @@ def do_migrate_to_direction(to_direction):
             # ok, migrating up
             to_version = a.currentversion + 1
             v = v.find_one({ "version" :  to_version })
+            print("-"*50)
             print("  Trying to migrate to this version now: ", str(to_version))
-            print("-"*40)
+            print("-"*50)
             print(v)
             up = load_func(v.long_name, "up")
             #execute the up() function

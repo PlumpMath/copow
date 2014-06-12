@@ -20,10 +20,10 @@ migration = Migration()
 def up():
     """ up method will be executed when running do_migrate -d up"""
     #MODELNAME = #UP_MODELNAME( schema  = {
-           #"title"      :      { "type" : "Text" },   
-           #"author"     :      { "type" : "Text" },
-           #"content"    :      { "type" : "Text" }
-           #"a_more_complex_one"    :       { "type" : "Text" , "index" : True, "default" : "something"}
+           #"title"      :      { "type" : "string" },   
+           #"author"     :      { "type" : "text" },
+           #"content"    :      { "type" : "text" }
+           #"a_more_complex_one"    :       { "type" : "text" , "index" : True, "default" : "something"}
       } 
     )
 

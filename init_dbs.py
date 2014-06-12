@@ -88,16 +88,26 @@ if __name__ == "__main__":
     v.version = 3
     v.save()
 
+    v.environment = env
+    v.short_name = "user"
+    v.long_name = "539a229b56031a0d30c6410e_user"
+    v.comment ="copow user collection"
+    v.version = 4
+    v.save()
+
     # setting up the app-db
     # 
     a = app.App()
     a.name = "#APPNAME"
     a.path = r"#APPPATH"
     a.lastversion = 0
-    a.maxversion = 3
+    a.maxversion = 4
     a.currentversion = 2
     a.save()
 
     ## setting up the log db with a standard do_migrate
     do_migrate.do_migrate_to_direction("up")
+    ## setting up the user colelction with the std do_migrate
+    do_migrate.do_migrate_to_direction("up")
+
 

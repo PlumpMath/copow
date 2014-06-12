@@ -294,7 +294,7 @@ def gen_app(appname, appdir, force=False):
     
 
     print(" 1. add your app: %s to the PYTHONPATH" % (appname))
-    print('  -> Windows  : set PYHTONPATH=',app_path, ';%PYTHONPATH%',sep="")
+    print('  -> Windows  : set PYTHONPATH=',app_path, ';%PYTHONPATH%',sep="")
     print("  -> Unix/Mac : export PYTHONPATH=%s:$PYTHONPATH" % (app_path))
     print(" 2. execute python %s/init_db.py" % (os.path.join(app_path, appname)))
     print(" 3. read first steps on www.pythononwheels.org/copow")

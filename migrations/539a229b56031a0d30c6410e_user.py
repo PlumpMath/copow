@@ -5,7 +5,7 @@
 # It will not be overwritten by python_on_wheels
 # unless you force it with the -f or --force option
 # 
-# 2014/06/05 14:32:45
+# 2014/06/12 23:58:51
 
 
 import sys
@@ -19,12 +19,12 @@ migration = Migration()
 
 def up():
     """ up method will be executed when running do_migrate -d up"""
-    user = User( schema  = {
-           "name"         :      { "type" : "Text" },   
-           "firstname"    :      { "type" : "Text" },
-           "lastname"     :      { "type" : "Text" },
-           "email"        :      { "type" : "Text" },
-           "password"     :      { "type" : "Text" }
+    user = User( schema  = { 
+           "name"         :      { "type" : "string" }, 
+           "firstname"    :      { "type" : "string" },
+           "lastname"     :      { "type" : "string" },
+           "email"        :      { "type" : "string" },
+           "password"     :      { "type" : "string" }
            #"a_more_complex_one"    :       { "type" : "Text" , "index" : True, "default" : "something"}
       } 
     )
