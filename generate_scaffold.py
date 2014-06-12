@@ -71,7 +71,7 @@ def generate_scaffold( modelname, force=False ):
     views = ["list", "show", "echo", "create_form"]
     
     for view in views:
-        template_in_path = os.path.join(os.path.normpath(settings.base["parts_dir"]), view + ".html")
+        template_in_path = os.path.join(os.path.normpath(settings.base["view_parts_dir"]), view + ".html")
         view_out_path = os.path.join("./", "views")
         current_path = __file__
         print("template in: ", template_in_path)

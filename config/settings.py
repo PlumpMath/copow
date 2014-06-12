@@ -4,6 +4,10 @@
 #
 import os
 import os.path
+import #APPNAME.uimodules.copow_ui_modules
+import #APPNAME.config.uimodules as uimodules
+
+
 
 base = {
     
@@ -12,6 +16,7 @@ base = {
     "environment"       :   "development",
     # Standard Directories
     "parts_dir"         :   "stubs/templates/",
+    "view_parts_dir"    :   "stubs/views/",
     "model_test_dir"    :  "test/models/",
     #authentication can be user or role (for now)
     "authentication"   :   "user",
@@ -48,5 +53,5 @@ webserver = {
     #"xsrf_cookies" : True,
     "login_url"     : "/login",
     #"base_handler_class"    :   "#APPNAME.controllers.welcome_controller.WelcomeController"
-    
+    "ui_modules"    :  uimodules.modules
 }

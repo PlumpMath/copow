@@ -16,7 +16,7 @@ from #APPNAME.ext.paginate import will_paginate
 
 class #MODELCLASS(BaseModel):
     
-    def __init__(self, data=None, schema={}):
+    def __init__(self, data={}, schema={}):
         #super(#MODELCLASS, self).__init__(data)
         """ Basic instance setup"""
         self.collection_name = "#MODEL_COLLECTION"

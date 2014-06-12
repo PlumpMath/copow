@@ -4,7 +4,7 @@
 
 
 
-{% extends "main_layout.html" %}
+{% extends "layouts/main_layout.html" %}
 
 {# this will be rendered in the content block of main.html view view #}
 
@@ -22,4 +22,5 @@
         </tr>
     </table>
 
+    {% module FormSelect(model=result, model_attribute="title") %}
 {% end %}

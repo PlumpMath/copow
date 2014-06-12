@@ -40,11 +40,12 @@ class BaseModel(object):
             raise Exception( "POWError: model %s has no column %s" % (self.modelname, key) )
         return 
 
-    def set_data(self, data):
+    def set_data(self, data={}):
         """ set the data for this model from given dictionary data"""
         for key in list(data.keys()):
             if key in self.schema:
-                self.__dict__[key] = data[key]
+                #self.__dict__[key] = data[key]
+                setattr(self,key, data[key])
             else:
                 raise Exception("unknown attribute: %s for model: %s ") (key, self.modelname)   
 

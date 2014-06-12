@@ -4,7 +4,7 @@
 
 
 
-{% extends "main_layout.html" %}
+{% extends "layouts/main_layout.html" %}
 
 {# this will be rendered in the content block of main.html view view #}
 
@@ -30,5 +30,7 @@
             {% end %}
         </tbody>
     </table>
-
+    Module call test:
+    <hr>
+    {% module form_select(models=result, model_attribute="title") %}
 {% end %}

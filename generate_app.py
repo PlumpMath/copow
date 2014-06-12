@@ -115,6 +115,7 @@ def gen_app(appname, appdir, force=False):
                 {"name" : "migrations", "subdirs" : [("schemas", True)], "init" : True},
                 {"name" : "models", "subdirs": [("basemodels", True)], "init" : True},
                 {"name" : "controllers", "subdirs" :  [], "init" : True},
+                {"name" : "uimodules", "subdirs" :  [], "init" : True},
                 {"name" : "ext", "subdirs" :  [], "init" : True},
                 {"name" : "public", "subdirs" : [
                             ("bootstrap", False),
@@ -125,8 +126,8 @@ def gen_app(appname, appdir, force=False):
                             ("img", False),
                             ("css", False),
                             ("js", False)], "init"  : False},
-                {"name" : "stubs", "subdirs" : [("templates", True)], "init" : True},
-                {"name" : "views", "subdirs" : [("layouts", False)], "init" : False},
+                {"name" : "stubs", "subdirs" : [("templates", True), ("views", True)], "init" : True},
+                {"name" : "views", "subdirs" : [("layouts", False), ("uimodules", False)], "init" : False},
                 {"name" : "test", "subdirs" : [("models", True), ("controllers", True)], "init" : True},
                 {"name" : "plugins", "subdirs" : [], "init" : True}
               ]
@@ -150,11 +151,12 @@ def gen_app(appname, appdir, force=False):
     deep_copy_list = [("config", "config"),
                        ("lib", "lib"),
                        ("stubs", "stubs"),
+                       ("stubs/templates", "stubs/templates"),  
+                       ("stubs/views", "stubs/views"),  
                        ("migrations", "migrations"),
                        ("migrations/schemas", "migrations/schemas"),
                        ("models", "models"),
-                       ("models/basemodels", "models/basemodels"),
-                       ("stubs/templates", "stubs/templates"),                       
+                       ("models/basemodels", "models/basemodels"),                     
                        ("public/bootstrap", "public/bootstrap"),
                        ("public/bootstrap/css", "public/bootstrap/css"),
                        ("public/bootstrap/js", "public/bootstrap/js"),
@@ -164,9 +166,11 @@ def gen_app(appname, appdir, force=False):
                        ("public/css", "public/css"),
                        ("public/js", "public/js"),                       
                        ("controllers", "controllers"),
+                       ("uimodules", "uimodules"),
                        ("ext", "ext"),
                        ("views", "views"),
                        ("views/layouts", "views/layouts"),
+                       ("views/uimodules", "views/uimodules"),
                        ("plugins", "plugins")
                        ]
 
