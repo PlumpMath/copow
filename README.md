@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-# Some new ideas for PoW
 
-## And a [new repo for that on bitbucket](https://bitbucket.org/pythononwheels/copow)
+# Some new ideas for PoW
 
 ## Still in the early beginnings but current work in progress. 
 I work currently more on this one than on standard PoW...
@@ -38,9 +36,3 @@ The Freedom of Mongo is amazing and pretty good to have, but sometimes I like to
 
 
 
-=======
-copow
-=====
-
-PythonOnWheels asynchronous (idea was with coroutines)
->>>>>>> 99788556081ca4b696def256c2b9a2200cbf15a5
