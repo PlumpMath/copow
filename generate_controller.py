@@ -43,6 +43,11 @@ def main():
                         dest="force", 
                         help="forces overrides of existing files",
                         default=False)
+    parser.add_option("-z", "--zero-tornado",  
+                        action="store_true",  
+                        dest="zero", 
+                        help="forces a controller withoujt any tornado inheritance",
+                        default=False)
     
     controller_name = "None"
     controller_model = "None"
@@ -62,7 +67,7 @@ def main():
             
     controller_name = options.model
     parts_dir = settings.base["parts_dir"]
-    render_controller(controller_name, options.force, parts_dir)
+    render_controller(controller_name, options.force, parts_dir, options.zero)
 
     end = datetime.datetime.now()
     duration = None
@@ -71,14 +76,20 @@ def main():
     print()
     return
     
-def render_controller( name="NO_NAME_GIVEN", force=False,  parts_dir="", prefix_path="./"):
+def render_controller(  name="NO_NAME_GIVEN", force=False,  parts_dir="", 
+                        zero_tornado=False, prefix_path="./"):
+    
     """ generates a controller according to the given options
         @param name: name prefix of the Controller fullname NameController
         @param force: if true: forces overwrtiting existing controllers"""
     
     print("generate_controller: ", name )
     # add the auto generated warning to the outputfile
-    infile = open (os.path.normpath( os.path.join(parts_dir +  "controller.py")), "r")
+    if zero_tornado:
+        infile = open (os.path.normpath( os.path.join(parts_dir +  "zero_tornado_controller.py")), "r")
+    else:
+        infile = open (os.path.normpath( os.path.join(parts_dir +  "controller.py")), "r")
+
     ostr = infile.read()
     infile.close()
     

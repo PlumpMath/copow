@@ -16,25 +16,6 @@ newline = os.linesep
 tab = "    "
 _logger = None
 
-# schema_types dictionary holds the possible document schema types and there copow defaults.
-# defaults can be adjusted by giving a default attribuet in the schema.
-# Format type : default
-schema_types = {
-    "string"    :   "",
-    "text"      :   "",
-    "int"       :   0,
-    "float"     :   0.0,
-    "list"      :   [],
-    "binary"    :   None,
-    "object"    :   None,
-    "date"      :   None,
-    #"id"        :   ObjectId()
-    "id"        :   None,
-    "dict"      :   {},
-    "bool"      :   False,
-    "set"       :   set()   
-}
-
 #
 # (pattern, search, replace) regex english plural rules tuple
 # taken from : http://www.daniweb.com/software-development/python/threads/70647

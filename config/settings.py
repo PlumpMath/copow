@@ -7,8 +7,6 @@ import os.path
 import #APPNAME.uimodules.copow_ui_modules
 import #APPNAME.config.uimodules as uimodules
 
-
-
 base = {
     
     "server"            :   "localhost",
@@ -54,4 +52,23 @@ webserver = {
     "login_url"     : "/login",
     #"base_handler_class"    :   "#APPNAME.controllers.welcome_controller.WelcomeController"
     "ui_modules"    :  uimodules.modules
+}
+
+# schema_types dictionary holds the possible document schema types and there copow defaults.
+# defaults can be adjusted by giving a default attribuet in the schema.
+# Format type : ( default_value, form_uimodule )
+schema_types = {
+    "string"    :   ("", uimodules.modules["form_textinput"]),
+    "text"      :   ("", uimodules.modules["form_textarea"]),
+    "int"       :   (0, uimodules.modules["form_textinput"]),
+    "float"     :   (0.0, uimodules.modules["form_textinput"]),
+    "list"      :   ([], uimodules.modules["form_select"]),
+    "binary"    :   (None, uimodules.modules["form_fileselect"]),
+    "object"    :   (None, uimodules.modules["form_textinput"]),
+    "date"      :   (None, uimodules.modules["form_datepicker"]),
+    #"id"        :  (ObjectId())
+    "id"        :   (None, uimodules.modules["form_textinput"]),
+    "dict"      :   ({}, uimodules.modules["form_textarea"]),
+    "bool"      :   (False, uimodules.modules["form_checkbox"]),
+    "set"       :   (set(), uimodules.modules["form_textinput"])   
 }

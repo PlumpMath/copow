@@ -14,12 +14,9 @@ import imp
 import pymongo
 
 from #APPNAME.lib.db_conn import DBConn
-#from #APPNAME.migrations.schemas.version import version as schema
-#from #APPNAME.migrations.schemas import version_schema as schema_module
-#import #APPNAME.migrations.schemas.version_schema
 from #APPNAME.lib import powlib
 from #APPNAME.lib.powlib import _log
-
+import #APPNAME.config.settings as settings
 
 newline = powlib.newline
 tab = powlib.tab
@@ -67,20 +64,11 @@ class BaseModel(object):
         try:
             """Tries to find the according schema in migrations/schemas/Version.py 
             imports the schema and sets the according properties in this class/instance"""
-            #from atest.migrations.schemas.version_schema import version as schema
-            #from atest.migrations.schemas.version_schema import version_relations as relations
-            #which = "atest.migrations.schemas." + self.modelname + "_schema"
             schema_module = __import__("#APPNAME"+".migrations.schemas." + self.modelname + "_schema", 
                 globals(), locals(), [self.modelname], 0)
-            #app = eval("schema_module." + self.modelname)
-            #app_relations = eval("schema_module." + self.modelname + "_relations")
+
             schema = imp.reload(schema_module)
-            #print("schema:", app)
-            #print("schema_relations:", app_relations)
-            #print("*"*20)
-            #print(schema_module)
-            #print(self.modelname), 
-            #print(schema_module.__dict__.keys())
+        
             self.schema = schema_module.__dict__[self.modelname]
             self.relations = schema_module.__dict__[self.modelname + "_relations"]
         except Exception as e:
@@ -94,10 +82,10 @@ class BaseModel(object):
             #print("column : %s" % (column))
             #type = string.lower(attrs["type"])
             att_type = attrs["type"].lower()
-            if att_type in powlib.schema_types:
+            if att_type in settings.schema_types:
                 #print "setting up property for: %s" % (column)
                 #setting the according attribute and the default value, if any.
-                setattr(self, column, powlib.schema_types[att_type])
+                setattr(self, column, settings.schema_types[att_type])
                 setattr(self, column+"_type", att_type)
             else:
                 raise Exception("no or unknown type given in schema: version_schema.py. Type was: ", att_type)
@@ -251,8 +239,8 @@ class BaseModel(object):
         """
         for elem in self.schema.keys():
             # get the according default type for the attribute 
-            # See: powlib.schema_types
-            default_value = powlib.schema_types[self.schema[elem]["type"].lower()]
+            # See: settings.schema_types
+            default_value = settings.schema_types[self.schema[elem]["type"].lower()]
             setattr(self, elem, default_value)
         print("erased values: ", self.to_json())
         return

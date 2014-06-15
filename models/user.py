@@ -5,12 +5,12 @@
 # 
 #
 
-from atest.lib.db_conn import DBConn
-from atest.migrations.schemas.user_schema import user as schema
-#from atest.models.basemodels.baseuser import BaseUser
-from atest.models.basemodels.base import BaseModel
-#import atest.lib.powlib
-from atest.lib import powlib
+from #APPNAME.lib.db_conn import DBConn
+from #APPNAME.migrations.schemas.user_schema import user as schema
+#from #APPNAME.models.basemodels.baseuser import BaseUser
+from #APPNAME.models.basemodels.base import BaseModel
+#import #APPNAME.lib.powlib
+from #APPNAME.lib import powlib
 
 class User(BaseModel):
     
