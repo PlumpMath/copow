@@ -5,6 +5,7 @@
 import code
 import sys,os, string, pdb
 from bson.objectid import ObjectId
+import json
 
 APPNAME = "#APPNAME"
 
@@ -54,6 +55,19 @@ class Shell(code.InteractiveConsole):
                     print("executing statement: ", statement)
                     #exec statement
                     self.push(statement)
+        std_imports = [
+                "import json",
+                "import lib.powlib",
+                "from lib.db_conn import DBConn",
+                "print('*'*40)",
+                "db=DBConn().get_db()",
+                "db.collection_names()"
+            ]
+        for stmt in std_imports:
+            if not stmt.startswith("print"):
+                print("executing statement: ", stmt)
+            self.push(stmt)
+                
         return
     
     def get_output(self): 
@@ -68,7 +82,7 @@ class Shell(code.InteractiveConsole):
         #print "hey, this is the input: ", line
         # line = filter(line)
         command = False
-        if line == "help":
+        if line == "helpme":
             print("start_save | end_save => save the console session to console_out.txt")
             print("You can use the standard python console help anyway.")
             command = True
@@ -108,7 +122,7 @@ if __name__ == '__main__':
     
     pow_banner = "pow console v0.1 " + os.linesep
     pow_banner += "Using python " + str(sys.version)[:6] + os.linesep
-    pow_banner += "type help to get more info and help on special pow_console commands"
+    pow_banner += "type helpme to get more info and help on special pow_console commands"
      
     sh.interact(pow_banner)
 ## end of http://code.activestate.com/recipes/355319/ }}}
