@@ -12,6 +12,7 @@ import os.path
 import json
 import imp
 import pymongo
+import pprint 
 
 from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.lib import powlib
@@ -85,8 +86,9 @@ class BaseModel(object):
             if att_type in settings.schema_types:
                 #print "setting up property for: %s" % (column)
                 #setting the according attribute and the default value, if any.
-                setattr(self, column, settings.schema_types[att_type])
+                setattr(self, column, settings.schema_types[att_type][0])
                 setattr(self, column+"_type", att_type)
+                setattr(self, column+"_uimodule", settings.schema_types[att_type][1])
             else:
                 raise Exception("no or unknown type given in schema: version_schema.py. Type was: ", att_type)
             if "index" in attrs:
@@ -124,11 +126,15 @@ class BaseModel(object):
         return self.__str__()
 
     def __str__(self):
-        ostr = ""
-        adict = self.to_json()
-        for key in adict:
-            ostr += key + " -> " + str(adict[key]) + os.linesep 
-        return ostr
+        #ostr = ""
+        #adict = self.to_json()
+        #for key in adict:
+        #    ostr += key + " -> " + str(adict[key]) + os.linesep 
+        #return ostr
+        pp = pprint.PrettyPrinter(indent=4)
+        str(pp.pprint(self.to_json()))
+        return ""
+        
 
     def get(self, attribute_name=None, as_str=True):
         """ returns the model attribute with the specified attribute_name"""
@@ -144,7 +150,7 @@ class BaseModel(object):
         param: replace is a list of 2-tuples [(old_str, replace_str),..] """    
         for elem in replace:
             method_str = method_str.replace(elem[0], elem[1])
-
+        print("method_str: ", method_str)
         exec(method_str,globals())
         self.__dict__[method_name] = types.MethodType(foo,self)
         #setattr(self, method_name, foo)
@@ -204,8 +210,8 @@ class BaseModel(object):
             sort=[("field", pymongo.ASCENDING), ("field2", pymongoDESCENDING),..]
             returns: a pymongo.cursor.Cursor
         """
-        print("args: ", *args)
-        print("kwargs: ", **kwargs)
+        #print("args: ", *args)
+        #print("kwargs: ", **kwargs)
         if sort:
             cursor = self.collection.find(*args, as_class=self.__class__, **kwargs).sort(sort)
         else:
@@ -274,6 +280,10 @@ class BaseModel(object):
         ret = self.collection.update({"_id": self._id}, self.to_json(), safe=safe, multi=False )
         return ret
     
+    def from_json(self, json_data):
+        """ makes an self instance from json """
+        return self.set_values(json_data)
+
 
     def to_json(self):
         """ returns a json representation of the schema"""
@@ -311,39 +321,35 @@ class BaseModel(object):
             rel_modelname = rel_model
         else:
             rel_modelname = rel_model.modelname
+        print("rel_modelname: ", rel_modelname)
+        # 0. check if model exists
         try:
-            # 0. check if model exists
-            try:
-                module = importlib.import_module("#APPNAME.models." + rel_modelname)
-            except Exception as e:
-                raise e    
-            rel = self.reload_relations()
-            # 1. check if relation is not already existing
-            if powlib.plural(rel_modelname) in self.relations:
-                raise Exception( "POWError: model %s already has a relation to %s " % (self.modelname, rel_modelname) )
-                return
-            # 2. add list of related model to relations
-            if one_to_one:
-                print("making a 1:1 relation")
-                self.relations[powlib.plural(rel_modelname)] = "has_one"
-                self.schema[rel_modelname] = { "type" : "dictionary" }
-            else:
-                print("making a 1:many relation")
-                self.relations[powlib.plural(rel_modelname)] = "has_many"
-                self.schema[powlib.plural(rel_modelname)] = { "type" : "list" }
+            module = importlib.import_module("#APPNAME.models." + rel_modelname)
+        except Exception as e:
+            raise e    
+        rel = self.reload_relations()
+        # 1. check if relation is not already existing
+        if powlib.plural(rel_modelname) in self.relations:
+            raise Exception( "POWError: model %s already has a relation to %s " % (self.modelname, rel_modelname) )
+            return
+        # 2. add list of related model to relations
+        if one_to_one:
+            print("creating a 1:1 relation")
+            self.relations[powlib.plural(rel_modelname)] = "has_one"
+            self.schema[rel_modelname] = { "type" : "object" }
+        else:
+            print("creating a 1:many relation")
+            self.relations[powlib.plural(rel_modelname)] = "has_many"
+            self.schema[powlib.plural(rel_modelname)] = { "type" : "list" }
 
-                con = __import__('#APPNAME.lib.rel_modeL_methods', globals(), locals(), ["rel_methods"], 0)
-                find_one_str = con["find_one"]
-                self.generate_method(find_one, "find_one_" + self.modelname, [("#PLURAL_RELMODEL", self.modelname_plural)])
+            con = __import__('#APPNAME.lib.rel_model_methods', globals(), locals(), ["rel_methods"], 0)
+            find_one_str = con.rel_methods["find_one"]
+            self.generate_method( "find_one_" + rel_modelname, find_one_str.strip(), [("#PLURAL_RELMODEL", self.modelname_plural)])
 
-            try:
-                self.create_schema()
-            except Exception as e:
-                raise e
-        except ImportError as error:
-            # Display error message
-            print("POWError: unable to import module: %s, error msg: %S " % (rel_modelname, error.message))
-            raise error
+        try:
+            self.create_schema()
+        except Exception as e:
+            raise e
 
     def has_one(self, model, embedd=True):
         """ creates an (currently embedded) one:one relation between this (self) and model."""

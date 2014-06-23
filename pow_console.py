@@ -56,6 +56,9 @@ class Shell(code.InteractiveConsole):
                     #exec statement
                     self.push(statement)
         std_imports = [
+                "from bson.objectid import ObjectId",
+                "import pprint",
+                "pp=pprint.PrettyPrinter(indent=4)",
                 "import json",
                 "import lib.powlib",
                 "from lib.db_conn import DBConn",
@@ -67,7 +70,7 @@ class Shell(code.InteractiveConsole):
             if not stmt.startswith("print"):
                 print("executing statement: ", stmt)
             self.push(stmt)
-                
+        print("You have a pretty printer pp.pprint(astr)")
         return
     
     def get_output(self): 
