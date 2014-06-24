@@ -49,17 +49,24 @@ class BaseModel(object):
 
 
     def setup_relations(self):
+        self.related_models = {}
         for rel_model in list(self.relations.keys()):
             # check relation type
             print("setting up relation for: %s " % (rel_model))
+            
             if self.relations[rel_model] == "has_many":
-                mod = importlib.import_module(
-                        "#APPNAME.models." + powlib.singularize(rel_model) 
-                        )
-                mod = mod.__dict__[powlib.p2c(rel_model)]
-                self.related_models[rel_model] = mod
+                rel_model = powlib.singularize(rel_model)
+                module = importlib.import_module("#APPNAME.models." + rel_model )
+                #print(module)
+                #print(dir(module))
+                rel_model_instance = getattr(module, str.capitalize(rel_model) )()
+                self.related_models[rel_model] = rel_model_instance
+                self.generate_accessor_methods(rel_model)
+            
+            elif self.relations[rel_model] == "has_one":
+                pass
             else:
-                raise Exception("unknown relation: %s ") %(self.relations[rel_mdoel])
+                raise Exception("unknown relation: %s ") %(rel_model)
 
     def load_schema(self):
         try:
@@ -108,7 +115,7 @@ class BaseModel(object):
             else:
                 setattr(self, column+"_has_validation", False)
             
-        #self.setup_relations()
+        self.setup_relations()
 
     
     def is_valid(self):
@@ -155,35 +162,37 @@ class BaseModel(object):
         self.__dict__[method_name] = types.MethodType(foo,self)
         #setattr(self, method_name, foo)
 
-    def generate_accessor_methods(self):
+    def generate_accessor_methods(self, rel_model_name):
         """generates the convenient getAttribute() and setAttribute Methods
         and sets them as accessors for this models Attributes """
-        for item in list(self.schema.keys()):
-            mstr = ""
-            self.has_accessor_methods = True
-            #getter
-            mstr = ""
-            method_name = "get_"+ item
-            setter = method_name
-            tmp_meth_name = "foo"
-            mstr +=     "def foo(self):" + newline
-            mstr += tab + "return self." + str(item) + os.linesep
-            exec(mstr,globals())
-            self.__dict__[method_name] = types.MethodType(foo,self)
-            #setattr(self, method_name, foo)
-            
-            
-            # setter
-            mstr = ""
-            method_name = "set_"+ item
-            getter = method_name
-            tmp_meth_name = "foo"
-            mstr +=     "def foo(self, value):" + newline
-            mstr += tab + "self." + str(item) + " = value " + newline
-            #print mstr
-            exec(mstr,globals())
-            self.__dict__[method_name] = types.MethodType(foo,self)
-            #setattr(self, method_name, foo)
+        
+        # prepare the tmp attribute for the full models of a relation.
+        setattr(self, powlib.pluralize(rel_model_name) +"_full", [])
+        mstr = ""
+        #add rel model
+        mstr = ""
+        method_name = "add_"+ rel_model_name
+        tmp_meth_name = "foo"
+        mstr +=     "def foo(self, model):" + newline
+        mstr += tab + "self." + powlib.pluralize(rel_model_name) +".append(model._id) "+ os.linesep
+        mstr += tab + "self." + powlib.pluralize(rel_model_name) +"_full.append(model) "+ os.linesep
+        mstr += tab + "return self." + powlib.pluralize(rel_model_name) + os.linesep
+        exec(mstr,globals())
+        self.__dict__[method_name] = types.MethodType(foo,self)
+        #setattr(self, method_name, foo)
+        
+        
+        # get a rel model
+        mstr = ""
+        method_name = "get_"+ powlib.pluralize(rel_model_name)
+
+        tmp_meth_name = "foo"
+        mstr +=     "def foo(self):" + newline
+        mstr += tab + "return self." + powlib.pluralize(rel_model_name) +"_full" + os.linesep
+        #print mstr
+        exec(mstr,globals())
+        self.__dict__[method_name] = types.MethodType(foo,self)
+        #setattr(self, method_name, foo)
         
 
     def find_by(self, field, value):
@@ -309,47 +318,51 @@ class BaseModel(object):
         self.relations = schema_module.__dict__[self.modelname + "_relations"]
         return self.relations
 
-    def has_many(self, rel_model, embedd=True, one_to_one=False):
+    def has_many(self, rel_model, one_to_one=False ):
         """ creates an (currently embedded) one:many relation between this (self) and model.
-            0. check if model exists 
-            1. check if relations is not already existing
-            2. a list of models is added to self.schema (migrations/schemas)
-            3. add the according relation to model_relations dictionary in migrations/schemas
-            If one_to_one is set to true this will create a 1:1 relation.
+            see doc in source below.
         """
+
         if type(rel_model) == str:
-            rel_modelname = rel_model
+            rel_modelname = powlib.singularize(rel_model)
         else:
             rel_modelname = rel_model.modelname
         print("rel_modelname: ", rel_modelname)
-        # 0. check if model exists
-        try:
-            module = importlib.import_module("#APPNAME.models." + rel_modelname)
-        except Exception as e:
-            raise e    
-        rel = self.reload_relations()
-        # 1. check if relation is not already existing
+        # 0. check if relation is not already existing
         if powlib.plural(rel_modelname) in self.relations:
             raise Exception( "POWError: model %s already has a relation to %s " % (self.modelname, rel_modelname) )
             return
+        # 1. check if model exists
+        try:
+            module = importlib.import_module("#APPNAME.models." + rel_modelname )
+            #print(module)
+            #print(dir(module))
+            rel_model_instance = getattr(module, str.capitalize(rel_modelname) )()
+            #print(rel_model_instance)
+        except Exception as e:
+            raise e    
+        
+        rel = self.reload_relations()
+        
         # 2. add list of related model to relations
-        if one_to_one:
-            print("creating a 1:1 relation")
-            self.relations[powlib.plural(rel_modelname)] = "has_one"
-            self.schema[rel_modelname] = { "type" : "object" }
-        else:
-            print("creating a 1:many relation")
-            self.relations[powlib.plural(rel_modelname)] = "has_many"
-            self.schema[powlib.plural(rel_modelname)] = { "type" : "list" }
-
-            con = __import__('#APPNAME.lib.rel_model_methods', globals(), locals(), ["rel_methods"], 0)
-            find_one_str = con.rel_methods["find_one"]
-            self.generate_method( "find_one_" + rel_modelname, find_one_str.strip(), [("#PLURAL_RELMODEL", self.modelname_plural)])
-
+        print(" creating the according object attributes:")
+        print("-"*50)
+        print("  ++ attribute for a 1:n relation : ", self.modelname + "." + rel_modelname + " type: []")
+        self.relations[powlib.plural(rel_modelname)] = "has_many"
+        self.schema[powlib.plural(rel_modelname)] = { "type" : "list" }
         try:
             self.create_schema()
         except Exception as e:
             raise e
+
+        print("  ++ attribute for a 1:1 relation : ", rel_modelname + "." + self.modelname + "_id type: ObjectId")
+        rel_model_instance.relations[self.modelname] ="has_one"
+        rel_model_instance.schema[self.modelname+"_id"] = { "type" : "ObjectId" }
+        try:
+            rel_model_instance.create_schema()
+        except Exception as e:
+            raise e
+        self.generate_accessor_methods(rel_modelname)
 
     def has_one(self, model, embedd=True):
         """ creates an (currently embedded) one:one relation between this (self) and model."""
@@ -459,9 +472,10 @@ class BaseModel(object):
             ostr += json.dumps(schema, indent=4) + powlib.newline 
             ostr += self.modelname + "_relations = "
             ostr += json.dumps(self.relations, indent=4)
-            #print ostr
+            print(ostr)
             ofile.write(ostr)
             ofile.close()
+            self.load_schema()
             self.setup_properties()
         except Exception as e:
             raise e

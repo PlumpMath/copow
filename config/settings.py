@@ -4,6 +4,7 @@
 #
 import os
 import os.path
+from bson.objectid import ObjectId
 import #APPNAME.uimodules.copow_ui_modules
 import #APPNAME.config.uimodules as uimodules
 
@@ -66,7 +67,7 @@ schema_types = {
     "binary"    :   (None, uimodules.modules["form_fileselect"]),
     "object"    :   (None, uimodules.modules["form_textinput"]),
     "date"      :   (None, uimodules.modules["form_datepicker"]),
-    #"id"        :  (ObjectId())
+    "objectid"  :   (ObjectId(), uimodules.modules["form_textinput"]),
     "id"        :   (None, uimodules.modules["form_textinput"]),
     "dict"      :   ({}, uimodules.modules["form_textarea"]),
     "bool"      :   (False, uimodules.modules["form_checkbox"]),
