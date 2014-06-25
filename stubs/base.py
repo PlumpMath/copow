@@ -52,7 +52,7 @@ class BaseModel(object):
         self.related_models = {}
         for rel_model in list(self.relations.keys()):
             # check relation type
-            print("setting up relation for: %s " % (rel_model))
+            print("  -> setting up relation for: %s " % (rel_model))
             
             if self.relations[rel_model] == "has_many":
                 rel_model = powlib.singularize(rel_model)
@@ -61,9 +61,9 @@ class BaseModel(object):
                 #print(dir(module))
                 rel_model_instance = getattr(module, str.capitalize(rel_model) )()
                 self.related_models[rel_model] = rel_model_instance
-                self.generate_accessor_methods(rel_model)
+                self.generate_accessor_methods(rel_model_instance)
             
-            elif self.relations[rel_model] == "has_one":
+            elif self.relations[rel_model] == "belongs_to":
                 pass
             else:
                 raise Exception("unknown relation: %s ") %(rel_model)
@@ -162,10 +162,14 @@ class BaseModel(object):
         self.__dict__[method_name] = types.MethodType(foo,self)
         #setattr(self, method_name, foo)
 
-    def generate_accessor_methods(self, rel_model_name):
+    def generate_accessor_methods(self, rel_model):
         """generates the convenient getAttribute() and setAttribute Methods
         and sets them as accessors for this models Attributes """
-        
+        #print(rel_model)
+        #print(type(rel_model))
+        #print(dir(rel_model))
+
+        rel_model_name = rel_model.modelname
         # prepare the tmp attribute for the full models of a relation.
         setattr(self, powlib.pluralize(rel_model_name) +"_full", [])
         mstr = ""
@@ -176,6 +180,8 @@ class BaseModel(object):
         mstr +=     "def foo(self, model):" + newline
         mstr += tab + "self." + powlib.pluralize(rel_model_name) +".append(model._id) "+ os.linesep
         mstr += tab + "self." + powlib.pluralize(rel_model_name) +"_full.append(model) "+ os.linesep
+
+        mstr += tab + "setattr(rel_model_instance, 'self.modelname' + '_id', self._id) "+ os.linesep
         mstr += tab + "return self." + powlib.pluralize(rel_model_name) + os.linesep
         exec(mstr,globals())
         self.__dict__[method_name] = types.MethodType(foo,self)
@@ -263,17 +269,17 @@ class BaseModel(object):
     def save(self, safe=True):
         """ Saves the object. Results in insert if object wasnt in the db before,
             results in update otherwise"""
-        #d = self.to_json()
-        #d["last_updated"] = powlib.get_time()
-        #self._id = self.collection.save(d,  safe=safe)
-        self._id = self.insert(safe=safe)
+        d = self.to_json()
+        d["last_updated"] = powlib.get_time()
+        self._id = self.collection.save(d,  safe=safe)
+        #self._id = self.insert(safe=safe)
         return self._id
 
     def insert(self, safe=True):
         """ Uses pymongo insert directly"""
         d = self.to_json()
         d["last_updated"] = powlib.get_time()
-        d["created"] = powlib.get_time()
+        #d["created"] = powlib.get_time()
         del d["_id"]
         self._id = self.collection.insert(d, safe=safe)
         return self._id
@@ -327,7 +333,7 @@ class BaseModel(object):
             rel_modelname = powlib.singularize(rel_model)
         else:
             rel_modelname = rel_model.modelname
-        print("rel_modelname: ", rel_modelname)
+        print("  rel_modelname: ", rel_modelname)
         # 0. check if relation is not already existing
         if powlib.plural(rel_modelname) in self.relations:
             raise Exception( "POWError: model %s already has a relation to %s " % (self.modelname, rel_modelname) )
@@ -356,13 +362,13 @@ class BaseModel(object):
             raise e
 
         print("  ++ attribute for a 1:1 relation : ", rel_modelname + "." + self.modelname + "_id type: ObjectId")
-        rel_model_instance.relations[self.modelname] ="has_one"
+        rel_model_instance.relations[self.modelname] ="belongs_to"
         rel_model_instance.schema[self.modelname+"_id"] = { "type" : "ObjectId" }
         try:
             rel_model_instance.create_schema()
         except Exception as e:
             raise e
-        self.generate_accessor_methods(rel_modelname)
+        self.generate_accessor_methods(rel_model_instance)
 
     def has_one(self, model, embedd=True):
         """ creates an (currently embedded) one:one relation between this (self) and model."""
@@ -467,12 +473,12 @@ class BaseModel(object):
             ostr = self.modelname + " = "
             schema = self.schema
             schema["last_updated"] = { "type" :  "date"  }
-            schema["created"] = { "type" :  "date"  }
-            schema["_id"] = { "type" :  "id"  }
+            #schema["created"] = { "type" :  "date"  }
+            schema["_id"] = { "type" :  "ObjectId"  }
             ostr += json.dumps(schema, indent=4) + powlib.newline 
             ostr += self.modelname + "_relations = "
             ostr += json.dumps(self.relations, indent=4)
-            print(ostr)
+            #print(ostr)
             ofile.write(ostr)
             ofile.close()
             self.load_schema()
