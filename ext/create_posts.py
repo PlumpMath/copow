@@ -9,14 +9,11 @@ from atest.models.post import Post
 
 if __name__ == "__main__":
 	p = Post()
-	
-	p.schema
+	print(p.to_json())
 	
 	for i in range(0,10):
 		p.author = "klaas"
-		p.content = """
-				Lorem ipsum dolor sit amet, ...
-				"""
+		p.content = """Lorem ipsum dolor sit amet, ..."""
 		p.title = "Breaking News " + str(i)
-		p.save()
+		p.create()
 		

@@ -9,7 +9,7 @@ copow_log = {
         "type": "Text"
     },
     "_id" :  { 
-        "type" : "id"  
+        "type" : "objectid"  
     }
 }
 

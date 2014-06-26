@@ -72,28 +72,28 @@ if __name__ == "__main__":
     v.long_name = "51c45aab45fb9f13048dbe2d_version"
     v.comment ="copow version collection"
     v.version = 1
-    v.save()
+    v.create()
 
     v.environment = env
     v.short_name = "app"
     v.long_name = "51c1965714c9b612bc20b95a_app"
     v.comment ="copow app collection"
     v.version = 2
-    v.save()
+    v.create()
 
     v.environment = env
     v.short_name = "copow_log"
     v.long_name = "5390626945fb9f1d3c184a15_copow_log"
     v.comment ="copow log collextion"
     v.version = 3
-    v.save()
+    v.create()
 
     v.environment = env
     v.short_name = "user"
     v.long_name = "539a229b56031a0d30c6410e_user"
     v.comment ="copow user collection"
     v.version = 4
-    v.save()
+    v.create()
 
     # setting up the app-db
     # 

@@ -114,7 +114,7 @@ class BaseModel(object):
                 setattr(self, column+"_has_validation", True)
             else:
                 setattr(self, column+"_has_validation", False)
-            
+        
         self.setup_relations()
 
     
@@ -272,6 +272,7 @@ class BaseModel(object):
         d = self.to_json()
         d["last_updated"] = powlib.get_time()
         self._id = self.collection.save(d,  safe=safe)
+        print("saved: ", self.modelname, " id: ",str(self._id))
         #self._id = self.insert(safe=safe)
         return self._id
 
@@ -282,6 +283,7 @@ class BaseModel(object):
         #d["created"] = powlib.get_time()
         del d["_id"]
         self._id = self.collection.insert(d, safe=safe)
+        print("inserted: ", self.modelname, " id: ", str(self._id))
         return self._id
         
     def create(self):
@@ -293,6 +295,7 @@ class BaseModel(object):
             Syntax: db.test.update({"x": "y"}, {"$set": {"a": "c"}}) """
         #ret = self.collection.update(*args, **kwargs)
         ret = self.collection.update({"_id": self._id}, self.to_json(), safe=safe, multi=False )
+        print("updated: ", self.modelname, " id: ", str(self._id))
         return ret
     
     def from_json(self, json_data):

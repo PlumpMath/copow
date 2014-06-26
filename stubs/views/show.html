@@ -14,12 +14,14 @@
     <div class="panel-heading">this is the show view: </div>
 
     <table class="table">
-        <tr>
-            {% for att in result.schema.keys() %}
+        
+        {% for att in result.schema.keys() %}
+            <tr>
               <td>{{ att }}</td>
               <td>{{ escape(result.get(att)) }}</td>
-            {% end %}
-        </tr>
+            </tr>
+        {% end %}
+    
     </table>
 
     {% module form_select(model=result, attribute="title") %}

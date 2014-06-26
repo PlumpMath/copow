@@ -1,12 +1,9 @@
 user = {
     "_id": {
-        "type": "id"
+        "type": "objectid"
     }, 
     "email": {
         "type": "string"
-    }, 
-    "created": {
-        "type": "date"
     }, 
     "firstname": {
         "type": "string"
@@ -23,5 +20,6 @@ user = {
     "last_updated": {
         "type": "date"
     }
-}
+}
+
 user_relations = {}

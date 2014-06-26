@@ -11,10 +11,8 @@ version = {
     "environment"   :    { "type"    : "Text" },
     "comment"       :    { "type"    : "Text" },
     "version"       :    { "type"    : "int"  },
-    
-    "created"       :    { "type"    : "date" },
     "last_updated"  :    { "type"    : "date" },
-    "_id"               :      { "type" : "id"  } 
+    "_id"               :      { "type" : "objectid"  } 
 }
 
 
