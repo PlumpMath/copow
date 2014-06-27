@@ -32,9 +32,16 @@ def main():
                       dest="force", 
                       help="forces overrides of existing files",
                       default=False)
+    parser.add_option("-n", "--name",  
+                      action="store",  
+                      type="string",
+                      dest="name", 
+                      help="define a specific template to be generated only",
+                      default="None")
 
     (options, args) = parser.parse_args()
-    #print options
+    print(options)
+    print(args)
     
 
     start = None
@@ -51,7 +58,7 @@ def main():
                 "You must at least specify a model by giving -m <model>."
             )
 
-    generate_scaffold(options.model, force=options.force)
+    generate_scaffold(options.model, force=options.force, name=options.name)
 
 
     end = datetime.datetime.now()
@@ -60,7 +67,7 @@ def main():
     print(" generated scaffolds in (" + str(duration) + ")")
 
 
-def generate_scaffold( modelname, force=False ):
+def generate_scaffold( modelname, force=False, name=None):
     """
         Generate the vies scaffolding for a given model. 
         Templates can be found in stubs/templates. 
@@ -68,8 +75,15 @@ def generate_scaffold( modelname, force=False ):
     """
     #views = ["create", "create_form","list", "show", "update", "update_form", "update_all", "delete" ]
     
-    views = ["list", "show", "echo", "create_form"]
-    
+    views = ["list", "show", "echo", "create_form", "update_form"]
+    if name != "None":
+        if name in views:
+            # only render the specified template
+            views = [name]
+        else:
+            print("Name must be one of: ", str(views))
+            sys.exit()
+
     for view in views:
         template_in_path = os.path.join(os.path.normpath(settings.base["view_parts_dir"]), view + ".html")
         view_out_path = os.path.join("./", "views")

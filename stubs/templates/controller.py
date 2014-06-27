@@ -16,6 +16,7 @@ import tornado.web
 import os
 from #APPNAME.controllers.base_controller import BaseController
 from  #APPNAME.models.#MODELNAME import #MODELCLASSNAME
+import #APPNAME.config.settings as settings
 from bson.objectid import ObjectId
 
 class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
@@ -51,7 +52,11 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """ called before any http get/pust method is called """
         pass
 
-    def initialize(self, method=None, params=[]):
+    def initialize(self,    method_get=None, 
+                            method_put=None,
+                            method_post=None,
+                            method_delete=None,
+                            params=[]):
         """
             The paramter method is set to the value defined in the dict
             in routes->rest_routes.
@@ -60,13 +65,16 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             which is specified as the 3rd parameter in rest_routes.
             
         """
-        self.method = method
+        self.method_get = method_get
+        self.method_put = method_put
+        self.method_post = method_post
+        self.method_delete = method_delete
         self.params = params
         #print("self.method: ", self.method, "  ->  ", self.params)
 
     def get(self, *args, **kwargs):
         #print("self.method: ", method)
-        if self.method == "echo":
+        if self.method_get == "echo":
             print("returning ECHO")
             return self.echo(*args,**kwargs)
         else:
@@ -84,14 +92,18 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         return self.render("#CONTROLLER_LOWER_NAME_echo.html", request=self.request, 
             result=None, formats=result_formats)
 
-    def show_html(self, *args, id=None, **kwargs):
+    def show_html(self, id=None, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/GET /#CONTROLLERNAME/id
             CRUD: READ
             show one #MODELNAME
         """
-        result = self.model.find_one()
-        return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request, result=result)
+        print("get *args: ", args)
+        print("get kwargs: ", kwargs)
+        print("show_html oid: ", id)
+        result = self.model.find({"_id" : ObjectId(str(id)) })
+        # if result.count()=1 self.model ist automatically set to result[0]
+        return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request, result=self.model)
 
     def show_json(self, oid, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
@@ -164,13 +176,20 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """
         return self.render("#CONTROLLER_LOWER_NAME_update.html", request=self.request)        
 
-    def update_form(self, *args, id=None, **kwargs):
+    def update_form(self, id=None, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/POST /#CONTROLLERNAME 
             CRUD: UPDATE 
             returns the form to update a new #MODELNAME
         """
-        return self.render("#CONTROLLER_LOWER_NAME_update_form.html", request=self.request)        
+        print("get *args: ", args)
+        print("get kwargs: ", kwargs)
+        print("update_form oid: ", id)
+        result = self.model.find({"_id" : ObjectId(str(id)) })
+        # if result.count()=1 self.model ist automatically set to result[0]
+        return self.render("#CONTROLLER_LOWER_NAME_update_form.html", 
+                request=self.request, result=self.model, types=settings.schema_rypes
+        )        
 
     def update_all(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
