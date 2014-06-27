@@ -11,7 +11,7 @@
 {% block content %}
     <div class="panel panel-default">
     <!-- Default panel contents -->
-    <div class="panel-heading">this is the show view: </div>
+    <div class="panel-heading"><b> This is the show view: </b></div>
 
     <table class="table">
         
@@ -21,7 +21,26 @@
               <td>{{ escape(result.get(att)) }}</td>
             </tr>
         {% end %}
-    
+         <tr>
+                <td>
+                    <div class="alert alert-info" role="alert">
+                        Actions:
+                    </div>
+                </td>
+                <td><div class="alert alert-info" role="alert">
+                        <span class="glyphicon glyphicon-edit"></span>
+                        <a href="/{{result.modelname}}/{{result._id}}/update">edit</a> 
+                    </div>
+                </td>
+
+            </tr>
+            <tr>
+                <td>To get this by using curl just do on the command line</td>
+                <td>
+                    curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
+                </td>
+
+            </tr>
     </table>
 
     {% module form_select(model=result, attribute="title") %}

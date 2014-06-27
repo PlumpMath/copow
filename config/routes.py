@@ -31,15 +31,30 @@ import #APPNAME.controllers.error_controller
 #    .#APPNAME.controllers.controllername_python.ClassName
 
 rest_routes = {
-        r"/#controller"                                :     ("#controller_cls", dict(  method="list", 
+        r"/#controller"                                :     ("#controller_cls", dict(  method_get="list", 
+                                                                                        method_post=None, 
+                                                                                        method_put=None, 
+                                                                                        method_delete=None, 
                                                                                         params=[])),
-        r"/#controller/echo"                           :     ("#controller_cls", dict(  method="echo", 
+        r"/#controller/echo"                           :     ("#controller_cls", dict(  method_get="echo", 
+                                                                                        method_post=None, 
+                                                                                        method_put=None, 
+                                                                                        method_delete=None, 
                                                                                         params=[])),
-        r"/#controller/create"                         :     ("#controller_cls", dict(  method="create_form", 
+        r"/#controller/create"                         :     ("#controller_cls", dict(  method_get="create_form", 
+                                                                                        method_post=None, 
+                                                                                        method_put=None, 
+                                                                                        method_delete=None, 
                                                                                         params=[])),
-        r"/#controller/([0-9a-zA-Z]+)"                 :     ("#controller_cls", dict(  method="show", 
+        r"/#controller/([0-9a-zA-Z]+)"                 :     ("#controller_cls", dict(  method_get="show", 
+                                                                                        method_post="update", 
+                                                                                        method_put="create", 
+                                                                                        method_delete="delete", 
                                                                                         params=["id"])),
-        r"/#controller/([0-9a-zA-Z]+)/update"          :     ("#controller_cls", dict(  method="update_form", 
+        r"/#controller/([0-9a-zA-Z]+)/update"          :     ("#controller_cls", dict(  method_get="update_form", 
+                                                                                        method_post=None, 
+                                                                                        method_put=None, 
+                                                                                        method_delete=None, 
                                                                                         params=["id"]))
 }
 

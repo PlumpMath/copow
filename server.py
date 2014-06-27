@@ -83,24 +83,28 @@ def init_controllers(app):
 					else:
 						handler_list.append((abs_route, routes.rest_routes[route]))
 
-
-	print(handler_list)
 	app.add_handlers(".*$", handler_list)
-	print("-"*50)
-	print("| routes apply to the following semantic: ")
-	print("-"*50)
-	print("  -> GET 	/controller 		   =>	controller.list()")
-	print("  -> GET 	/controller/id		   =>	controller.show(id)	")
-	print("  -> GET 	/controller/id/update  =>	controller.update_form(id)")
-	print("  -> POST 	/controller 		   =>	HTTP 501, not implemented.")
-	print("  -> POST 	/controller/id		   =>	controller.update(id)")
-	print("  -> DELETE 	/controllers		   =>	controller.delete_all()")
-	print("  -> DELETE 	/controller/id		   =>	controller.delete(id)")
-	print("  -> PUT 	/controllers		   =>	controller.create()")
-	print("  -> PUT 	/controller/id		   =>	HTTP 501, not implemented ")
-	print("-"*50)
-	print("| The Standard REST methods require json as input format. (PUT & POST) ")
-	print("-"*50)
+	width=80
+	print("-"*width)
+	print("| RESTful routes semantic: (defined in routes.py")
+	print("-"*width)
+	print('{0:40} {1:8} {2:15} {3:15}'.format(
+		"Route", "HTTP", "Method", "Parameters"
+		)
+	)
+	print(""*width)
+	for route in routes.rest_routes.keys():
+		for method in ["GET", "POST", "PUT", "DELETE"]:
+		 	print('{0:40} {1:8} {2:15} {3:15}'.format(
+		 			route,
+		 			method,
+		 			routes.rest_routes[route][1]["method_"+method.lower()],
+		 			routes.rest_routes[route][1]["params"]	
+		 		)
+		 	)
+	print("-"*width)
+	print("| The Standard REST methods input and output format is json.")
+	print("-"*width)
 if __name__ == "__main__":
 	tornado.options.parse_command_line()
 	app = tornado.web.Application(handlers=copow_handlers, **copow_settings)
