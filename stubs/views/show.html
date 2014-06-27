@@ -25,4 +25,8 @@
     </table>
 
     {% module form_select(model=result, attribute="title") %}
+
+    To get this by using curl just do on the command line
+    <hr>
+    curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
 {% end %}

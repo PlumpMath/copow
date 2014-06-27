@@ -16,9 +16,11 @@
 
     <table class="table">
         <thead>
-            {% for key in result[0].schema.keys() %}
+            {% set mod = result[0] %}
+            {% for key in mod.schema.keys() %}
                 <th>{{ escape(key) }}</th>
             {% end %}
+            <th>action</th>
         </thead>
         <tbody>
             {% for model in result %}
@@ -26,11 +28,16 @@
                     {% for att in model.schema.keys() %}
                       <td>{{ escape(model.get(att)) }}</td>
                     {% end %}
+                    <td><a href="/{{model.modelname}}/{{model._id}}">show</a> </td>
                 </tr>
             {% end %}
         </tbody>
     </table>
     Module call test:
     <hr>
+    To get this by using curl just do on the command line
+    <hr>
+    curl -i -H "Accept: application/json" http://localhost:8000/{{mod.modelname}}
+
     {% module form_select(model=result, attribute="title") %}
 {% end %}

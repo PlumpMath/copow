@@ -96,14 +96,28 @@ class BaseController(tornado.web.RequestHandler):
             and a call to domain:port/controller/
             HTTP POST       => will call controller.create()
         """
-        if args:
-            # POST /controller/id   => [returns HTTP 501]
-            self.set_status(501)
-            self.render("error.html")
-        else:
-            # POST /controller/     => its create
-            id = args[0]
-            return self.create(id)
+        print("post *args: ", args)
+        print("post kwargs: ", kwargs)
+        print("self.method: ", self.method_post)
+        print("self.params: ", self.params)
+        # Which Output formats do we support ?
+        supported_result_formats = settings.base["result_formats"]
+        # Which Output formats does the client accept ?
+        accepted_result_formats = self.request.headers.get("Accept").split(",")
+        
+        # try to match them. order matters. 1st come, 1st servec
+        for format in accepted_result_formats:
+            if format in supported_result_formats.keys():
+                # call the defined function (suffix)
+                print("requested result formats: ", accepted_result_formats)
+                print("returning: ", format)
+                if self.method in settings.base["format_dependend_methods"]:
+                    return getattr(self,self.method + supported_result_formats[format])(*args, **kwargs)
+                else:
+                    return getattr(self,self.method)(*args, **kwargs)
+                break
+        #raise tornado.web.HTTPError(406)
+        self.send_error(status_code=406, **kwargs)
 
     def put():
         """
