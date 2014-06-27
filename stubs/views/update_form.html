@@ -1,0 +1,61 @@
+<!-- copow / pythononwheels list view template -->
+<!-- for scaffolding views -->
+<!-- www.pythononwheels.org -->
+
+
+
+{% extends "layouts/main_layout.html" %}
+
+{# this will be rendered in the content block of main.html view view #}
+{% set model = result %}
+
+<script>
+    $(document).ready(function() {
+        $.ajax({
+                type: "POST",
+                url: hb_base_url + "consumer",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    first_name: $("#namec").val(),
+                    last_name: $("#surnamec").val(),
+                    email: $("#emailc").val(),
+                    mobile: $("#numberc").val(),
+                    password: $("#passwordc").val()
+                }),
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+    });
+</script>
+
+{% block content %}
+
+    <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading"><b> This is the show view: </b></div>
+
+    <form role="form" action="/">
+        {% for att in model.schema.keys() %}
+            <div class="form-group">
+                <label for="{{att}}">{{att}}</label>
+                <input  type="{{att}}" 
+                        class="form-control" 
+                        id="exampleInputEmail1" 
+                        placeholder="Enter email">
+            </div>
+        {% end %}
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+    
+  
+
+    {% module form_select(model=result, attribute="title") %}
+
+    To get this by using curl just do on the command line
+    <hr>
+    curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
+{% end %}
