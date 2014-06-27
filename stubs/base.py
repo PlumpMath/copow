@@ -52,7 +52,7 @@ class BaseModel(object):
         self.related_models = {}
         for rel_model in list(self.relations.keys()):
             # check relation type
-            print("  -> setting up relation for: %s " % (rel_model))
+            #print("  -> setting up relation for: %s " % (rel_model))
             
             if self.relations[rel_model] == "has_many":
                 rel_model = powlib.singularize(rel_model)
@@ -336,7 +336,7 @@ class BaseModel(object):
             rel_modelname = powlib.singularize(rel_model)
         else:
             rel_modelname = rel_model.modelname
-        print("  rel_modelname: ", rel_modelname)
+        print(" rel_modelname: ", rel_modelname)
         # 0. check if relation is not already existing
         if powlib.plural(rel_modelname) in self.relations:
             raise Exception( "POWError: model %s already has a relation to %s " % (self.modelname, rel_modelname) )
@@ -380,6 +380,7 @@ class BaseModel(object):
     def remove_relation(self, rel_model):
         """ tries to find the given relation by its name and deltes the relation entry and the
             instance and class attribute, as well."""
+        print("in remove_relation: ", self)
         if type(rel_model) == str:
             rel_modelname = rel_model
         else:
@@ -388,15 +389,30 @@ class BaseModel(object):
             # 0. check if model exists
             rel = self.reload_relations()
             # 1. check if relation is existing
-            if powlib.plural(rel_modelname) not in self.relations:
+            if powlib.plural(rel_modelname) in self.relations or rel_modelname in self.relations:
+                pass
+            else:    
                 raise Exception( "POWError: model %s already norelation to %s " % (self.modelname, rel_modelname) )
             # 2. remove the relation 
-            if self.relations[powlib.plural(rel_modelname)] == "has_one":
-                del self.relations[powlib.plural(rel_modelname)]
-                del self.schema[rel_modelname]
-            elif self.relations[powlib.plural(rel_modelname)] == "has_many":
+            # has_many
+            if powlib.plural(rel_modelname) in self.relations.keys():
+                print("removing relation (has_many): ", self.modelname, " -> ", rel_modelname)
                 del self.relations[powlib.plural(rel_modelname)]
                 del self.schema[powlib.plural(rel_modelname)]
+                # delete the belongs to in the rel_model as well
+                try:
+                    module = importlib.import_module("#APPNAME.models." + rel_modelname )
+                    rel_model_instance = getattr(module, str.capitalize(rel_modelname) )()
+                    print("removing relation (belongs_to): ", rel_modelname, " -> ", self.modelname)
+                    rel_model_instance.remove_relation(self)
+                    rel_model_instance.create_schema()
+                except Exception as e:
+                    raise e    
+            # belongs_to
+            elif rel_modelname in self.relations.keys():
+                print("actually del the relation (belongs_to): ", self.modelname, " -> ", rel_modelname)
+                del self.relations[rel_modelname]
+                del self.schema[rel_modelname+"_id"]
             # write the new schema and relation json.
             try:
                 self.create_schema()
