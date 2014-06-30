@@ -19,7 +19,6 @@
             alert('aha aha aha' );
         });
     });
-
 </script>
 
 
@@ -48,5 +47,6 @@
 
     To get this by using curl just do on the command line
     <hr>
-    curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
+    curl -i -X POST --data "id=1234"  --header "Content-Type:application/json" 
+    http://localhost:8000/{{result.modelname}}/{{result._id}}/update
 {% end %}
