@@ -16,9 +16,8 @@ from #APPNAME.models import version
 import #APPNAME.lib.powlib as powlib
 import #APPNAME.config.settings as settings 
 
-# setting the right defaults
-MODE_CREATE = 1
-MODE_REMOVE = 0
+# Minversion protects the copow collections (app, ver, user, logging)
+MINVERSION = 4
 
 
 def main():
@@ -55,6 +54,13 @@ def main():
                       help="sets cuurentversion to given version ver",
                       default="None")
 
+    parser.add_option("-e", "--erase",
+                      action="store",
+                      type="string",
+                      dest="erase",
+                      help="Erases all versions, schemas and migrations to the given version.",
+                      default="None")
+
     (options, args) = parser.parse_args()
     #print options
     
@@ -63,17 +69,21 @@ def main():
     end = None
     start = datetime.datetime.now()
 
-    # only show current version information
+    
     if options.info:
+        # only show current version information
         show_info()
-    # only set the current version 
+    elif options.erase != "None":
+        # erase the given version
+        erase_version(int(options.version))
     elif options.set_curr_version != "None":
+        # only set the current version 
         set_currentversion(options.set_curr_version)
-    # migrate into direction
     elif options.direction != "None":
+        # migrate into direction
         do_migrate_to_direction(options.direction)
-    # migrate to version
     elif options.version != "None":
+        # migrate to version
         ver = int(options.version)
         do_migrate_to_version(ver)
 
@@ -97,6 +107,35 @@ def load_func( filename, function_name):
     #print("func:")
     #print(func)
     return func
+
+
+def erase_version(ver):
+    """ erase the given version from version collection. Also remove the schema and migration.
+        The model file will be renamed to model_erased.py.
+    """
+    v = version.Version()
+    a = app.App()
+    a.find_one()
+
+    v_to_erase = v.find_by("version", ver)
+    del_one = os.path.abspath(
+        os.path.normpath(os.path.join("./migrations", v_to_erase.long_name + ".py"))
+    )
+    del_two=os.path.abspath(
+        os.path.normpath(os.path.join("./migrations/schemas/", v_to_erase.short_name + "_schema.py"))
+    )
+    print("  deleting: ", del_one)
+    os.remove(del_one)
+    print("  deleting: ", del_two)
+    os.remove(del_two)
+    ren_one = path.abspath(
+        os.path.normpath(os.path.join("./models/", v_to_erase.short_name + ".py"))
+    )
+    ren_two=path.abspath(
+        os.path.normpath(os.path.join("./models/", "erased_" + v_to_erase.short_name + ".py"))
+    )
+    print("  renaming: ", ren_one, " to: ", ren_two)
+    os.rename(ren_one, ren_two)
 
 def do_migrate_to_direction(to_direction):
     #powlib.load_module("App")
@@ -128,7 +167,7 @@ def do_migrate_to_direction(to_direction):
             raise Exception("Cannot migrate up. You are already on maxversion")
     elif to_direction == "down":
         # check if currentversion > 2 :
-        if a.currentversion > 2:
+        if a.currentversion > MINVERSION:
             # ok, migrate down
             to_version = a.currentversion - 1
             v = v.find_one({ "version" :  a.currentversion })
@@ -147,15 +186,41 @@ def do_migrate_to_direction(to_direction):
 
 def do_migrate_to_version(to_version):
     #powlib.load_module("App")
-    print("..migrating ")
-    print("    -- to version: %s" % (to_version))
+    v = version.Version()
+    a = app.App()
+    a.find_one()
+    if to_version > MINVERSION and to_version < a.maxversion:
+        print("..migrating ")
+        print("    -- to version: %s" % (to_version))
+        direction = "None"
+        if to_version < a.currentversion:
+            times = a.currentversion - to_version
+            direction = "down"
+        else:
+            times = to_version - a.currentversion
+            direction = "up"
+        for runs in range(0,times):
+            do_migrate_to_direction(direction)
+
+    else:
+        print("  -- cannot migrate above maxversion: ", str(a.maxversion), " or MINVERSION: ", str(MINVERSION))
     
 
     return
 
 
 def set_currentversion(ver):
-    print("migrating ")
+    print("  migrating ")
+    v = version.Version()
+    a = app.App()
+    a.find_one()
+
+    if ver <= a.maxversion and ver > MINVERSION:
+        # set the given version
+        a.currentversion = ver
+    else:
+        print("  -- cannot migrate above maxversion: ", str(a.maxversion), " or MINVERSION: ", str(MINVERSION))
+
     return
 
 

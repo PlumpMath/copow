@@ -7,32 +7,22 @@
 {% extends "layouts/main_layout.html" %}
 
 {# this will be rendered in the content block of main.html view view #}
+
+{% block content %}
+
 {% set model = result %}
 
 <script>
-    $(document).ready(function() {
-        $.ajax({
-                type: "POST",
-                url: hb_base_url + "consumer",
-                contentType: "application/json",
-                dataType: "json",
-                data: JSON.stringify({
-                    first_name: $("#namec").val(),
-                    last_name: $("#surnamec").val(),
-                    email: $("#emailc").val(),
-                    mobile: $("#numberc").val(),
-                    password: $("#passwordc").val()
-                }),
-                success: function(response) {
-                    console.log(response);
-                },
-                error: function(response) {
-                    console.log(response);
-                }
+    $(document).ready(function(){
+        // Handler for .ready() called.
+        $('#test').click( function() {
+            alert('aha aha aha' );
+        });
     });
+
 </script>
 
-{% block content %}
+
 
     <div class="panel panel-default">
     <!-- Default panel contents -->
@@ -51,7 +41,8 @@
         <button type="submit" class="btn btn-default">Submit</button>
     </form>
     
-  
+    <p id="test">Test</p>
+
 
     {% module form_select(model=result, attribute="title") %}
 

@@ -70,7 +70,7 @@ class BaseController(tornado.web.RequestHandler):
         print("self.method_get: ", self.method_get)
         print("self.params: ", self.params)
         # Which Output formats do we support ?
-        supported_result_formats = settings.base["result_formats"]
+        supported_result_formats = settings.data_formats["result_formats"]
         # Which Output formats does the client accept ?
         accepted_result_formats = self.request.headers.get("Accept").split(",")
         
@@ -80,7 +80,7 @@ class BaseController(tornado.web.RequestHandler):
                 # call the defined function (suffix)
                 print("requested result formats: ", accepted_result_formats)
                 print("returning: ", format)
-                if self.method_get in settings.base["format_dependend_methods"]:
+                if self.method_get in settings.data_formats["result_format_dependend_methods"]:
                     return getattr(self,self.method_get + supported_result_formats[format])(*args, **kwargs)
                 else:
                     return getattr(self,self.method_get)(*args, **kwargs)
@@ -101,22 +101,24 @@ class BaseController(tornado.web.RequestHandler):
         print("self.method_post: ", self.method_post)
         print("self.params: ", self.params)
         # Which Output formats do we support ?
-        supported_result_formats = settings.base["result_formats"]
+        supported_request_formats = settings.data_formats["request_formats"]
         # Which Output formats does the client accept ?
-        accepted_result_formats = self.request.headers.get("Accept").split(",")
+        accepted_request_formats = self.request.headers.get("Content-Type").split(",")
         
         # try to match them. order matters. 1st come, 1st servec
-        for format in accepted_result_formats:
-            if format in supported_result_formats.keys():
+        for format in accepted_request_formats:
+            if format in supported_request_formats.keys():
                 # call the defined function (suffix)
-                print("requested result formats: ", accepted_result_formats)
+                print("request formats: ", accepted_request_formats)
                 print("returning: ", format)
-                if self.method_post in settings.base["format_dependend_methods"]:
-                    return getattr(self,self.method_post + supported_result_formats[format])(*args, **kwargs)
+                if self.method_post in settings.data_formats["request_format_dependend_methods"]:
+                    return getattr(self,self.method_post + supported_request_formats[format])(*args, **kwargs)
                 else:
                     return getattr(self,self.method_post)(*args, **kwargs)
                 break
-        #raise tornado.web.HTTPError(406)
+        
+        # if non supported format: raise Error 406
+        # raise tornado.web.HTTPError(406)
         self.send_error(status_code=406, **kwargs)
 
     def put():

@@ -50,11 +50,13 @@ class Shell(code.InteractiveConsole):
             importlist = []
             for elem in os.listdir(os.path.normpath(path)):
                 fname, fext = os.path.splitext(elem)
-                if fext in include_ext_list and not fname.startswith("__"):
+                if fext in include_ext_list and not (fname.startswith("__") or fname.startswith("erased_")):
                     statement = "from "+ str(fname)+ " import *" 
                     print("executing statement: ", statement)
                     #exec statement
                     self.push(statement)
+                else:
+                    print("Skipping: ", fname )
         std_imports = [
                 "from bson.objectid import ObjectId",
                 "import pprint",

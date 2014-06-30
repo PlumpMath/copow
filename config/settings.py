@@ -19,16 +19,6 @@ base = {
     "model_test_dir"    :  "test/models/",
     #authentication can be user or role (for now)
     "authentication"   :   "user",
-    # supported result_formats of your Application.
-    # By default copow will invoke the method which fits
-    # the REST request and end in the tuple[1] name
-    # exmaple: Accept: "application/json"   + GET /controller  => controller.list_json()
-    # Only applies to methods that return values (show, list) ;)
-    # Order of the Accepted Header counts (1st come 1st served)
-    "result_formats"    :   {   "text/html"         :       "_html",
-                                "application/json"  :       "_json"
-                            },
-    "format_dependend_methods"  :   ["list", "show"]
 }
 
 logging=  {
@@ -72,4 +62,24 @@ schema_types = {
     "dict"      :   ({}, uimodules.modules["form_textarea"]),
     "bool"      :   (False, uimodules.modules["form_checkbox"]),
     "set"       :   (set(), uimodules.modules["form_textinput"])   
+}
+
+data_formats = {
+    
+    # supported result_formats of your Application.
+    # By default copow will invoke the method which fits
+    # the REST request and end in the tuple[1] name
+    # exmaple: Accept: "application/json"   + GET /controller  => controller.list_json()
+    # Only applies to methods that return values (show, list) ;)
+    # Order of the Accepted Header counts (1st come 1st served)
+    "result_formats"    :   {   "text/html"         :       "_html",
+                                "application/json"  :       "_json"
+                            },
+    "request_formats"    :  {   "application/x-www-form-urlencoded"         :       "_html",
+                                "application/json"                          :       "_json",
+                                "multipart/form-data"                       :       "_multipart"
+                            },
+    "result_format_dependend_methods"  :   ["list", "show"],
+    "request_format_dependend_methods"  :   ["update"]
+
 }
