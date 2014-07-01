@@ -12,33 +12,35 @@
 
     <div class="panel panel-default">
     <!-- Default panel contents -->
-    <div class="panel-heading">this is the list view: </div>
-
-    <table class="table">
-        <thead>
-            {% set mod = result[0] %}
-            {% for key in mod.schema.keys() %}
-                <th>{{ escape(key) }}</th>
-            {% end %}
-            <th>action</th>
-        </thead>
-        <tbody>
-            {% for model in result %}
-                <tr>
-                    {% for att in model.schema.keys() %}
-                      <td>{{ escape(model.get(att)) }}</td>
+        <div class="panel-heading">this is the list view: </div>
+        <div class="panel-body">
+            <table class="table">
+                <thead>
+                    {% set mod = result[0] %}
+                    {% for key in mod.schema.keys() %}
+                        <th>{{ escape(key) }}</th>
                     {% end %}
-                    <td><a href="/{{model.modelname}}/{{model._id}}">show</a> </td>
-                    <td><a href="/{{model.modelname}}/{{model._id}}/update">edit</a> </td>
-                </tr>
-            {% end %}
-        </tbody>
-    </table>
-    Module call test:
-    <hr>
-    To get this by using curl just do on the command line
-    <hr>
-    curl -i -H "Accept: application/json" http://localhost:8000/{{mod.modelname}}
+                    <th>action</th>
+                </thead>
+                <tbody>
+                    {% for model in result %}
+                        <tr>
+                            {% for att in model.schema.keys() %}
+                              <td>{{ escape(model.get(att)) }}</td>
+                            {% end %}
+                            <td><a href="/{{model.modelname}}/{{model._id}}">show</a> </td>
+                            <td><a href="/{{model.modelname}}/{{model._id}}/update">edit</a> </td>
+                        </tr>
+                    {% end %}
+                </tbody>
+            </table>
+            Module call test:
+            <hr>
+            To get this by using curl just do on the command line
+            <hr>
+            curl -i -H "Accept: application/json" http://localhost:8000/{{mod.modelname}}
+        </div>
+    </div>
 
     {% module form_select(model=result, attribute="title") %}
 {% end %}

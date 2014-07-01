@@ -9,6 +9,7 @@ import importlib
 
 import #APPNAME.config.routes as routes
 import #APPNAME.config.settings as settings
+import #APPNAME.models.copow_log as logger
 
 #sys.path.append(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../config" )) 
 
@@ -65,23 +66,29 @@ def init_controllers(app):
 			#
 			# edit
 			#handler_list.append(("/"+controller_short_name+"/([0-9a-zA-Z]+)/(update)", controller))
-			for route in routes.rest_routes.keys():
-				# route[0] = the controller to handle the Request 
-				# route[1] = an optional dict of paramenters passed to controller.initialize method.
+			for route in routes.rest_routes:
+				# route[n][0] = the regex
+				# route[n][1][0] = the controller to handle the Request 
+				# route[n][1][1] = the dictionary continaing the HTTP handle methods and the parameter
 				# see: tornado.RequestHandler.initialize
-				abs_route = route.replace("#controller", controller)
-				if routes.rest_routes[route][0] == "#controller_cls":
-					if routes.rest_routes[route][1]:
-						handler_list.append((abs_route, controller_cls, routes.rest_routes[route][1]))
+				print(route)
+				route_regex = route[0]
+				route_controller_cls = route[1][0]
+				route_dict = route[1][1]
+				abs_route = route_regex.replace("#controller", controller)
+				if route_controller_cls == "#controller_cls":
+					# check if there are methods and/or parameters for this specific route
+					if route_dict:
+						handler_list.append((abs_route, controller_cls, route_dict))
 					else:
 						handler_list.append((abs_route, controller_cls))
 				else:
 					# a specific class is defined in the rest_routes
 					# (for whatever reason ;) but anyway, load it.
-					if routes.rest_routes[route][1]:
-						handler_list.append((abs_route, routes.rest_routes[route],routes.rest_routes[route][1] ))
+					if route_dict:
+						handler_list.append((abs_route, route_controller,route_dict))
 					else:
-						handler_list.append((abs_route, routes.rest_routes[route]))
+						handler_list.append((abs_route, route_controller))
 
 	app.add_handlers(".*$", handler_list)
 	width=80
@@ -93,13 +100,13 @@ def init_controllers(app):
 		)
 	)
 	print(""*width)
-	for route in routes.rest_routes.keys():
+	for route in routes.rest_routes:
 		for method in ["GET", "POST", "PUT", "DELETE"]:
 		 	print('{0:40} {1:8} {2:15} {3:15}'.format(
-		 			route,
+		 			route[0],
 		 			method,
-		 			routes.rest_routes[route][1]["method_"+method.lower()],
-		 			routes.rest_routes[route][1]["params"]	
+		 			route[1][1]["method_"+method.lower()],
+		 			route[1][1]["params"]	
 		 		)
 		 	)
 	print("-"*width)

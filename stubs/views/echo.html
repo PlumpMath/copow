@@ -10,26 +10,28 @@
 {% block content %}
     <div class="panel panel-default">
     <!-- Default panel contents -->
-    <div class="panel-heading">this is the echo! view: </div>
-
-    <table class="table">
-        <tr>
-            <td>request:</td>
-            <td>{{ request }}</td>
-        </tr>
-          <tr>
-            <td>request.headers:</td>
-            <td>{{ request.headers }}</td>
-        </tr>
-         <tr>
-            <td>formats</td>
-            <td>{{ formats }}</td>
-        </tr>
-        <tr>
-        <tr>
-            <td>request.body:</td>
-            <td>{{ request.body }}</td>
-        </tr>
-    </table>
+        <div class="panel-heading">this is the echo! view: </div>
+        <div class="panel-body">
+            <table class="table">
+                <tr>
+                    <td>request:</td>
+                    <td>{{ request }}</td>
+                </tr>
+                  <tr>
+                    <td>request.headers:</td>
+                    <td>{{ request.headers }}</td>
+                </tr>
+                 <tr>
+                    <td>formats</td>
+                    <td>{{ formats }}</td>
+                </tr>
+                <tr>
+                <tr>
+                    <td>request.body:</td>
+                    <td>{{ request.body }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
 {% end %}

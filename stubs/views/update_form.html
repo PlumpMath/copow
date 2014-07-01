@@ -26,34 +26,36 @@
     <div class="panel panel-default">
     <!-- Default panel contents -->
         <div class="panel-heading"><b> This is the show view: </b></div>
-        <p>&nbsp;</p>
-        <form class="form-horizontal" role="form">
-            {% for att in model.schema.keys() %}
-                <div class="form-group">
-                    <label for="{{att}}" class="col-sm-2 control-label">{{att}}</label>
-                    <div class="col-sm-8">
-                            <input  type="text" 
-                                    class="form-control" 
-                                    id="exampleInputEmail1" 
-                                    placeholder="{{model.get(att)}}"
-                                    {% if att == "_id" %}
-                                        readonly
-                                    {% end %}
-                                    >
+        <div class="panel-body">
+            <p>&nbsp;</p>
+            <form class="form-horizontal" role="form">
+                {% for att in model.schema.keys() %}
+                    <div class="form-group">
+                        <label for="{{att}}" class="col-sm-2 control-label">{{att}}</label>
+                        <div class="col-sm-8">
+                                <input  type="text" 
+                                        class="form-control" 
+                                        id="exampleInputEmail1" 
+                                        placeholder="{{model.get(att)}}"
+                                        {% if att == "_id" %}
+                                            readonly
+                                        {% end %}
+                                        >
+                        </div>
                     </div>
-                </div>
-            {% end %}
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        
-        <p id="test">Test</p>
+                {% end %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            
+            <p id="test">Test</p>
 
 
-        {% module form_select(model=result, attribute="title") %}
+            {% module form_select(model=result, attribute="title") %}
 
-        To get this by using curl just do on the command line
-        <hr>
-        curl -i -X POST --data "id=1234"  --header "Content-Type:application/json" 
-        http://localhost:8000/{{result.modelname}}/{{result._id}}/update
+            To get this by using curl just do on the command line
+            <hr>
+            curl -i -X POST --data "id=1234"  --header "Content-Type:application/json" 
+            http://localhost:8000/{{result.modelname}}/{{result._id}}/update
+        </div>
     </div>
 {% end %}

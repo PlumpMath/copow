@@ -69,28 +69,28 @@ if __name__ == "__main__":
     v = version.Version()
     v.environment = env
     v.short_name = "version"
-    v.long_name = "51c45aab45fb9f13048dbe2d_version"
+    v.long_name = "version_51c45aab45fb9f13048dbe2d"
     v.comment ="copow version collection"
     v.version = 1
     v.create()
 
     v.environment = env
     v.short_name = "app"
-    v.long_name = "51c1965714c9b612bc20b95a_app"
+    v.long_name = "app_51c1965714c9b612bc20b95a"
     v.comment ="copow app collection"
     v.version = 2
     v.create()
 
     v.environment = env
     v.short_name = "copow_log"
-    v.long_name = "5390626945fb9f1d3c184a15_copow_log"
+    v.long_name = "copow_log_5390626945fb9f1d3c184a15"
     v.comment ="copow log collextion"
     v.version = 3
     v.create()
 
     v.environment = env
     v.short_name = "user"
-    v.long_name = "539a229b56031a0d30c6410e_user"
+    v.long_name = "user_539a229b56031a0d30c6410e"
     v.comment ="copow user collection"
     v.version = 4
     v.create()

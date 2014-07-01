@@ -22,7 +22,8 @@ def up():
     #MODELNAME = #UP_MODELNAME( schema  = {
            #"title"      :      { "type" : "string" },   
            #"author"     :      { "type" : "text" },
-           #"content"    :      { "type" : "text" }
+           #"content"    :      { "type" : "text" },
+           #"tags"       :      { "type" : "set" }
            #"a_more_complex_one"    :       { "type" : "text" , "index" : True, "default" : "something"}
       } 
     )
@@ -36,5 +37,5 @@ def down():
     # drops the table (collection) and removes the schema from migrations/schemas/
     #MODELNAME = #UP_MODELNAME()
     migration.drop_table(#MODELNAME)
-    print("  Successfully migrated #MODELNAME -> mehtod: down()")
+    print("  Successfully migrated #MODELNAME -> method: down()")
     

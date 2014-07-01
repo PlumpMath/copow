@@ -70,21 +70,22 @@ class BaseController(tornado.web.RequestHandler):
         print("self.method_get: ", self.method_get)
         print("self.params: ", self.params)
         # Which Output formats do we support ?
-        supported_result_formats = settings.data_formats["result_formats"]
+        supported_formats = settings.data_formats["accept_formats"]
         # Which Output formats does the client accept ?
-        accepted_result_formats = self.request.headers.get("Accept").split(",")
+        requested_formats = self.request.headers.get("Accept").split(",")
         
-        # try to match them. order matters. 1st come, 1st servec
-        for format in accepted_result_formats:
-            if format in supported_result_formats.keys():
+        # try to match them. order matters. 1st come, 1st served
+        print("  -- requested result formats: ", requested_formats)
+        for format in requested_formats:
+            # try to find a supporting method to serve the request
+            if format in supported_formats.keys():
                 # call the defined function (suffix)
-                print("requested result formats: ", accepted_result_formats)
-                print("returning: ", format)
-                if self.method_get in settings.data_formats["result_format_dependend_methods"]:
-                    return getattr(self,self.method_get + supported_result_formats[format])(*args, **kwargs)
-                else:
-                    return getattr(self,self.method_get)(*args, **kwargs)
+                print("  -- returning: ", format)
+                return getattr(self,self.method_get + supported_formats[format])(*args, **kwargs)
                 break
+        # if we are here it means that we cannot serve any of the requested formats.
+        # Returning the default format (Standard is: _json)
+        return getattr(self,self.method_get + settings.data_formats["default"])(*args, **kwargs)
         #raise tornado.web.HTTPError(406)
         self.send_error(status_code=406, **kwargs)
         
@@ -101,20 +102,17 @@ class BaseController(tornado.web.RequestHandler):
         print("self.method_post: ", self.method_post)
         print("self.params: ", self.params)
         # Which Output formats do we support ?
-        supported_request_formats = settings.data_formats["request_formats"]
+        supported_formats = settings.data_formats["content_type_formats"]
         # Which Output formats does the client accept ?
-        accepted_request_formats = self.request.headers.get("Content-Type").split(",")
-        
+        requested_formats = self.request.headers.get("Content-Type").split(",")
+        print("  -- request formats: ", requested_formats)
         # try to match them. order matters. 1st come, 1st servec
-        for format in accepted_request_formats:
-            if format in supported_request_formats.keys():
+        
+        for format in requested_formats:
+            if format in supported_formats.keys():
                 # call the defined function (suffix)
-                print("request formats: ", accepted_request_formats)
-                print("returning: ", format)
-                if self.method_post in settings.data_formats["request_format_dependend_methods"]:
-                    return getattr(self,self.method_post + supported_request_formats[format])(*args, **kwargs)
-                else:
-                    return getattr(self,self.method_post)(*args, **kwargs)
+                print("  -- returning: ", format)
+                return getattr(self,self.method_post + supported_formats[format])(*args, **kwargs)
                 break
         
         # if non supported format: raise Error 406

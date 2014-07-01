@@ -158,7 +158,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """
         return self.render("#CONTROLLER_LOWER_NAME_create_form.html", request=self.request)        
 
-    def create_from_form(self, *args, **kwargs):
+    def create_json(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/PUT /#CONTROLLERNAME 
             CRUD: CREATE 

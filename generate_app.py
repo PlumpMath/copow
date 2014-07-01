@@ -226,12 +226,12 @@ def gen_app(appname, appdir, force=False):
     powlib.check_copy_file("pow_console.py", appbase, replace=[("#APPNAME",appname)] )
     powlib.check_copy_file("init_dbs.py", appbase, 
                            replace=[("#APPNAME",appname),("#APPPATH",appbase)] )
-    powlib.check_copy_file(os.path.join("./stubs/","base.py"), 
-                           os.path.normpath(os.path.join(appbase, "models/basemodels")), 
-                           replace=[("#APPNAME",appname)] )
-    powlib.check_copy_file(os.path.join("./stubs/","db_conn.py"), 
-                           os.path.normpath(os.path.join(appbase, "lib")), 
-                           replace=[("#APPNAME",appname)] )
+    #powlib.check_copy_file(os.path.join("./stubs/","base.py"), 
+    #                       os.path.normpath(os.path.join(appbase, "models/basemodels")), 
+    #                       replace=[("#APPNAME",appname)] )
+    #powlib.check_copy_file(os.path.join("./stubs/","db_conn.py"), 
+    #                       os.path.normpath(os.path.join(appbase, "lib")), 
+    #                       replace=[("#APPNAME",appname)] )
     #powlib.check_copy_file("scripts/runtests.py", appbase)
 
     #powlib.replace_string_in_file(

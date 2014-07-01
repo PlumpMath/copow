@@ -22,7 +22,6 @@ MINVERSION = 4
 
 def main():
     parser = OptionParser()
-    mode = MODE_CREATE
 
     parser.add_option("-d", "--direction",
                       action="store",
@@ -148,6 +147,7 @@ def do_migrate_to_direction(to_direction):
     a.find_one()
 
     print(" ...migrating ")
+    print(a)
     if to_direction == "up":
         # check if current_version == maxversion => Error. Cannot migrate higher than max.
         if a.currentversion < a.maxversion:
