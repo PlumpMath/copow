@@ -18,8 +18,8 @@ from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.lib import powlib
 from #APPNAME.lib.powlib import _log
 import #APPNAME.config.settings as settings
+import #APPNAME.lib.custom_encoders as encoders
 
-newline = powlib.newline
 tab = powlib.tab
 
 class BaseModel(object):
@@ -30,8 +30,19 @@ class BaseModel(object):
             Uses the as_class parameter of the find methods. 
             See http://dirolf.com/2010/06/17/pymongo-1.7-released.html
         """
+        #print(key,value)
         if key in self.schema.keys():
-            setattr(self,key, value)
+            curr_type = self.schema[key]["type"].lower()
+            #print("column: ", column, " curr_type: ", curr_type)
+            if curr_type in settings.schema_types.keys():
+                if "encode" in settings.schema_types[curr_type][2]:
+                    #
+                    # if this type has a custom_encoder, then use it
+                    #
+                    setattr(slf, key, settings.schema_types[curr_type][2]["encode"](value))
+                    #print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2]["encode"])
+                else:
+                    setattr(self,key, value)
         else:
             print("Skipping: ", key, " -> ", value, " Not in schema")
             
@@ -90,7 +101,9 @@ class BaseModel(object):
             att_type = attrs["type"].lower()
             if att_type in settings.schema_types:
                 #print "setting up property for: %s" % (column)
-                #setting the according attribute and the default value, if any.
+                #
+                # setting the according attribute and the default value, if any.
+                #
                 setattr(self, column, settings.schema_types[att_type][0])
                 setattr(self, column+"_type", att_type)
                 setattr(self, column+"_uimodule", settings.schema_types[att_type][1])
@@ -161,8 +174,10 @@ class BaseModel(object):
         #setattr(self, method_name, foo)
 
     def generate_accessor_methods(self, rel_model):
-        """generates the convenient getAttribute() and setAttribute Methods
-        and sets them as accessors for this models Attributes """
+        """ generates the convenient append Method for adding related (has_many)
+            models. Also updates the belongs_to section in the related model with this 
+            model's seld._id
+        """
         #print(rel_model)
         #print(type(rel_model))
         #print(dir(rel_model))
@@ -226,11 +241,11 @@ class BaseModel(object):
         #print("args: ", *args)
         #print("kwargs: ", **kwargs)
         if sort:
-            #cursor = self.collection.find(*args, as_class=self.__class__, **kwargs).sort(sort)
-            cursor = self.collection.find(*args, **kwargs).sort(sort)
+            cursor = self.collection.find(*args, as_class=self.__class__, **kwargs).sort(sort)
+            #cursor = self.collection.find(*args, **kwargs).sort(sort)
         else:
-            #cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
-            cursor = self.collection.find(*args, **kwargs)
+            cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
+            #cursor = self.collection.find(*args, **kwargs)
         if cursor.__class__ == pymongo.cursor.Cursor:
             if cursor.count() == 1:
                 # if it is only one result in the cursor, return the cursor but also 
@@ -316,6 +331,9 @@ class BaseModel(object):
             #print("column: ", column, " curr_type: ", curr_type)
             if curr_type in settings.schema_types.keys():
                 if "encode" in settings.schema_types[curr_type][2]:
+                    #
+                    # if this type has a custom_encoder, then use it
+                    #
                     d[column] = settings.schema_types[curr_type][2]["encode"](getattr(self, column))
                     #print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2]["encode"])
                 else:
@@ -475,7 +493,7 @@ class BaseModel(object):
         # exmaple: db.createCollection("log", { capped : true, size : 5242880, max : 5000 } )
         return self.db.create_collection(self.collection_name, *args, **kwargs)
 
-    def drop(self):
+    def drop_table(self):
         """ drops this collection / table """
         return self.db.drop_collection(self.collection_name)
 
@@ -502,7 +520,7 @@ class BaseModel(object):
             schema["last_updated"] = { "type" :  "date"  }
             #schema["created"] = { "type" :  "date"  }
             schema["_id"] = { "type" :  "ObjectId"  }
-            ostr += json.dumps(schema, indent=4) + powlib.newline 
+            ostr += json.dumps(schema, indent=4) + os.linesep
             ostr += self.modelname + "_relations = "
             ostr += json.dumps(self.relations, indent=4)
             #print(ostr)

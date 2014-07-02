@@ -147,7 +147,7 @@ def do_migrate_to_direction(to_direction):
     a.find_one()
 
     print(" ...migrating ")
-    print(a)
+    #print(a)
     if to_direction == "up":
         # check if current_version == maxversion => Error. Cannot migrate higher than max.
         if a.currentversion < a.maxversion:
@@ -189,9 +189,8 @@ def do_migrate_to_version(to_version):
     v = version.Version()
     a = app.App()
     a.find_one()
-    if to_version > MINVERSION and to_version < a.maxversion:
-        print("..migrating ")
-        print("    -- to version: %s" % (to_version))
+    if to_version >= MINVERSION and to_version <= a.maxversion:
+        print("..migrating --> to version: %s" % (to_version))
         direction = "None"
         if to_version < a.currentversion:
             times = a.currentversion - to_version
@@ -236,6 +235,7 @@ def show_info():
     v = version.Version()
     version_list = v.find_all()
     for elem in version_list:
+        print(type(elem))
         print(elem)
 
 
