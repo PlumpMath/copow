@@ -71,7 +71,7 @@ def init_controllers(app):
 				# route[n][1][0] = the controller to handle the Request 
 				# route[n][1][1] = the dictionary continaing the HTTP handle methods and the parameter
 				# see: tornado.RequestHandler.initialize
-				print(route)
+				#print(route)
 				route_regex = route[0]
 				route_controller_cls = route[1][0]
 				route_dict = route[1][1]
@@ -93,7 +93,7 @@ def init_controllers(app):
 	app.add_handlers(".*$", handler_list)
 	width=80
 	print("-"*width)
-	print("| RESTful routes semantic: (defined in routes.py")
+	print("| RESTful routes semantic: (defined in routes.py)")
 	print("-"*width)
 	print('{0:40} {1:8} {2:15} {3:15}'.format(
 		"Route", "HTTP", "Method", "Parameters"
