@@ -35,11 +35,11 @@ class BaseModel(object):
             curr_type = self.schema[key]["type"].lower()
             #print("column: ", column, " curr_type: ", curr_type)
             if curr_type in settings.schema_types.keys():
-                if "encode" in settings.schema_types[curr_type][2]:
+                if "decode" in settings.schema_types[curr_type][2]:
                     #
                     # if this type has a custom_encoder, then use it
                     #
-                    setattr(slf, key, settings.schema_types[curr_type][2]["encode"](value))
+                    setattr(self, key, settings.schema_types[curr_type][2]["decode"](value))
                     #print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2]["encode"])
                 else:
                     setattr(self,key, value)
