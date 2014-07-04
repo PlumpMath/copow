@@ -271,8 +271,8 @@ class BaseModel(object):
         if isinstance(val, self.__class__):
             self = val
         elif isinstance(val, dict):
-            for elem in dictionary:
-                self.__setitem__(elem, dictionary[elem])
+            for elem in val:
+                self.__setitem__(elem, val[elem])
         return
 
     def clear(self):
