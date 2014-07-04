@@ -246,6 +246,7 @@ class BaseModel(object):
         else:
             cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
             #cursor = self.collection.find(*args, **kwargs)
+            print("cursor: ", cursor.count())
         if cursor.__class__ == pymongo.cursor.Cursor:
             if cursor.count() == 1:
                 # if it is only one result in the cursor, return the cursor but also 
@@ -265,10 +266,13 @@ class BaseModel(object):
             self.set_values(ret)
         return self
     
-    def set_values(self, dictionary):
+    def set_values(self, val):
         #print ("set_values: ", dictionary)
-        for elem in dictionary:
-            self.__setitem__(elem, dictionary[elem])
+        if isinstance(val, self.__class__):
+            self = val
+        elif isinstance(val, dict):
+            for elem in dictionary:
+                self.__setitem__(elem, dictionary[elem])
         return
 
     def clear(self):
@@ -317,6 +321,26 @@ class BaseModel(object):
         print("updated: ", self.modelname, " id: ", str(self._id))
         return ret
     
+
+    def remove_self(self, *args, **kwargs):
+        """ removes this instances document representation in the db """
+        return self.collection.remove({"_id" : self._id}, True, *args, **kwargs)
+
+    def remove(self, *args, **kwargs):
+        """ removes any given instances document representation in the db 
+            example:
+            model.remove( { "attribute" : value }, True, multi=True )
+            for more information see: 
+                http://docs.mongodb.org/manual/tutorial/remove-documents/
+        """
+        return self.collection.remove(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """ removes this instances document representation in the db 
+            conveniance method, calls remove_self internally.
+        """
+        return self.remove_self(*args, **kwargs)
+
     def from_json(self, json_data):
         """ makes an self instance from json """
         return self.set_values(json_data)
