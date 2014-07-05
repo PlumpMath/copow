@@ -104,9 +104,9 @@ def init_controllers(app):
 		for method in ["GET", "POST", "PUT", "DELETE"]:
 		 	print('{0:40} {1:8} {2:15} {3:15}'.format(
 		 			route[0],
-		 			method,
-		 			route[1][1]["method_"+method.lower()],
-		 			route[1][1]["params"]	
+		 			str(method),
+		 			str(route[1][1]["method_"+method.lower()]),
+		 			str(route[1][1]["params"])	
 		 		)
 		 	)
 	print("-"*width)
