@@ -41,7 +41,7 @@ class BaseController(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
         super(BaseController,self).__init__(*args,**kwargs)
 
-    
+    @tornado.web.removeslash
     def get(self, *args, **kwargs):
         """
             Routing is done RESTful but accoring to the specification ikn routes.py
@@ -81,7 +81,7 @@ class BaseController(tornado.web.RequestHandler):
         #raise tornado.web.HTTPError(406)
         self.send_error(status_code=406, **kwargs)
         
-
+    @tornado.web.removeslash
     def post(self, *args, **kwargs):
         """ 
             Meaning a call to domain:port/controller/([someting]+)
@@ -111,6 +111,7 @@ class BaseController(tornado.web.RequestHandler):
         # raise tornado.web.HTTPError(406)
         self.send_error(status_code=406, **kwargs)
 
+    @tornado.web.removeslash
     def put():
         """
             Meaning a call to domain:port/controller/([someting]+)
@@ -125,7 +126,8 @@ class BaseController(tornado.web.RequestHandler):
         else:
             # PUT /controller/   => it is update_all()
             return self.update_all()
-            
+    
+    @tornado.web.removeslash
     def delete():
         """
             Meaning a call to domain:port/controller/([someting]+)

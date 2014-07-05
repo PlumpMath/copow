@@ -82,5 +82,5 @@ handlers = [
         #
         # Anything else => ERROR
         #
-        #(r'.*', #APPNAME.controllers.error_controller.ErrorController)
+        #(r'.*', #APPNAME.controllers.welcome_controller.WelcomeController)
         ]

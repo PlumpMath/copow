@@ -21,16 +21,18 @@
             alert('aha aha aha' );
         });
     
-        $.ajax({
-            type: "POST",
-            url: "/{{server}}:{{port}}/{{model.modelname}}/{{model._id}}/update",
-            // The key needs to match your method's input parameter (case-sensitive).
-            data: JSON.stringify({ Markers: markers }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(data){alert(data);},
-            failure: function(errMsg) {alert(errMsg);}
-        });
+        $('#submit').click( function() {
+            $.ajax({
+                type: "POST",
+                url: "/{{server}}:{{port}}/{{model.modelname}}/{{model._id}}/update",
+                // The key needs to match your method's input parameter (case-sensitive).
+                data: JSON.stringify({ "test": "test_value" }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "application/json",
+                success: function(data){alert(data);},
+                failure: function(errMsg) {alert(errMsg);}
+            });
+        }
     });
 </script>
 

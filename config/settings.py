@@ -12,7 +12,7 @@ from #APPNAME.lib.custom_encoders import *
 base = {
     
     "server"            :   "localhost",
-    "port"              :   8080,
+    "port"              :   8000,
     "environment"       :   "development",
     # Standard Directories
     "parts_dir"         :   "stubs/templates/",

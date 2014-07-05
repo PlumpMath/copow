@@ -1,4 +1,4 @@
-3#!python
+#!python
 # do_migrate
 # execute db migrations and jobs.
 # also modify migrations (erase, set version etc)
