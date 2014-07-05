@@ -1,1 +1,29 @@
-<h1>ERROR !!!</h1>
+{% extends "layouts/main_layout.html" %}
+
+{# this will be rendered in the content block of main.html view view #}
+
+{% block content %}
+	{% import #APPNAME.config.settings as settings %}
+	{% set model = result %}
+	{% set server = settings.base["server"] %}
+	{% set port  = settings.base["port"] %}
+
+	<div class="panel panel-default">
+    <!-- Default panel contents -->
+        <div class="panel-heading"><b> copow ERROR !!!</b></div>
+        <div class="panel-body">
+            <table class="table">
+               	<tr>
+               		<td>message:</td>
+               		<td>{{message}}</td>
+              	</tr>
+            </table>
+
+            
+        </div>
+    </div>
+
+	<p>  <a href="http://www.pythononwheels.org/copow">Read the documentation</a> for more information.</p>
+
+
+{% end %}

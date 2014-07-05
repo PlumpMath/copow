@@ -103,7 +103,12 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         print("show_html oid: ", id)
         result = self.model.find({"_id" : ObjectId(str(id)) })
         # if result.count()=1 self.model ist automatically set to result[0]
-        return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request, result=self.model)
+        if result.count() == 1:
+            print("Yes, there is exactly 1 result, good !")
+            return self.render("#CONTROLLER_LOWER_NAME_show.html", request=self.request, result=result[0])
+        else:
+            self.set_status(501)
+            self.render("error.html", message=" No such ObjectID " + str(id))
 
     def show_json(self, oid, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
@@ -118,7 +123,10 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         #return result.to_json()
         #print("result: ", result)
         #print("result: ", result, " Num -> ", result.count())
-        self.write(str(result[0].to_json()))
+        if result.count() == 1:
+            self.write(str(result[0].to_json()))
+        else:
+            self.write({ "error" : "No such ObjectId"} )
 
     def list_json(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
@@ -187,9 +195,14 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         print("update_form oid: ", id)
         result = self.model.find({"_id" : ObjectId(str(id)) })
         # if result.count()=1 self.model ist automatically set to result[0]
-        return self.render("#CONTROLLER_LOWER_NAME_update_form.html", 
-                request=self.request, result=self.model, types=settings.schema_types
-        )        
+        if result.count() == 1:
+            return self.render("#CONTROLLER_LOWER_NAME_update_form.html", request=self.request, 
+                result=result[0], types=settings.schema_types
+            )
+        else:
+            self.set_status(501)
+            self.render("error.html", message=" No such ObjectID " + str(id))
+
 
     def update_all(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
@@ -198,7 +211,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             update all #MODELNAME_PLURAL
         """
         self.set_status(501)
-        self.render("error.html")
+        self.render("error.html", message="Method not implemented, yet!")
 
 
     def delete_all(self, *args, **kwargs):

@@ -67,14 +67,17 @@ def main():
     print(" generated scaffolds in (" + str(duration) + ")")
 
 
-def generate_scaffold( modelname, force=False, name=None):
+def generate_scaffold( modelname, force=False, name="None"):
     """
         Generate the vies scaffolding for a given model. 
         Templates can be found in stubs/templates. 
 
     """
     #views = ["create", "create_form","list", "show", "update", "update_form", "update_all", "delete" ]
-    
+    width=50
+    print("-"*width)
+    print("generating scaffold: name:",name)
+    print("-"*width)
     views = ["list", "show", "echo", "create_form", "update_form"]
     if name != "None":
         if name in views:

@@ -82,8 +82,10 @@ def render_controller(  name="NO_NAME_GIVEN", force=False,  parts_dir="",
     """ generates a controller according to the given options
         @param name: name prefix of the Controller fullname NameController
         @param force: if true: forces overwrtiting existing controllers"""
-    
+    width=50
+    print("-"*width)
     print("generate_controller: ", name )
+    print("-"*width)
     # add the auto generated warning to the outputfile
     if zero_tornado:
         infile = open (os.path.normpath( os.path.join(parts_dir +  "zero_tornado_controller.py")), "r")

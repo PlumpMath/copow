@@ -9,9 +9,11 @@ import sqlite3, sys, os, datetime
 import string
 import sys
 import generate_migration
+import generate_controller
+import generate_scaffold
 
-from atest.lib import powlib
-from  atest.config import settings 
+from #APPNAME.lib import powlib
+from  #APPNAME.config import settings 
 
 APPNAME = "atest"
 def main():
@@ -145,8 +147,14 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["p
     # render_basemodel(baseclassname, modelname, collection_name, classname, output_path, parts_dir, properties)
 
     # render the according migration (and schema)
-    generate_migration.render_migration( modelname, comment="", col_defs = None, parts_dir=settings.base["parts_dir"], prefix_dir = "./")
-
+    generate_migration.render_migration( modelname, comment="", col_defs = None, 
+            parts_dir=settings.base["parts_dir"], prefix_dir = "./")
+    
+    generate_controller.render_controller(  name=modelname, force=False,  
+            parts_dir=settings.base["parts_dir"], zero_tornado=False, prefix_path="./")
+    
+    generate_scaffold.generate_scaffold( modelname, force=False)
+    
     # render a basic testcase 
     render_test_stub(modelname, classname, parts_dir)
     #render_schema(modelname)

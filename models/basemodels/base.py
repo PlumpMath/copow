@@ -40,7 +40,7 @@ class BaseModel(object):
                     # if this type has a custom_encoder, then use it
                     #
                     setattr(self, key, settings.schema_types[curr_type][2]["decode"](value))
-                    #print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2]["encode"])
+                    print ("custom decoded for: ", curr_type, " with: ", settings.schema_types[curr_type][2]["decode"])
                 else:
                     setattr(self,key, value)
         else:
@@ -104,7 +104,9 @@ class BaseModel(object):
                 #
                 # setting the according attribute and the default value, if any.
                 #
+                # default_value:
                 setattr(self, column, settings.schema_types[att_type][0])
+                # set the conveniance att_type attribute
                 setattr(self, column+"_type", att_type)
                 setattr(self, column+"_uimodule", settings.schema_types[att_type][1])
             else:
@@ -217,12 +219,7 @@ class BaseModel(object):
     def find_by(self, field, value):
         """ find model by attribute. Sets self to the model found.
             Uses find_one internally. """
-        res = self.collection.find_one({ field : value })
-        for column in res:
-            if column in self.schema.keys():
-                setattr(self, column, res[column])
-            else:
-                raise Exception( "POWError: model %s has no column %s" % (self.modelname, column) )
+        res = self.find_one({ field : value })
         return self
 
     def find_all(self, *args, **kwargs):
@@ -247,14 +244,16 @@ class BaseModel(object):
             cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
             #cursor = self.collection.find(*args, **kwargs)
             print("cursor: ", cursor.count())
+        print("cursor__class__:", cursor.__class__)
+        print("cursor count:", cursor.count())
         if cursor.__class__ == pymongo.cursor.Cursor:
             if cursor.count() == 1:
+                print("setting self.set_values cause only _one_ result")
                 # if it is only one result in the cursor, return the cursor but also 
                 # set this (self) object's values as the result.
                 #print(cursor[0].to_json())
                 self.set_values(cursor[0])
         return cursor
-
 
     def find_one(self, *args, **kwargs):
         """ Updates this(self) object directly.
@@ -270,9 +269,14 @@ class BaseModel(object):
         #print ("set_values: ", dictionary)
         if isinstance(val, self.__class__):
             self = val
+            print("set self = val", type(val))
         elif isinstance(val, dict):
+            print("setting self = dict")
             for elem in val:
                 self.__setitem__(elem, val[elem])
+        else:
+            print("You should never see this message!!!!")
+        print(self)
         return
 
     def clear(self):
