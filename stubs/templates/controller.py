@@ -176,7 +176,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """
         return self.render("#CONTROLLER_LOWER_NAME_update.html", request=self.request)        
 
-    def update_form(self, id=None, *args, **kwargs):
+    def update_form_html(self, id=None, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/POST /#CONTROLLERNAME 
             CRUD: UPDATE 
@@ -188,7 +188,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         result = self.model.find({"_id" : ObjectId(str(id)) })
         # if result.count()=1 self.model ist automatically set to result[0]
         return self.render("#CONTROLLER_LOWER_NAME_update_form.html", 
-                request=self.request, result=self.model, types=settings.schema_rypes
+                request=self.request, result=self.model, types=settings.schema_types
         )        
 
     def update_all(self, *args, **kwargs):

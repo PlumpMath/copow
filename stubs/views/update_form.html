@@ -9,14 +9,27 @@
 {# this will be rendered in the content block of main.html view view #}
 
 {% block content %}
-
+{% import #APPNAME.config.settings as settings %}
 {% set model = result %}
+{% set server = settings.base["server"] %}
+{% set port  = settings.base["port"] %}
 
 <script>
     $(document).ready(function(){
         // Handler for .ready() called.
         $('#test').click( function() {
             alert('aha aha aha' );
+        });
+    
+        $.ajax({
+            type: "POST",
+            url: "/{{server}}:{{port}}/{{model.modelname}}/{{model._id}}/update",
+            // The key needs to match your method's input parameter (case-sensitive).
+            data: JSON.stringify({ Markers: markers }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data){alert(data);},
+            failure: function(errMsg) {alert(errMsg);}
         });
     });
 </script>
@@ -35,7 +48,7 @@
                         <div class="col-sm-8">
                                 <input  type="text" 
                                         class="form-control" 
-                                        id="exampleInputEmail1" 
+                                        id="{{att}}" 
                                         placeholder="{{model.get(att)}}"
                                         {% if att == "_id" %}
                                             readonly
@@ -51,11 +64,11 @@
 
 
             {% module form_select(model=result, attribute="title") %}
-
+            
             To get this by using curl just do on the command line
             <hr>
             curl -i -X POST --data "id=1234"  --header "Content-Type:application/json" 
-            http://localhost:8000/{{result.modelname}}/{{result._id}}/update
+            http://{{server}}:{{port}}/{{result.modelname}}/{{result._id}}/update
         </div>
     </div>
 {% end %}

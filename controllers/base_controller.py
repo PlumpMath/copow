@@ -26,17 +26,9 @@ class BaseController(tornado.web.RequestHandler):
         addiotional HTTP Parameter: REQUEST_TYPE
         set to PUT or DELETE accordingly.
 
-        Meaning a call to domain:port/controller/([someting]+)
-        Where something is usually an ID
-        HTTP GET        => will call controller.show(something)
-        HTTP POST       => will call Nothing. [returns HTTP 501]
-        HTTP PUT        => will call controller.edit(something)
-        HTTP DELETE     => will call controller.delete(something)
-        and a call to domain:port/controller/
-        HTTP GET        => will call controller.list()
-        HTTP POST       => will call controller.create()
-        HTTP PUT        => will call controller.replace_all() [returns HTTP 501 by default]
-        HTTP DELETE     => will call controller.delete_all()
+        The actual implementation for your application is defined
+        in config/routes.py. See section rest_routes.
+        It will be also printed to the console when you start server.py
 
         ***********
         * FORMAT:
