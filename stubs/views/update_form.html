@@ -23,7 +23,7 @@
     
         $('#submit').click( function() {
             $.ajax({
-                type: "POST",
+                type: 'POST',
                 url: "/{{server}}:{{port}}/{{model.modelname}}/{{model._id}}/update",
                 // The key needs to match your method's input parameter (case-sensitive).
                 data: JSON.stringify({ "test": "test_value" }),
@@ -32,7 +32,7 @@
                 success: function(data){alert(data);},
                 failure: function(errMsg) {alert(errMsg);}
             });
-        }
+        });
     });
 </script>
 
