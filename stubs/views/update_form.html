@@ -18,7 +18,8 @@
     $(document).ready(function(){
         // Handler for .ready() called.
         $('#test').click( function() {
-            alert('aha aha aha' );
+            alert($('#update_form').serializeJSON() );
+            console.log($('#update_form').serializeJSON());
         });
     
         $('#submit').click( function() {
@@ -43,7 +44,7 @@
         <div class="panel-heading"><b> This is the show view: </b></div>
         <div class="panel-body">
             <p>&nbsp;</p>
-            <form class="form-horizontal" role="form">
+            <form id="update_form" class="form-horizontal" role="form">
                 {% for att in model.schema.keys() %}
                     <div class="form-group">
                         <label for="{{att}}" class="col-sm-2 control-label">{{att}}</label>
@@ -68,10 +69,12 @@
 
             {% module form_select(model=result, attribute="title") %}
             
-            To get this by using curl just do on the command line
-            <hr>
-            curl -i -X POST --data "id=1234"  --header "Content-Type:application/json" 
-            http://{{server}}:{{port}}/{{result.modelname}}/{{result._id}}/update
+            To get this by using curl just cut and paste the snippet below to the command line:
+            <pre>
+                <code>
+                curl -i -X POST --data "id=1234"  --header "Content-Type:application/json"  http://{{server}}:{{port}}/{{result.modelname}}/{{result._id}}/update
+                </code>
+            </pre>
         </div>
     </div>
 {% end %}

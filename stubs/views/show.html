@@ -34,20 +34,17 @@
                         </td>
 
                     </tr>
-                    <tr>
-                        <td>To get this by using curl just do on the command line</td>
-                        <td>
-                            curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
-                        </td>
-
-                    </tr>
             </table>
 
             {% module form_select(model=result, attribute="title") %}
 
             To get this by using curl just do on the command line
             <hr>
-            curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
+            <pre>
+                </code>
+                    curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
+                </code>
+            </pre>
         </div>
     </div>
 {% end %}
