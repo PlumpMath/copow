@@ -24,10 +24,10 @@
         $('#submit').click( function() {
             $.ajax({
                 type: 'POST',
-                url: "/{{server}}:{{port}}/{{model.modelname}}/{{model._id}}/update",
+                url: "http://{{server}}:{{port}}/{{model.modelname}}/{{model._id}}/update",
                 // The key needs to match your method's input parameter (case-sensitive).
                 data: JSON.stringify({ "test": "test_value" }),
-                contentType: "application/json; charset=utf-8",
+                contentType: "application/json",
                 dataType: "application/json",
                 success: function(data){alert(data);},
                 failure: function(errMsg) {alert(errMsg);}
@@ -59,11 +59,12 @@
                         </div>
                     </div>
                 {% end %}
-                <button type="submit" class="btn btn-primary">Submit</button>
+                
             </form>
             
-            <p id="test">Test</p>
+            <button id="test" class="btn btn-warning">Test</button>
 
+            <button id="submit" class="btn btn-primary">Submit</button>
 
             {% module form_select(model=result, attribute="title") %}
             
