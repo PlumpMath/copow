@@ -328,6 +328,7 @@ class BaseModel(dict):
 
     def remove_self(self, *args, **kwargs):
         """ removes this instances document representation in the db """
+        print("removing: ", str(self._id))
         return self.collection.remove({"_id" : self._id}, True, *args, **kwargs)
 
     def remove(self, *args, **kwargs):

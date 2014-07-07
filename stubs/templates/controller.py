@@ -174,7 +174,36 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             but eats the HTML Form input, not the json
             returns the form to create a new post
         """
-        return self.render("#CONTROLLER_LOWER_NAME_create.html", request=self.request)
+        print("create_json *args: ", args)
+        print("create_json kwargs: ", kwargs)
+        #print("update_json request: ", self.request)
+        #print("request body: ", self.request.body)
+        #
+        # getting the data payload
+        #
+        data = json.loads(self.request.body.decode(settings.base["default_encoding"]))
+        now = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+        print("data: ", data)
+        try:
+            self.model.set_values(data)
+            self.model.create()
+            print("model is now: ", self.model)
+            ret_data = dict( data = self.model.to_json())
+            #print("returning: ", ret_data)
+            self.set_status(200)
+            self.set_header("Content-Type", "application/json")
+            print("headers: ", self._headers)
+            self.write(tornado.escape.json_encode(ret_data))
+        except Exception as e:
+            ret_data = dict( data = 'Uuups: ' + now + str(e))
+            #print("returning: ", ret_data)
+            self.set_status(400)
+            self.set_header("Content-Type", "application/json")
+            print("headers: ", self._headers)
+            self.write(tornado.escape.json_encode(ret_data))
+        finally:
+            self.finish()  
+        #return self.render("#CONTROLLER_LOWER_NAME_create.html", request=self.request)
 
     @tornado.web.asynchronous    
     def update_json(self, *args, **kwargs):
@@ -196,7 +225,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         print("data: ", data)
         try:
             self.model.set_values(data)
-            self.model.save()
+            self.model.update()
             print("model is now: ", self.model)
             ret_data = dict( data = self.model.to_json())
             #print("returning: ", ret_data)
@@ -252,13 +281,26 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """
         return self.render("#CONTROLLER_LOWER_NAME_delete_all.html", request=self.request)
 
-    def delete(self, *args, **kwargs):
+    @tornado.web.asynchronous 
+    def delete(self, id=None, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/DELETE /#CONTROLLERNAME/id
             CRUD: DELETE
             delete a #MODELNAME
         """
-        return self.render("#CONTROLLER_LOWER_NAME_delete.html", request=self.request)
+        print("delete id: ", str(id))
+        if id:
+            res = None
+            res = self.model.find_by("_id", ObjectId(id))
+            print("delete: res: ", res)
+            if res:
+                res[0].delete()
+                ret_data = dict( data = 'Successfully deleted model: ' + str(id))
+                self.write(tornado.escape.json_encode(ret_data))
+                self.finish()     
+        self.set_status(501)
+        self.render("error.html", message=" No such ObjectID ", result=self.model)
+        #return self.render("#CONTROLLER_LOWER_NAME_delete.html", request=self.request)
 
     
 

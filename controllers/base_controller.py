@@ -85,10 +85,8 @@ class BaseController(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def post(self, *args, **kwargs):
         """ 
-            Meaning a call to domain:port/controller/([someting]+)
-            HTTP POST       => will call Nothing, yet.
-            and a call to domain:port/controller/
-            HTTP POST       => will call controller.create()
+            HTTP POST /controller/<id>/ will call the
+            method defined in routes.py POST (method_post)
         """
         print("post *args: ", args)
         print("post kwargs: ", kwargs)
@@ -118,36 +116,30 @@ class BaseController(tornado.web.RequestHandler):
 
     @tornado.web.removeslash
     #@tornado.web.asynchronous
-    def put():
+    def put(self, *args, **kwargs):
         """
-            Meaning a call to domain:port/controller/([someting]+)
-            HTTP PUT        => will call controller.edit(something)
+            Meaning a call to domain:port/controller/
+            HTTP PUT        => will call controller.create(something)
             and a call to domain:port/controller/
             HTTP PUT        => will call controller.replace_all() [returns HTTP 501]
         """
-        if args:
-            # PUT /controller/id   => its update(id)
-            id = args[0]
-            return self.update(id)
-        else:
-            # PUT /controller/   => it is update_all()
-            return self.update_all()
+        pass
     
     @tornado.web.removeslash
-    def delete():
+    @tornado.web.asynchronous
+    def delete(self, *args, **kwargs):
         """
-            Meaning a call to domain:port/controller/([someting]+)
+            Meaning a call to domain:port/controller/([id]+)
             HTTP DELETE     => will call controller.delete(something)
             and a call to domain:port/controller/
             HTTP DELETE     => will call controller.delete_all()
+                            => delete_all is not implemented yet.
         """
-        if args:
-            # DELETE /controller/id   => its delete(id)
-            id = args[0]
-            return self.delete(id)
-        else:
-            # DELETE /controller/   => it is delete_all()
-            return self.delete_all()
+        print("delete *args: ", args)
+        print("delete kwargs: ", kwargs)
+        print("self.method_delete: ", self.method_delete)
+        print("self.params: ", self.params)
+        return self.delete(*args, **kwargs)
 
     ## error handler taken from: https://github.com/CarlosGabaldon/tornado_alley/blob/master/chasing_tornado.py
     def write_error(self, status_code, **kwargs):

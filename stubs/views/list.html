@@ -7,8 +7,57 @@
 {% extends "layouts/main_layout.html" %}
 
 {# this will be rendered in the content block of main.html view view #}
-
 {% block content %}
+{% import atest.config.settings as settings %}
+{% set model = result[0] %}
+{% set server = settings.base["server"] %}
+{% set port  = settings.base["port"] %}
+
+<script>
+    $(document).ready(function(){
+        // Handler for .ready() called.
+        // see: http://api.jquery.com/jQuery.ajax/#jqXHR
+        $('#delete').click( function() {
+                console.log("delete clicked");
+                $.ajax( 
+                    {
+                        type: 'DELETE',
+                        url: "http://{{server}}:{{port}}/{{model.modelname}}/{{model._id}}",
+                        data: "",
+                        contentType: "application/json",
+                        dataType: "json"
+                    }
+                )
+                .done(function(msg) {
+                    //alert( "success" );
+                    console.log(msg);
+                    //var payload = JSON.parse(msg.responseText);
+                    console.log(msg["data"]);
+                    $("#flash_message").text("sucess:" + msg["data"]);
+                    $("#flash_message_div").attr("class",
+                        "alert alert-success alert-dismissible"
+                     );
+                    $("#flash_message_div").show();
+
+                })
+                .fail(function( msg ) {
+                    //alert( "error" );
+                    console.log(msg);
+                    var payload = JSON.parse(msg.responseText);
+                    console.log(payload["data"]);
+                    $("#flash_message").text("Error :" + payload["data"]);
+                     $("#flash_message_div").attr("class",
+                        "alert alert-danger alert-dismissible"
+                     )
+                    $("#flash_message_div").show();
+                })
+                .always(function() {
+                    //alert( "complete" );
+                    console.log("complete")
+                });
+        });
+    });
+</script>
 
     <div class="panel panel-default">
     <!-- Default panel contents -->
@@ -28,8 +77,9 @@
                             {% for att in model.schema.keys() %}
                               <td>{{ escape(model.get(att)) }}</td>
                             {% end %}
-                            <td><a href="/{{model.modelname}}/{{model._id}}">show</a> </td>
-                            <td><a href="/{{model.modelname}}/{{model._id}}/update">edit</a> </td>
+                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-success active" role="button">show</a> </td>
+                            <td><a href="/{{model.modelname}}/{{model._id}}/update" class="btn btn-warning  active" role="button">edit</a> </td>
+                            <td><button id="delete" class="btn btn-danger">delete</button></td>
                         </tr>
                     {% end %}
                 </tbody>
