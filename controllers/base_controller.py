@@ -82,6 +82,7 @@ class BaseController(tornado.web.RequestHandler):
         self.send_error(status_code=406, **kwargs)
         
     @tornado.web.removeslash
+    @tornado.web.asynchronous
     def post(self, *args, **kwargs):
         """ 
             Meaning a call to domain:port/controller/([someting]+)
@@ -97,6 +98,10 @@ class BaseController(tornado.web.RequestHandler):
         supported_formats = settings.data_formats["content_type_formats"]
         # Which Output formats does the client accept ?
         requested_formats = self.request.headers.get("Content-Type").split(",")
+        requested_formats_encodings = []
+        for format in requested_formats:
+                # TODO: Implement charset checking here:
+                pass
         print("  -- request formats: ", requested_formats)
         # try to match them. order matters. 1st come, 1st servec
         
@@ -112,6 +117,7 @@ class BaseController(tornado.web.RequestHandler):
         self.send_error(status_code=406, **kwargs)
 
     @tornado.web.removeslash
+    #@tornado.web.asynchronous
     def put():
         """
             Meaning a call to domain:port/controller/([someting]+)

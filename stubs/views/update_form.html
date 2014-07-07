@@ -9,7 +9,7 @@
 {# this will be rendered in the content block of main.html view view #}
 
 {% block content %}
-{% import #APPNAME.config.settings as settings %}
+{% import atest.config.settings as settings %}
 {% set model = result %}
 {% set server = settings.base["server"] %}
 {% set port  = settings.base["port"] %}
@@ -18,30 +18,70 @@
     $(document).ready(function(){
         // Handler for .ready() called.
         $('#test').click( function() {
-            alert($('#update_form').serializeJSON() );
+            //alert($('#update_form').serializeJSON() );
+            console.log("copow: serialized to json:")
             console.log($('#update_form').serializeJSON());
+            console.log("copow: stringified & serialized to json:")
+            console.log(JSON.stringify($('#update_form').serializeJSON()));
+            $("#flash_message_div").toggle();
         });
-    
+        // see: http://api.jquery.com/jQuery.ajax/#jqXHR
         $('#submit').click( function() {
-            $.ajax({
-                type: 'POST',
-                url: "http://{{server}}:{{port}}/{{model.modelname}}/{{model._id}}/update",
-                // The key needs to match your method's input parameter (case-sensitive).
-                data: JSON.stringify({ "test": "test_value" }),
-                contentType: "application/json",
-                dataType: "application/json",
-                success: function(data){alert(data);},
-                failure: function(errMsg) {alert(errMsg);}
-            });
+                $.ajax( 
+                    {
+                        type: 'POST',
+                        url: "http://{{server}}:{{port}}/{{model.modelname}}/{{model._id}}/update",
+                        // The key needs to match your method's input parameter (case-sensitive).
+                        data: (JSON.stringify($('#update_form').serializeJSON())),
+                        contentType: "application/json",
+                        dataType: "json"
+                    }
+                )
+                .done(function(msg) {
+                    //alert( "success" );
+                    console.log(msg);
+                    //var payload = JSON.parse(msg.responseText);
+                    console.log(msg["data"]);
+                    $("#flash_message").text("sucess:" + msg["data"]);
+                    $("#flash_message_div").attr("class",
+                        "alert alert-success alert-dismissible"
+                     );
+                    $("#flash_message_div").show();
+
+                })
+                .fail(function( msg ) {
+                    //alert( "error" );
+                    console.log(msg);
+                    var payload = JSON.parse(msg.responseText);
+                    console.log(payload["data"]);
+                    $("#flash_message").text("Error :" + payload["data"]);
+                     $("#flash_message_div").attr("class",
+                        "alert alert-danger alert-dismissible"
+                     )
+                    $("#flash_message_div").show();
+                })
+                .always(function() {
+                    //alert( "complete" );
+                    console.log("complete")
+                });
         });
     });
 </script>
 
 
 
+
     <div class="panel panel-default">
     <!-- Default panel contents -->
         <div class="panel-heading"><b> This is the show view: </b></div>
+        
+        <!-- an optional flash-message -->
+        <div class="" role="alert"  style="display: none;" id="flash_message_div">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">
+                &times;</span><span class="sr-only">Close</span></button>
+            <strong>Info:</strong> <span id="flash_message"></span>
+        </div>
+
         <div class="panel-body">
             <p>&nbsp;</p>
             <form id="update_form" class="form-horizontal" role="form">
@@ -51,6 +91,7 @@
                         <div class="col-sm-8">
                                 <input  type="text" 
                                         class="form-control" 
+                                        name="{{att}}" 
                                         id="{{att}}" 
                                         value="{{model.get(att)}}"
                                         {% if att == "_id" %}

@@ -18,6 +18,7 @@ from #APPNAME.controllers.base_controller import BaseController
 from  #APPNAME.models.#MODELNAME import #MODELCLASSNAME
 import #APPNAME.config.settings as settings
 from bson.objectid import ObjectId
+import datetime
 
 class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
 
@@ -174,7 +175,8 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             returns the form to create a new post
         """
         return self.render("#CONTROLLER_LOWER_NAME_create.html", request=self.request)
-    
+
+    @tornado.web.asynchronous    
     def update_json(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/POST /#CONTROLLERNAME 
@@ -182,7 +184,35 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             update really updates the data in the db
             data must be in json format
         """
-        return self.render("#CONTROLLER_LOWER_NAME_update.html", request=self.request)        
+        print("update_json *args: ", args)
+        print("update_json kwargs: ", kwargs)
+        #print("update_json request: ", self.request)
+        #print("request body: ", self.request.body)
+        #
+        # getting the data payload
+        #
+        data = json.loads(self.request.body.decode(settings.base["default_encoding"]))
+        now = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+        print("data: ", data)
+        try:
+            self.model.set_values(data)
+            self.model.save()
+            print("model is now: ", self.model)
+            ret_data = dict( data = self.model.to_json())
+            #print("returning: ", ret_data)
+            self.set_status(200)
+            self.set_header("Content-Type", "application/json")
+            print("headers: ", self._headers)
+            self.write(tornado.escape.json_encode(ret_data))
+        except Exception as e:
+            ret_data = dict( data = 'Uuups: ' + now + str(e))
+            #print("returning: ", ret_data)
+            self.set_status(400)
+            self.set_header("Content-Type", "application/json")
+            print("headers: ", self._headers)
+            self.write(tornado.escape.json_encode(ret_data))
+        finally:
+            self.finish()               
 
     def update_form_html(self, id=None, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
@@ -192,7 +222,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """
         print("get *args: ", args)
         print("get kwargs: ", kwargs)
-        print("update_form oid: ", id)
+        print("update_form oid: ", str(id))
         result = self.model.find({"_id" : ObjectId(str(id)) })
         # if result.count()=1 self.model ist automatically set to result[0]
         if result.count() == 1:

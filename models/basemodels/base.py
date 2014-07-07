@@ -22,7 +22,7 @@ import #APPNAME.lib.custom_encoders as encoders
 
 tab = powlib.tab
 
-class BaseModel(object):
+class BaseModel(dict):
     
     #def __init__(self, data=None, schema=None):
     def __setitem__(self, key, value):    
@@ -294,7 +294,7 @@ class BaseModel(object):
     def save(self, safe=True):
         """ Saves the object. Results in insert if object wasnt in the db before,
             results in update otherwise"""
-        d = self.to_json()
+        d = self.to_mongo()
         #print(self)
         d["last_updated"] = powlib.get_time()
         self._id = self.collection.save(d,  safe=safe)
@@ -321,7 +321,7 @@ class BaseModel(object):
         """  Pure: pymongo update. Can update any document in the collection (not only self)
             Syntax: db.test.update({"x": "y"}, {"$set": {"a": "c"}}) """
         #ret = self.collection.update(*args, **kwargs)
-        ret = self.collection.update({"_id": self._id}, self.to_json(), safe=safe, multi=False )
+        ret = self.collection.update({"_id": self._id}, self.to_mongo(), safe=safe, multi=False )
         print("updated: ", self.modelname, " id: ", str(self._id))
         return ret
     
@@ -349,24 +349,32 @@ class BaseModel(object):
         """ makes an self instance from json """
         return self.set_values(json_data)
 
+    def to_mongo(self):
+        return self.to_json(skip_id=True)
 
-    def to_json(self):
+    def to_JSON(self):
+        return self.to_json()
+
+    def to_json(self, skip_id=False):
         """ returns a json representation of the schema"""
         d = {}
         #print(self.schema)
         for column in list(self.schema.keys()):
-            curr_type = self.schema[column]["type"].lower()
-            #print("column: ", column, " curr_type: ", curr_type)
-            if curr_type in settings.schema_types.keys():
-                if "encode" in settings.schema_types[curr_type][2]:
-                    #
-                    # if this type has a custom_encoder, then use it
-                    #
-                    d[column] = settings.schema_types[curr_type][2]["encode"](getattr(self, column))
-                    #print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2]["encode"])
-                else:
-                    d[column] = getattr(self, column)
-                    #print ("standard encoded for: ", column)
+            if column == "_id" and skip_id:
+                pass
+            else:
+                curr_type = self.schema[column]["type"].lower()
+                #print("column: ", column, " curr_type: ", curr_type)
+                if curr_type in settings.schema_types.keys():
+                    if "encode" in settings.schema_types[curr_type][2]:
+                        #
+                        # if this type has a custom_encoder, then use it
+                        #
+                        d[column] = settings.schema_types[curr_type][2]["encode"](getattr(self, column))
+                        print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2]["encode"])
+                    else:
+                        d[column] = getattr(self, column)
+                        #print ("standard encoded for: ", column)
         return d
     
     def reload_relations(self):

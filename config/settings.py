@@ -19,7 +19,8 @@ base = {
     "view_parts_dir"    :   "stubs/views/",
     "model_test_dir"    :  "test/models/",
     #authentication can be user or role (for now)
-    "authentication"   :   "user",
+    "authentication"    :   "user",
+    "default_encoding"  :   "utf-8"
 }
 
 logging=  {
@@ -58,7 +59,11 @@ schema_types = {
     "binary"    :   (None, uimodules.modules["form_fileselect"], {}),
     "object"    :   (None, uimodules.modules["form_textinput"], {}),
     "date"      :   (None, uimodules.modules["form_datepicker"], {}),
-    "objectid"  :   (ObjectId(), uimodules.modules["form_textinput"], {}),
+    "objectid"  :   (ObjectId(), uimodules.modules["form_textinput"], 
+                            {   "encode"    :   #APPNAME.lib.custom_encoders.encode_oid,
+                                "decode"    :   #APPNAME.lib.custom_encoders.decode_oid
+                            }
+                    ),
     "id"        :   (None, uimodules.modules["form_textinput"], {}),
     "dict"      :   ({}, uimodules.modules["form_textarea"], {}),
     "bool"      :   (False, uimodules.modules["form_checkbox"], {}),
