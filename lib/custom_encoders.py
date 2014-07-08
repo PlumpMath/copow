@@ -9,16 +9,25 @@
 #
 from bson.objectid import ObjectId
 
-def encode_set(val):
-    return list(val)
-
-def decode_set(val):
+def set_encode_python(val):
     return set(val)
 
+def set_encode_json(val):
+    return list(val)
+    
+def set_encode_db(val):
+    return list(val)
 
-def encode_oid(val):
+def oid_encode_python(val):
+    if isinstance(val, str):
+        return ObjectId(val)
+    elif isinstance(val,ObjectId):
+        return val
+    else:
+        return ObjectId(str(val))
+
+def oid_encode_json(val):
     return str(val)
 
-def decode_oid(val):
+def oid_encode_db(val):
     return ObjectId(val)
-

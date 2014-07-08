@@ -35,27 +35,17 @@ class BaseModel(dict):
             curr_type = self.schema[key]["type"].lower()
             #print("column: ", column, " curr_type: ", curr_type)
             if curr_type in settings.schema_types.keys():
-                if "decode" in settings.schema_types[curr_type][2]:
+                if "encode_python" in settings.schema_types[curr_type][2]:
                     #
                     # if this type has a custom_encoder, then use it
                     #
-                    setattr(self, key, settings.schema_types[curr_type][2]["decode"](value))
-                    print ("custom decoded for: ", curr_type, " with: ", settings.schema_types[curr_type][2]["decode"])
+                    setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](value))
+                    print ("custom decoded for: ", curr_type, " with: ", settings.schema_types[curr_type][2]["encode_python"])
                 else:
                     setattr(self,key, value)
         else:
             print("Skipping: ", key, " -> ", value, " Not in schema")
             
-
-    def set_data(self, data={}):
-        """ set the data for this model from given dictionary data"""
-        for key in list(data.keys()):
-            if key in self.schema:
-                #self.__dict__[key] = data[key]
-                setattr(self,key, data[key])
-            else:
-                raise Exception("unknown attribute: %s for model: %s ") % (key, self.modelname)   
-
 
     def setup_relations(self):
         self.related_models = {}
@@ -158,22 +148,12 @@ class BaseModel(dict):
 
     def get(self, attribute_name=None, as_str=True):
         """ returns the model attribute with the specified attribute_name"""
-        if attribute_name:
+        if attribute_name in self.schema.keys():
             if as_str:
                 return str(getattr(self,attribute_name))
             else:
                 return getattr(self,attribute_name)
 
-    def generate_method(self, method_name, method_str, replace = []):
-        """ generates a method for this object based on the 
-        given method_name and  method_str
-        param: replace is a list of 2-tuples [(old_str, replace_str),..] """    
-        for elem in replace:
-            method_str = method_str.replace(elem[0], elem[1])
-        print("method_str: ", method_str)
-        exec(method_str,globals())
-        self.__dict__[method_name] = types.MethodType(foo,self)
-        #setattr(self, method_name, foo)
 
     def generate_accessor_methods(self, rel_model):
         """ generates the convenient append Method for adding related (has_many)
@@ -276,7 +256,7 @@ class BaseModel(dict):
                 self.__setitem__(elem, val[elem])
         else:
             print("You should never see this message!!!!")
-        print(self)
+        #print(self)
         return
 
     def clear(self):
@@ -286,7 +266,7 @@ class BaseModel(dict):
         for elem in self.schema.keys():
             # get the according default type for the attribute 
             # See: settings.schema_types
-            default_value = settings.schema_types[self.schema[elem]["type"].lower()]
+            default_value = settings.schema_types[self.schema[elem]["type"].lower()][0]
             setattr(self, elem, default_value)
         print("erased values: ", self.to_json())
         return
@@ -324,12 +304,6 @@ class BaseModel(dict):
         ret = self.collection.update({"_id": self._id}, self.to_mongo(), safe=safe, multi=False )
         print("updated: ", self.modelname, " id: ", str(self._id))
         return ret
-    
-
-    def remove_self(self, *args, **kwargs):
-        """ removes this instances document representation in the db """
-        print("removing: ", str(self._id))
-        return self.collection.remove({"_id" : self._id}, True, *args, **kwargs)
 
     def remove(self, *args, **kwargs):
         """ removes any given instances document representation in the db 
@@ -344,38 +318,33 @@ class BaseModel(dict):
         """ removes this instances document representation in the db 
             conveniance method, calls remove_self internally.
         """
-        return self.remove_self(*args, **kwargs)
+        return self.remove({"_id" : self._id}, True)
 
     def from_json(self, json_data):
         """ makes an self instance from json """
         return self.set_values(json_data)
 
     def to_mongo(self):
-        return self.to_json(skip_id=True)
+        return self.to_json(encoder="encode_db")
+        
 
-    def to_JSON(self):
-        return self.to_json()
-
-    def to_json(self, skip_id=False):
+    def to_json(self, encoder="encode_json"):
         """ returns a json representation of the schema"""
         d = {}
         #print(self.schema)
         for column in list(self.schema.keys()):
-            if column == "_id" and skip_id:
-                pass
-            else:
-                curr_type = self.schema[column]["type"].lower()
-                #print("column: ", column, " curr_type: ", curr_type)
-                if curr_type in settings.schema_types.keys():
-                    if "encode" in settings.schema_types[curr_type][2]:
-                        #
-                        # if this type has a custom_encoder, then use it
-                        #
-                        d[column] = settings.schema_types[curr_type][2]["encode"](getattr(self, column))
-                        print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2]["encode"])
-                    else:
-                        d[column] = getattr(self, column)
-                        #print ("standard encoded for: ", column)
+            curr_type = self.schema[column]["type"].lower()
+            #print("column: ", column, " curr_type: ", curr_type)
+            if curr_type in settings.schema_types.keys():
+                if encoder in settings.schema_types[curr_type][2]:
+                    #
+                    # if this type has a custom_encoder, then use it
+                    #
+                    d[column] = settings.schema_types[curr_type][2][encoder](getattr(self, column))
+                    print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2][encoder])
+                else:
+                    d[column] = getattr(self, column)
+                    #print ("standard encoded for: ", column)
         return d
     
     def reload_relations(self):

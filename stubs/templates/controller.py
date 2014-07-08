@@ -149,7 +149,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             show all #MODELNAME_PLURAL
         """
         result = self.model.find_all()
-        return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result=result)
+        return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result_model=self.model, result=result)
 
     def create(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
@@ -159,13 +159,14 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """
         return self.render("#CONTROLLER_LOWER_NAME_create.html", request=self.request)        
 
-    def create_form(self, *args, **kwargs):
+    def create_form_html(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/PUT /#CONTROLLERNAME 
             CRUD: CREATE 
             returns the form to create a new #MODELNAME
         """
-        return self.render("#CONTROLLER_LOWER_NAME_create_form.html", request=self.request)        
+        self.model = self.model.__class__()
+        return self.render("#CONTROLLER_LOWER_NAME_create_form.html", request=self.request, result=self.model)        
 
     def create_json(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
@@ -272,6 +273,30 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         self.set_status(501)
         self.render("error.html", message="Method not implemented, yet!")
 
+    @tornado.web.asynchronous 
+    def delete(self, id=None, *args, **kwargs):
+        """ respresents the folowing REST/CRUD Terminology:
+            REST: HTTP/DELETE /#CONTROLLERNAME/id
+            CRUD: DELETE
+            delete a post
+        """
+        print("delete id: ", str(id))
+        if id:
+            res = None
+            res = self.model.find_by("_id", ObjectId(id))
+            print("delete: res: ", res)
+            if res != None:
+                print("now its getting closer ...")
+                res.delete()
+                ret_data = dict( data = 'Successfully deleted model: ' + str(id))
+                self.write(tornado.escape.json_encode(ret_data))
+                self.finish()     
+            else:
+                print("No res !!")
+                self.set_status(501)
+                self.render("error.html", message=" No such ObjectID ", result=self.model)
+        #return self.render("post_delete.html", request=self.request)
+
 
     def delete_all(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
@@ -279,28 +304,10 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             CRUD: DELETE
             delete all #MODELNAME_PLURAL
         """
-        return self.render("#CONTROLLER_LOWER_NAME_delete_all.html", request=self.request)
-
-    @tornado.web.asynchronous 
-    def delete(self, id=None, *args, **kwargs):
-        """ respresents the folowing REST/CRUD Terminology:
-            REST: HTTP/DELETE /#CONTROLLERNAME/id
-            CRUD: DELETE
-            delete a #MODELNAME
-        """
-        print("delete id: ", str(id))
-        if id:
-            res = None
-            res = self.model.find_by("_id", ObjectId(id))
-            print("delete: res: ", res)
-            if res:
-                res[0].delete()
-                ret_data = dict( data = 'Successfully deleted model: ' + str(id))
-                self.write(tornado.escape.json_encode(ret_data))
-                self.finish()     
+        #return self.render("#CONTROLLER_LOWER_NAME_delete_all.html", request=self.request)
         self.set_status(501)
-        self.render("error.html", message=" No such ObjectID ", result=self.model)
-        #return self.render("#CONTROLLER_LOWER_NAME_delete.html", request=self.request)
+        self.render("error.html", message="Method not implemented, yet!")
+        
 
     
 

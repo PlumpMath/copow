@@ -9,77 +9,86 @@
 {# this will be rendered in the content block of main.html view view #}
 {% block content %}
 {% import atest.config.settings as settings %}
-{% set model = result[0] %}
+{% set model = result_model %}
 {% set server = settings.base["server"] %}
 {% set port  = settings.base["port"] %}
 
 <script>
-    $(document).ready(function(){
-        // Handler for .ready() called.
-        // see: http://api.jquery.com/jQuery.ajax/#jqXHR
-        $('#delete').click( function() {
-                console.log("delete clicked");
-                $.ajax( 
-                    {
-                        type: 'DELETE',
-                        url: "http://{{server}}:{{port}}/{{model.modelname}}/{{model._id}}",
-                        data: "",
-                        contentType: "application/json",
-                        dataType: "json"
-                    }
-                )
-                .done(function(msg) {
-                    //alert( "success" );
-                    console.log(msg);
-                    //var payload = JSON.parse(msg.responseText);
-                    console.log(msg["data"]);
-                    $("#flash_message").text("sucess:" + msg["data"]);
-                    $("#flash_message_div").attr("class",
-                        "alert alert-success alert-dismissible"
-                     );
-                    $("#flash_message_div").show();
+    var del;
+    del = function(id) {
+            console.log("delete clicked", id);
+            console.log("url: " + "http://{{server}}:{{port}}/{{model.modelname}}/"+id)
+            $.ajax( 
+                {
+                    type: 'DELETE',
+                    url: "http://{{server}}:{{port}}/{{model.modelname}}/"+id,
+                    data: "",
+                    contentType: "application/json",
+                    dataType: "json"
+                }
+            )
+            .done(function(msg) {
+                //alert( "success" );
+                console.log(msg);
+                //var payload = JSON.parse(msg.responseText);
+                console.log(msg["data"]);
+                $("#flash_message").text("sucess:" + msg["data"]);
+                $("#flash_message_div").attr("class",
+                    "alert alert-success alert-dismissible"
+                 );
+                $("#flash_message_div").show();
 
-                })
-                .fail(function( msg ) {
-                    //alert( "error" );
-                    console.log(msg);
-                    var payload = JSON.parse(msg.responseText);
-                    console.log(payload["data"]);
-                    $("#flash_message").text("Error :" + payload["data"]);
-                     $("#flash_message_div").attr("class",
-                        "alert alert-danger alert-dismissible"
-                     )
-                    $("#flash_message_div").show();
-                })
-                .always(function() {
-                    //alert( "complete" );
-                    console.log("complete")
-                });
-        });
-    });
+            })
+            .fail(function( msg ) {
+                //alert( "error" );
+                console.log(msg);
+                var payload = JSON.parse(msg.responseText);
+                console.log(payload["data"]);
+                $("#flash_message").text("Error :" + payload["data"]);
+                 $("#flash_message_div").attr("class",
+                    "alert alert-danger alert-dismissible"
+                 )
+                $("#flash_message_div").show();
+            })
+            .always(function() {
+                //alert( "complete" );
+                console.log("complete")
+            });
+        };
 </script>
 
+    <!-- an optional flash-message -->
+    <div class="" role="alert"  style="display: none;" id="flash_message_div">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">
+            &times;</span><span class="sr-only">Close</span></button>
+        <strong>Info:</strong> <span id="flash_message"></span>
+    </div>
+        
     <div class="panel panel-default">
     <!-- Default panel contents -->
-        <div class="panel-heading">this is the list view: </div>
+        <div class="panel-heading">this is the list view: 
+            <a href="/{{model.modelname}}/create" class="btn btn-success active" role="button">
+                Create new {{model.modelname}}</a>
+        </div>
+
         <div class="panel-body">
             <table class="table">
                 <thead>
-                    {% set mod = result[0] %}
-                    {% for key in mod.schema.keys() %}
+                    {% for key in model.schema.keys() %}
                         <th>{{ escape(key) }}</th>
                     {% end %}
                     <th>action</th>
                 </thead>
                 <tbody>
+
                     {% for model in result %}
                         <tr>
                             {% for att in model.schema.keys() %}
                               <td>{{ escape(model.get(att)) }}</td>
                             {% end %}
-                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-success active" role="button">show</a> </td>
+                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-primary active" role="button">show</a> </td>
                             <td><a href="/{{model.modelname}}/{{model._id}}/update" class="btn btn-warning  active" role="button">edit</a> </td>
-                            <td><button id="delete" class="btn btn-danger">delete</button></td>
+                            <td><button id="delete" class="btn btn-danger" name="{{model._id}}" onclick="del('{{model._id}}')">delete</button></td>
                         </tr>
                     {% end %}
                 </tbody>
@@ -89,7 +98,7 @@
             To get this by using curl just do on the command line
             <pre>
                 <code>
-                    curl -i -H "Accept: application/json" http://localhost:8000/{{mod.modelname}}
+                    curl -i -H "Accept: application/json" http://localhost:8000/{{model.modelname}}
                 </code>
             </pre>
         </div>

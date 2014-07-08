@@ -23,12 +23,6 @@ base = {
     "default_encoding"  :   "utf-8"
 }
 
-logging=  {
-    
-    "clear_log_at_startup"  : True,
-    "format"                : "#DATE,#TIME,#LEVEL,#MESSAGE"
-}
-
 # for the webserver_settings
 # See: http://www.tornadoweb.org/en/stable/web.html 
 # section: Application configuration
@@ -60,18 +54,26 @@ schema_types = {
     "object"    :   (None, uimodules.modules["form_textinput"], {}),
     "date"      :   (None, uimodules.modules["form_datepicker"], {}),
     "objectid"  :   (ObjectId(), uimodules.modules["form_textinput"], 
-                            {   "encode"    :   #APPNAME.lib.custom_encoders.encode_oid,
-                                "decode"    :   #APPNAME.lib.custom_encoders.decode_oid
+                            {   "encode_python"     :   #APPNAME.lib.custom_encoders.oid_encode_python,
+                                "encode_json"       :   #APPNAME.lib.custom_encoders.oid_encode_json,
+                                "encode_db"         :   #APPNAME.lib.custom_encoders.oid_encode_db
                             }
                     ),
     "id"        :   (None, uimodules.modules["form_textinput"], {}),
     "dict"      :   ({}, uimodules.modules["form_textarea"], {}),
     "bool"      :   (False, uimodules.modules["form_checkbox"], {}),
     "set"       :   (set(), uimodules.modules["form_textinput"], 
-                            {   "encode"    :   #APPNAME.lib.custom_encoders.encode_set,
-                                "decode"    :   #APPNAME.lib.custom_encoders.decode_set
+                            {   "encode_python"     :   #APPNAME.lib.custom_encoders.set_encode_python,
+                                "encode_json"       :   #APPNAME.lib.custom_encoders.set_encode_json,
+                                "encode_db"       :   #APPNAME.lib.custom_encoders.set_encode_db,
                             }
                     )   
+}
+
+logging=  {
+    
+    "clear_log_at_startup"  : True,
+    "format"                : "#DATE,#TIME,#LEVEL,#MESSAGE"
 }
 
 data_formats = {
@@ -81,7 +83,8 @@ data_formats = {
     # the REST request and end in the tuple[1] name
     # exmaple: Accept: "application/json"   + GET /controller  => controller.list_json()
     # Only applies to methods that return values (show, list) ;)
-    # Order of the Accepted Header counts (1st come 1st served)
+    # Order of the Accepted incoming HTTP-Header counts (1st come 1st served)
+
     "accept_formats"        :   {   
                                 "text/html"         :       "_html",
                                 "application/json"  :       "_json"

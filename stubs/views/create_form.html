@@ -3,24 +3,117 @@
 <!-- www.pythononwheels.org -->
 
 
+
 {% extends "layouts/main_layout.html" %}
 
 {# this will be rendered in the content block of main.html view view #}
 
 {% block content %}
+{% import atest.config.settings as settings %}
+{% set model = result %}
+{% set server = settings.base["server"] %}
+{% set port  = settings.base["port"] %}
+
+<script>
+    $(document).ready(function(){
+        // Handler for .ready() called.
+        $('#test').click( function() {
+            //alert($('#update_form').serializeJSON() );
+            console.log("copow: serialized to json:")
+            console.log($('#update_form').serializeJSON());
+            console.log("copow: stringified & serialized to json:")
+            console.log(JSON.stringify($('#update_form').serializeJSON()));
+            $("#flash_message_div").toggle();
+        });
+        // see: http://api.jquery.com/jQuery.ajax/#jqXHR
+        $('#submit').click( function() {
+                $.ajax( 
+                    {
+                        type: 'PUT',
+                        url: "http://{{server}}:{{port}}/{{model.modelname}}/{{model._id}}",
+                        // The key needs to match your method's input parameter (case-sensitive).
+                        data: (JSON.stringify($('#create_form').serializeJSON())),
+                        contentType: "application/json",
+                        dataType: "json"
+                    }
+                )
+                .done(function(msg) {
+                    //alert( "success" );
+                    console.log(msg);
+                    //var payload = JSON.parse(msg.responseText);
+                    console.log(msg["data"]);
+                    $("#flash_message").text("sucess:" + msg["data"]);
+                    $("#flash_message_div").attr("class",
+                        "alert alert-success alert-dismissible"
+                     );
+                    $("#flash_message_div").show();
+
+                })
+                .fail(function( msg ) {
+                    //alert( "error" );
+                    console.log(msg);
+                    var payload = JSON.parse(msg.responseText);
+                    console.log(payload["data"]);
+                    $("#flash_message").text("Error :" + payload["data"]);
+                     $("#flash_message_div").attr("class",
+                        "alert alert-danger alert-dismissible"
+                     )
+                    $("#flash_message_div").show();
+                })
+                .always(function() {
+                    //alert( "complete" );
+                    console.log("complete")
+                });
+        });
+    });
+</script>
+
+
     <div class="panel panel-default">
     <!-- Default panel contents -->
-        <div class="panel-heading">this is the create view: </div>
+        <div class="panel-heading"><b> This is the create view: </b></div>
+        
+        <!-- an optional flash-message -->
+        <div class="" role="alert"  style="display: none;" id="flash_message_div">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">
+                &times;</span><span class="sr-only">Close</span></button>
+            <strong>Info:</strong> <span id="flash_message"></span>
+        </div>
+
         <div class="panel-body">
-            <table class="table">       
-                {% for key in model.schema.keys() %}
-                    <tr> 
-                        <td>{{ escape(key) }}</td>
-                        <td>{{ escape(model.get(key)) }}</td>
-                    </tr>
+            <p>&nbsp;</p>
+            <form id="create_form" class="form-horizontal" role="form">
+                {% for att in model.schema.keys() %}
+                    <div class="form-group">
+                        <label for="{{att}}" class="col-sm-2 control-label">{{att}}</label>
+                        <div class="col-sm-8">
+                                <input  type="text" 
+                                        class="form-control" 
+                                        name="{{att}}" 
+                                        id="{{att}}" 
+                                        value="{{model.get(att)}}"
+                                        {% if att == "_id" or att=="last_updated" %}
+                                            readonly
+                                        {% end %}
+                                        >
+                        </div>
+                    </div>
                 {% end %}
-            </table>
+                
+            </form>
+            
+            <button id="test" class="btn btn-warning">Test</button>
+
+            <button id="submit" class="btn btn-primary">Submit</button>
+
+            {% module form_select(model=result, attribute="title") %}
+            
+            To get this by using curl just cut and paste the snippet below to the command line:
+            <pre>
+                <code>
+                curl -i -X POST --data "id=1234"  --header "Content-Type:application/json"  http://{{server}}:{{port}}/{{result.modelname}}/{{result._id}}/update
+                </code>
+            </pre>
         </div>
     </div>
-
 {% end %}

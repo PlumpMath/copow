@@ -123,7 +123,31 @@ class BaseController(tornado.web.RequestHandler):
             and a call to domain:port/controller/
             HTTP PUT        => will call controller.replace_all() [returns HTTP 501]
         """
-        pass
+        print("put *args: ", args)
+        print("put kwargs: ", kwargs)
+        print("self.method_put: ", self.method_put)
+        print("self.params: ", self.params)
+        # Which Output formats do we support ?
+        supported_formats = settings.data_formats["content_type_formats"]
+        # Which Output formats does the client accept ?
+        requested_formats = self.request.headers.get("Content-Type").split(",")
+        requested_formats_encodings = []
+        for format in requested_formats:
+                # TODO: Implement charset checking here:
+                pass
+        print("  -- request formats: ", requested_formats)
+        # try to match them. order matters. 1st come, 1st servec
+        
+        for format in requested_formats:
+            if format in supported_formats.keys():
+                # call the defined function (suffix)
+                print("  -- returning: ", format)
+                return getattr(self,self.method_put + supported_formats[format])(*args, **kwargs)
+                break
+        
+        # if non supported format: raise Error 406
+        # raise tornado.web.HTTPError(406)
+        self.send_error(status_code=406, **kwargs)
     
     @tornado.web.removeslash
     @tornado.web.asynchronous

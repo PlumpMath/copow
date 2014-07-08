@@ -38,7 +38,7 @@ class #MODELCLASS(BaseModel):
         #print self.schema
         #print dir(self)
         if data:
-            self.set_data(data)
+            self.set_values(data)
 
     # example for extension use
     # @will_paginate(per_page=10)
