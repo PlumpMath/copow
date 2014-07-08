@@ -14,6 +14,8 @@
 {% set server = settings.base["server"] %}
 {% set port  = settings.base["port"] %}
 
+<script type="text/javascript" src="{{ static_url("js/copow.js")}}"></script>
+
 <script>
     $(document).ready(function(){
         // Handler for .ready() called.
@@ -73,7 +75,9 @@
 
     <div class="panel panel-default">
     <!-- Default panel contents -->
-        <div class="panel-heading"><b> This is the edit view: </b></div>
+        <div class="panel-heading"><b> This is the edit view: </b>
+            <a href="/{{model.modelname}}">show {{model.modelname}} list</a>
+        </div>
         
         <!-- an optional flash-message -->
         <div class="" role="alert"  style="display: none;" id="flash_message_div">
@@ -108,6 +112,8 @@
 
             <button id="submit" class="btn btn-primary">Submit</button>
 
+            <button id="delete" class="btn btn-danger" name="{{model._id}}" onclick="del('/{{model.modelname}}/{{model._id}}')">delete</button>
+            
             {% module form_select(model=result, attribute="title") %}
             
             To get this by using curl just cut and paste the snippet below to the command line:

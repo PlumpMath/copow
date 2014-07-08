@@ -11,7 +11,9 @@
 {% block content %}
     <div class="panel panel-default">
     <!-- Default panel contents -->
-        <div class="panel-heading"><b> This is the show view: </b></div>
+        <div class="panel-heading"><b> This is the show view: </b>
+            <a href="/{{model.modelname}}">show {{model.modelname}} list</a>
+        </div>
         <div class="panel-body">
             <table class="table">
                 
@@ -23,14 +25,14 @@
                 {% end %}
                  <tr>
                         <td>
-                            <div class="alert alert-info" role="alert">
+                            <b>
                                 Actions:
-                            </div>
+                            </b>
                         </td>
-                        <td><div class="alert alert-info" role="alert">
+                        <td><p>
                                 <span class="glyphicon glyphicon-edit"></span>
                                 <a href="/{{result.modelname}}/{{result._id}}/update">edit</a> 
-                            </div>
+                            </p>
                         </td>
 
                     </tr>
