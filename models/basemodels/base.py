@@ -40,7 +40,7 @@ class BaseModel(dict):
                     # if this type has a custom_encoder, then use it
                     #
                     setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](value))
-                    print ("custom decoded for: ", curr_type, " with: ", settings.schema_types[curr_type][2]["encode_python"])
+                    #print ("custom decoded for: ", curr_type, " with: ", settings.schema_types[curr_type][2]["encode_python"])
                 else:
                     setattr(self,key, value)
         else:
@@ -224,7 +224,7 @@ class BaseModel(dict):
             cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
             #cursor = self.collection.find(*args, **kwargs)
             print("cursor: ", cursor.count())
-        print("cursor__class__:", cursor.__class__)
+        #print("cursor__class__:", cursor.__class__)
         print("cursor count:", cursor.count())
         if cursor.__class__ == pymongo.cursor.Cursor:
             if cursor.count() == 1:
@@ -341,7 +341,7 @@ class BaseModel(dict):
                     # if this type has a custom_encoder, then use it
                     #
                     d[column] = settings.schema_types[curr_type][2][encoder](getattr(self, column))
-                    print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2][encoder])
+                    #print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2][encoder])
                 else:
                     d[column] = getattr(self, column)
                     #print ("standard encoded for: ", column)
