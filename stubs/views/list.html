@@ -17,11 +17,11 @@
     var del;
     del = function(id) {
             console.log("delete clicked", id);
-            console.log("url: " + "http://{{server}}:{{port}}/{{model.modelname}}/"+id)
+            console.log("url: " + "/{{model.modelname}}/"+id)
             $.ajax( 
                 {
                     type: 'DELETE',
-                    url: "http://{{server}}:{{port}}/{{model.modelname}}/"+id,
+                    url: "/{{model.modelname}}/"+id,
                     data: "",
                     contentType: "application/json",
                     dataType: "json"
@@ -64,20 +64,23 @@
         <strong>Info:</strong> <span id="flash_message"></span>
     </div>
         
-    <div class="panel panel-default">
+    
     <!-- Default panel contents -->
-        <div class="panel-heading">this is the list view: 
+        <p>this is the list view: 
             <a href="/{{model.modelname}}/create" class="btn btn-success active" role="button">
                 Create new {{model.modelname}}</a>
-        </div>
+        </p>
+    
 
-        <div class="panel-body">
+        <div class="table-responsive">
             <table class="table">
                 <thead>
                     {% for key in model.schema.keys() %}
-                        <th>{{ escape(key) }}</th>
+                        <th class="text-center">{{ escape(key) }}</th>
                     {% end %}
-                    <th>action</th>
+                    <th class="text-center">show</th>
+                    <th class="text-center">edit</th>
+                    <th class="text-center">delete</th>
                 </thead>
                 <tbody>
 
@@ -86,23 +89,24 @@
                             {% for att in model.schema.keys() %}
                               <td>{{ escape(model.get(att)) }}</td>
                             {% end %}
-                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-primary active" role="button">show</a> </td>
-                            <td><a href="/{{model.modelname}}/{{model._id}}/update" class="btn btn-warning  active" role="button">edit</a> </td>
+                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-primary active" role="button">show</a></td>
+                            <td><a href="/{{model.modelname}}/{{model._id}}/update" class="btn btn-warning  active" role="button">edit</a></td> 
                             <td><button id="delete" class="btn btn-danger" name="{{model._id}}" onclick="del('{{model._id}}')">delete</button></td>
                         </tr>
                     {% end %}
                 </tbody>
             </table>
-            Module call test:
-            <hr>
-            To get this by using curl just do on the command line
-            <pre>
-                <code>
-                    curl -i -H "Accept: application/json" http://localhost:8000/{{model.modelname}}
-                </code>
-            </pre>
         </div>
-    </div>
+
+        Module call test:
+        <hr>
+        To get this by using curl just do on the command line
+        <pre>
+            <code>
+                curl -i -H "Accept: application/json" http://localhost:8000/{{model.modelname}}
+            </code>
+        </pre>
+    
 
     {% module form_select(model=result, attribute="title") %}
 {% end %}
