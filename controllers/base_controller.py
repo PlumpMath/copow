@@ -45,13 +45,45 @@ class BaseController(tornado.web.RequestHandler):
         # typical example with charset: ["applicatio/json; charset=UTF-8"]
         # typical example without charset: ["text/html"]
         l=format.split(";")
-        if len(l) > 1:
-            format = l[0]
-            charset= l[1][l[1].index("=")+1:]
-        else:
-            format=l[0]
-            charset="UTF-8"
+        #if len(l) > 1:
+        #    format = l[0]
+        #    charset= l[1][l[1].index("=")+1:]
+        #else:
+        #    format=l[0]
+        #    charset="UTF-8"
+        format=l[0]
+        charset="UTF-8"
         return format,charset
+
+    def get_preferred_format(self, req_formats, supported_formats):
+        """ input is a lis of content-type header formats.
+            example: ['text/html', 'application/json; charset=utf-8', 'application/xml]
+            charsets are currently dropped
+        """
+        # Which Output formats does the client accept ?
+        
+        requested_formats_encodings = []
+        requested_formats = []
+        for f in req_formats:
+                # TODO: Implement charset checking here:
+                format,charset = self.get_format_and_charset(f)
+                requested_formats.append(format)
+                requested_formats_encodings.append(charset)      
+
+        print("  -- request formats: ", requested_formats)
+        #print("  -- request charsets: ", requested_formats_encodings)
+        # try to match them. order matters. 1st come, 1st servec
+        
+        for format in requested_formats:
+            if format in supported_formats.keys():
+                # call the defined function (suffix)
+                print("  -- returning: ", format)
+                return format
+                break
+        #
+        # unsupported format request, returning default:
+        #
+        return settings.data_formats["default_format"]
 
     @tornado.web.removeslash
     def get(self, *args, **kwargs):
@@ -141,27 +173,11 @@ class BaseController(tornado.web.RequestHandler):
         print("self.params: ", self.params)
         # Which Output formats do we support ?
         supported_formats = settings.data_formats["content_type_formats"]
-        # Which Output formats does the client accept ?
-        
         req_formats = self.request.headers.get("Content-Type").split(",")
-        requested_formats_encodings = []
-        requested_formats = []
-        for f in req_formats:
-                # TODO: Implement charset checking here:
-                format,charset = self.get_format_and_charset(f)
-                requested_formats.append(format)
-                requested_formats_encodings.append(charset)      
-
-        print("  -- request formats: ", requested_formats)
-        print("  -- request charsets: ", requested_formats_encodings)
-        # try to match them. order matters. 1st come, 1st servec
         
-        for format in requested_formats:
-            if format in supported_formats.keys():
-                # call the defined function (suffix)
-                print("  -- returning: ", format)
-                return getattr(self,self.method_put + supported_formats[format])(*args, **kwargs)
-                break
+        format = self.get_preferred_format(req_formats, supported_formats)
+
+        return getattr(self,self.method_put + supported_formats[format])(*args, **kwargs)
         
         # if non supported format: raise Error 406
         # raise tornado.web.HTTPError(406)
