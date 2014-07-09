@@ -7,6 +7,7 @@
 {% extends "layouts/main_layout.html" %}
 
 {# this will be rendered in the content block of main.html view view #}
+
 {% block content %}
 {% import atest.config.settings as settings %}
 {% set model = result_model %}
@@ -31,12 +32,14 @@
                 //alert( "success" );
                 console.log(msg);
                 //var payload = JSON.parse(msg.responseText);
-                console.log(msg["data"]);
-                $("#flash_message").text("sucess:" + msg["data"]);
+                var id = msg["data"]
+                console.log("id: ", id);
+                $("#flash_message").text("sucessfully deleted:" + id);
                 $("#flash_message_div").attr("class",
                     "alert alert-success alert-dismissible"
                  );
                 $("#flash_message_div").show();
+                $("#"+id).remove()
 
             })
             .fail(function( msg ) {
@@ -85,7 +88,7 @@
                 <tbody>
 
                     {% for model in result %}
-                        <tr>
+                        <tr id="{{model._id}}">
                             {% for att in model.schema.keys() %}
                               <td>{{ escape(model.get(att)) }}</td>
                             {% end %}

@@ -10,6 +10,8 @@
 from bson.objectid import ObjectId
 
 def set_encode_python(val):
+    if isinstance(val, str):
+        val = val.split(" ")
     return set(val)
 
 def set_encode_json(val):
@@ -17,6 +19,12 @@ def set_encode_json(val):
     
 def set_encode_db(val):
     return list(val)
+
+def set_encode_str(val):
+    ostr = ""
+    for elem in val:
+        ostr += str(elem) + " "
+    return ostr
 
 def oid_encode_python(val):
     if isinstance(val, str):

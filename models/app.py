@@ -13,8 +13,9 @@ import #APPNAME.lib.powlib as powlib
 
 class App(BaseModel):
 	
-    def __init__(self, data=None, schema={}):
+    def __init__(self, *args, data=None, schema={}, **kwargs):
         """ Basic instance setup"""
+        super(App,self).__init__(*args, **kwargs)
         self.collection_name = "apps"
         self.modelname = "app"
         self.modelname_plural = powlib.pluralize(self.modelname)

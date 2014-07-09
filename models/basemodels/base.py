@@ -24,27 +24,53 @@ tab = powlib.tab
 
 class BaseModel(dict):
     
-    #def __init__(self, data=None, schema=None):
+    def __init__(self, *args, data=None, schema=None, **kwargs):
+        super(BaseModel,self).__init__(*args, **kwargs)
+        self.array = []
+        self.is_array = False
+
+    
     def __setitem__(self, key, value):    
         """ sets the objects attributes according to the search/find result
             Uses the as_class parameter of the find methods. 
             See http://dirolf.com/2010/06/17/pymongo-1.7-released.html
         """
-        #print(key,value)
-        if key in self.schema.keys():
-            curr_type = self.schema[key]["type"].lower()
-            #print("column: ", column, " curr_type: ", curr_type)
-            if curr_type in settings.schema_types.keys():
-                if "encode_python" in settings.schema_types[curr_type][2]:
-                    #
-                    # if this type has a custom_encoder, then use it
-                    #
-                    setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](value))
-                    #print ("custom decoded for: ", curr_type, " with: ", settings.schema_types[curr_type][2]["encode_python"])
-                else:
-                    setattr(self,key, value)
-        else:
-            print("Skipping: ", key, " -> ", value, " Not in schema")
+        print("__setitem__: ", key,value)
+         
+        if isinstance(key, int):
+            #
+            # iterable type. first come the data parts (0, value0), (1, value1)
+            # followed by a str key which is the arrays name. 
+            print("adding to array: ", value)
+            self.array.append(value)
+            is_array = True
+        elif isinstance(key, str):
+            if key in self.schema.keys():
+                curr_type = self.schema[key]["type"].lower()
+                #print("column: ", column, " curr_type: ", curr_type)
+                if curr_type in settings.schema_types.keys():
+                    if "encode_python" in settings.schema_types[curr_type][2]:
+                        #
+                        # if this type has a custom_encoder, then use it
+                        #
+                        if self.is_array:
+                            print("found array (with custom encoding) name:", key)
+                            setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](self.array))
+                            self.array = []
+                            self.is_array = False
+                        else:    
+                            setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](value))
+                        print ("custom encoded for: ", curr_type, " value: ", value, "  -> with: ", settings.schema_types[curr_type][2]["encode_python"])
+                    else:
+                        if self.is_array:
+                            setattr(self,key, self.array)
+                            self.array = []
+                            self.is_array = False
+                            print("found array name:", key)
+                        else:
+                            setattr(self,key, value)
+            else:
+                print("Skipping: ", key, " -> ", value, " Not in schema")
             
 
     def setup_relations(self):
@@ -150,7 +176,15 @@ class BaseModel(dict):
         """ returns the model attribute with the specified attribute_name"""
         if attribute_name in self.schema.keys():
             if as_str:
-                return str(getattr(self,attribute_name))
+                curr_type = self.schema[attribute_name]["type"].lower()
+                #print("column: ", column, " curr_type: ", curr_type)
+                if curr_type in settings.schema_types.keys():
+                    if "encode_str" in settings.schema_types[curr_type][2]:
+                        retval = settings.schema_types[curr_type][2]["encode_str"](getattr(self,attribute_name))
+                        print("get as_str custom encoding: value = ", retval)
+                        return retval
+                    else:
+                        return str(getattr(self,attribute_name))
             else:
                 return getattr(self,attribute_name)
 

@@ -12,9 +12,10 @@ import #APPNAME.lib.powlib as powlib
 
 class Version(BaseModel):
     
-    def __init__(self, data=None, schema={}):
+    def __init__(self, *args, data=None, schema={}, **kwargs):
         #super(Version, self).__init__(data)
         """ Basic instance setup"""
+        super(Version,self).__init__(*args, **kwargs)
         self.collection_name = "versions"
         self.modelname = "version"
         self.modelname_plural = powlib.pluralize(self.modelname)

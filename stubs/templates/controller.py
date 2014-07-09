@@ -288,7 +288,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             if res != None:
                 print("now its getting closer ...")
                 res.delete()
-                ret_data = dict( data = 'Successfully deleted model: ' + str(id))
+                ret_data = dict( data = str(id))
                 self.write(tornado.escape.json_encode(ret_data))
                 self.finish()     
             else:

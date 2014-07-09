@@ -16,9 +16,10 @@ from #APPNAME.ext.paginate import will_paginate
 
 class #MODELCLASS(BaseModel):
     
-    def __init__(self, data={}, schema={}):
+    def __init__(self, *args, data={}, schema={}, **kwargs):
         #super(#MODELCLASS, self).__init__(data)
         """ Basic instance setup"""
+        super(#MODELCLASS,self).__init__(*args, **kwargs)
         self.collection_name = "#MODEL_COLLECTION"
         self.modelname = "#MODELNAME"
         self.modelname_plural = powlib.pluralize(self.modelname)
@@ -44,4 +45,4 @@ class #MODELCLASS(BaseModel):
     # @will_paginate(per_page=10)
     # also look at the import above
     def find(self, *args, sort=False, **kwargs):
-        return super(Post,self).find(*args,**kwargs)
+        return super(#MODELCLASS,self).find(*args,**kwargs)

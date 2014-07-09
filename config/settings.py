@@ -66,6 +66,7 @@ schema_types = {
                             {   "encode_python"     :   #APPNAME.lib.custom_encoders.set_encode_python,
                                 "encode_json"       :   #APPNAME.lib.custom_encoders.set_encode_json,
                                 "encode_db"       :   #APPNAME.lib.custom_encoders.set_encode_db,
+                                "encode_str"       :   #APPNAME.lib.custom_encoders.set_encode_str
                             }
                     )   
 }
