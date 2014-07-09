@@ -92,9 +92,20 @@
                             {% for att in model.schema.keys() %}
                               <td>{{ escape(model.get(att)) }}</td>
                             {% end %}
-                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-primary active" role="button">show</a></td>
-                            <td><a href="/{{model.modelname}}/{{model._id}}/update" class="btn btn-warning  active" role="button">edit</a></td> 
-                            <td><button id="delete" class="btn btn-danger" name="{{model._id}}" onclick="del('{{model._id}}')">delete</button></td>
+                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-primary active" role="button">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/{{model.modelname}}/{{model._id}}/update" class="btn btn-warning active" role="button">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                            </td> 
+                            <td>
+                                <button id="delete" class="btn btn-danger" name="{{model._id}}" onclick="del('{{model._id}}')">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </td>
                         </tr>
                     {% end %}
                 </tbody>
