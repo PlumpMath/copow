@@ -12,13 +12,11 @@
 {% set model = result %}
 
 
-
-    <div class="panel panel-default">
     <!-- Default panel contents -->
-        <div class="panel-heading"><b> This is the show view: </b>
-            <a href="/{{model.modelname}}">show {{model.modelname}} list</a>
-        </div>
-        <div class="panel-body">
+    <p><b> This is the show view: </b>
+        <a href="/{{model.modelname}}">show {{model.modelname}} list</a>
+    </p>
+        <div class="table-responsive">
             <table class="table">
                 
                 {% for att in result.schema.keys() %}
@@ -41,16 +39,16 @@
 
                     </tr>
             </table>
-
-            {% module form_select(model=result, attribute="title") %}
-
-            To get this by using curl just do on the command line
-            <hr>
-            <pre>
-                </code>
-                    curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
-                </code>
-            </pre>
         </div>
-    </div>
+
+        {% module form_select(model=result, attribute="title") %}
+
+        To get this by using curl just do on the command line
+        <hr>
+        <pre>
+            </code>
+                curl -i -H "Accept: application/json" http://localhost:8000/{{result.modelname}}/{{result._id}}
+            </code>
+        </pre>
+    
 {% end %}
