@@ -9,6 +9,9 @@
 #
 from bson.objectid import ObjectId
 
+#
+# for type: set
+#
 def set_encode_python(val):
     if isinstance(val, str):
         val = val.split(" ")
@@ -26,6 +29,28 @@ def set_encode_str(val):
         ostr += str(elem) + " "
     return ostr
 
+#
+# for type: list
+#
+def list_encode_python(val):
+    if isinstance(val, str):
+        val = val.split(" ")
+    return set(val)
+
+def list_encode_json(val):
+    return list(val)
+    
+def list_encode_db(val):
+    return list(val)
+
+def list_encode_str(val):
+    ostr = ""
+    for elem in val:
+        ostr += str(elem) + " "
+    return ostr
+#
+# for type: ObjectId
+#
 def oid_encode_python(val):
     if isinstance(val, str):
         return ObjectId(val)
