@@ -30,7 +30,8 @@
                 $.ajax( 
                     {
                         type: 'PUT',
-                        url: "/{{model.modelname}}/{{model._id}}",
+                        //url: "/{{model.modelname}}/{{model._id}}",
+                        url: "/{{model.modelname}}/create",
                         // The key needs to match your method's input parameter (case-sensitive).
                         data: (JSON.stringify($('#create_form').serializeJSON())),
                         contentType: "application/json",
@@ -47,6 +48,12 @@
                         "alert alert-success alert-dismissible"
                      );
                     $("#flash_message_div").show();
+                    var base_curl = "curl -H 'Content-Type: application/json' -X PUT -d '";
+                    base_curl = base_curl + (JSON.stringify($('#create_form').serializeJSON()));
+                    base_curl = base_curl + "' http://localhost:8000/post/create"
+                    $("#code").text(base_curl);
+                    $("#code_intro").show();
+                    $("#code_outro").show();
 
                 })
                 .fail(function( msg ) {
@@ -103,22 +110,22 @@
                 {% end %}
                 
             </form>
-            
+            <p>
             <button id="test" class="btn btn-warning">Test</button>
 
             <button id="submit" class="btn btn-primary">Submit</button>
-
-            {% module form_select(model=result, attribute="title") %}
-            
-            To get this by using curl just cut and paste the snippet below to the command line:
+            </p>
+            <div id="code_intro" style="display: none;">
+                To get this by using curl just cut and paste the snippet below to the command line:
+            </div>
+            <hr>
             <pre>
-                <code>
-                curl -H "Content-Type: application/json" -X PUT -d '{"content": "ahahahah", "last updated": "2014/07/09 23:01:24", "author": "klaas", "title": "test for curl", "tags": "aha oho aha"}' http://localhost:8000/post/create
-                
-                This is just an example. Please check twice if your model really has the attributes above.
-                It will work right away if you use the model post from the documentation.
+                <code id="code">
                 </code>
             </pre>
+            <div id="code_outro" style="display: none;">
+                This not just an example but represents the actual code used to create this model. You can use it to test the REST interface with cut and paste.
+            <code>
         </div>
     </div>
 {% end %}

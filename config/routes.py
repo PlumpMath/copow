@@ -45,7 +45,7 @@ rest_routes = [
         ),
         (r"/#controller/create"                         ,     ("#controller_cls", dict(  method_get="create_form", 
                                                                                         method_post=None, 
-                                                                                        method_put=None, 
+                                                                                        method_put="create", 
                                                                                         method_delete=None, 
                                                                                         params=[]))
         ),
