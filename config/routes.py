@@ -37,11 +37,11 @@ rest_routes = [
                                                                                         method_delete=None, 
                                                                                         params=[]))
         ),
-        (r"/#controller"                                ,     ("#controller_cls", dict(  method_get="list", 
+        (r"/#controller/[0-9]+"                         ,     ("#controller_cls", dict(  method_get="list", 
                                                                                         method_post=None, 
                                                                                         method_put=None, 
                                                                                         method_delete=None, 
-                                                                                        params=[]))
+                                                                                        params=["page"]))
         ),
         (r"/#controller/create"                         ,     ("#controller_cls", dict(  method_get="create_form", 
                                                                                         method_post=None, 

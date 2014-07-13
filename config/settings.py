@@ -97,7 +97,7 @@ data_formats = {
                                 "multipart/form-data"                       :       "_multipart"
                             },
     "default_function"      :   "_json",
-    "defaul_format"         :   "aplication/json"
+    "default_format"         :   "application/json"
     #"accept_format_dependend_methods"   :   ["list", "show"],
     #"content_type_dependend_methods"    :   ["update"]
 

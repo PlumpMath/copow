@@ -35,7 +35,7 @@ class BaseModel(dict):
             Uses the as_class parameter of the find methods. 
             See http://dirolf.com/2010/06/17/pymongo-1.7-released.html
         """
-        print("__setitem__: ", key,value)
+        #print("__setitem__: ", key,value)
          
         if isinstance(key, int):
             #
@@ -60,7 +60,7 @@ class BaseModel(dict):
                             self.is_array = False
                         else:    
                             setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](value))
-                        print ("custom encoded for: ", curr_type, " value: ", value, "  -> with: ", settings.schema_types[curr_type][2]["encode_python"])
+                        #print ("custom encoded for: ", curr_type, " value: ", value, "  -> with: ", settings.schema_types[curr_type][2]["encode_python"])
                     else:
                         if self.is_array:
                             setattr(self,key, self.array)
@@ -243,7 +243,7 @@ class BaseModel(dict):
         return self.find(*args,**kwargs)
 
     
-    def find(self, *args, sort=False, **kwargs):
+    def find(self, *args, sort=False, limit=False, skip=False, **kwargs):
         """ Find all matching models. Returns an iterable.
             sorting can be done by giving for exmaple: 
             sort=[("field", pymongo.ASCENDING), ("field2", pymongoDESCENDING),..]
@@ -251,13 +251,18 @@ class BaseModel(dict):
         """
         #print("args: ", *args)
         #print("kwargs: ", **kwargs)
+        cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
+
+        if limit:
+            print("limit:", limit)
+            cursor=cursor.limit(limit)
+        if skip:
+            print("skip:",skip)
+            cursor=cursor.skip(skip)
         if sort:
-            cursor = self.collection.find(*args, as_class=self.__class__, **kwargs).sort(sort)
-            #cursor = self.collection.find(*args, **kwargs).sort(sort)
-        else:
-            cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
-            #cursor = self.collection.find(*args, **kwargs)
-            print("cursor: ", cursor.count())
+            print("sort",sort)
+            cursor = cursor.sort(sort)
+            
         #print("cursor__class__:", cursor.__class__)
         print("cursor count:", cursor.count())
         if cursor.__class__ == pymongo.cursor.Cursor:

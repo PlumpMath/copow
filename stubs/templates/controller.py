@@ -75,7 +75,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
 
     def get(self, *args, **kwargs):
         #print("self.method: ", method)
-        if self.method_get == "echo":
+        if self.method_get == "echo1":
             print("returning ECHO")
             return self.echo(*args,**kwargs)
         else:
@@ -83,7 +83,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             super( #CONTROLLER_CAPITALIZED_NAMEController,self).get(*args,**kwargs)
 
 
-    def echo(self, *args, **kwargs):
+    def echo_html(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/GET /#CONTROLLERNAME
             CRUD: READ
@@ -92,6 +92,14 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         result_formats = self.request.headers.get("Accept").split(",")
         return self.render("#CONTROLLER_LOWER_NAME_echo.html", request=self.request, 
             result=None, formats=result_formats)
+
+    def echo_json(self, *args, **kwargs):
+        """ respresents the folowing REST/CRUD Terminology:
+            REST: HTTP/GET /#CONTROLLERNAME
+            CRUD: READ
+            show all #MODELNAME_PLURAL
+        """
+        self.write(json.dumps(self.request.headers))
 
     def show_html(self, id=None, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
