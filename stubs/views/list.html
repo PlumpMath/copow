@@ -92,7 +92,8 @@
                             {% for att in model.schema.keys() %}
                               <td>{{ escape(model.get(att)) }}</td>
                             {% end %}
-                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-primary active" role="button">
+                            <td><a href="/{{model.modelname}}/{{model._id}}" class="btn btn-primary active" role="button"
+                                 data-toggle="tooltip" data-placement="top" title="Tooltip on left">
                                 <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
                             </td>

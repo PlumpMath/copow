@@ -13,6 +13,7 @@ import json
 import imp
 import pymongo
 import pprint 
+import re
 
 from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.lib import powlib
@@ -21,57 +22,34 @@ import #APPNAME.config.settings as settings
 import #APPNAME.lib.custom_encoders as encoders
 
 tab = powlib.tab
+#reg = re.compile("[0-9]+")
 
 class BaseModel(dict):
     
-    def __init__(self, *args, data=None, schema=None, **kwargs):
-        super(BaseModel,self).__init__(*args, **kwargs)
-        self.array = []
-        self.is_array = False
+    #def __init__(self, *args, data=None, schema=None, **kwargs):
+    #    super(BaseModel,self).__init__(*args, **kwargs)
+    #    self.array = []
+    #    self.is_array = False
 
     
-    def __setitem__(self, key, value):    
-        """ sets the objects attributes according to the search/find result
-            Uses the as_class parameter of the find methods. 
-            See http://dirolf.com/2010/06/17/pymongo-1.7-released.html
-        """
-        #print("__setitem__: ", key,value)
-         
-        if isinstance(key, int):
-            #
-            # iterable type. first come the data parts (0, value0), (1, value1)
-            # followed by a str key which is the arrays name. 
-            print("adding to array: ", value)
-            self.array.append(value)
-            is_array = True
-        elif isinstance(key, str):
-            if key in self.schema.keys():
-                curr_type = self.schema[key]["type"].lower()
-                #print("column: ", column, " curr_type: ", curr_type)
-                if curr_type in settings.schema_types.keys():
-                    if "encode_python" in settings.schema_types[curr_type][2]:
-                        #
-                        # if this type has a custom_encoder, then use it
-                        #
-                        if self.is_array:
-                            print("found array (with custom encoding) name:", key)
-                            setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](self.array))
-                            self.array = []
-                            self.is_array = False
-                        else:    
-                            setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](value))
-                        #print ("custom encoded for: ", curr_type, " value: ", value, "  -> with: ", settings.schema_types[curr_type][2]["encode_python"])
-                    else:
-                        if self.is_array:
-                            setattr(self,key, self.array)
-                            self.array = []
-                            self.is_array = False
-                            print("found array name:", key)
-                        else:
-                            setattr(self,key, value)
-            else:
-                print("Skipping: ", key, " -> ", value, " Not in schema")
-            
+    def __setitem__(self, key, value):
+        # optional processing here
+        print("--> setitem: ", key,value)
+        if key in self.schema.keys():
+            curr_type = self.schema[key]["type"].lower()
+            if curr_type in settings.schema_types.keys():
+                if "encode_python" in settings.schema_types[curr_type][2]:
+                    #
+                    # if this type has a custom_encoder, then use it
+                    #
+                    setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](value))
+                    #print ("custom encoded for: ", curr_type, " value: ", value, "  -> with: ", settings.schema_types[curr_type][2]["encode_python"])
+                else:
+                    setattr(self,key, value)
+        else:
+            print("Skipping: ", key, " -> ", value, " Not in schema")
+        super(BaseModel, self).__setitem__(key, value)
+    
 
     def setup_relations(self):
         self.related_models = {}

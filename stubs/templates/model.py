@@ -19,7 +19,8 @@ class #MODELCLASS(BaseModel):
     def __init__(self, *args, data={}, schema={}, **kwargs):
         #super(#MODELCLASS, self).__init__(data)
         """ Basic instance setup"""
-        super(#MODELCLASS,self).__init__(*args, **kwargs)
+        #super(#MODELCLASS,self).__init__(*args, **kwargs)
+        #print("created a new #MODELCLASS, id:", id(self))
         self.collection_name = "#MODEL_COLLECTION"
         self.modelname = "#MODELNAME"
         self.modelname_plural = powlib.pluralize(self.modelname)
