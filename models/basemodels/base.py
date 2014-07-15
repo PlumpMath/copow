@@ -47,7 +47,7 @@ class BaseModel(dict):
                 else:
                     setattr(self,key, value)
         else:
-            print("Skipping: ", key, " -> ", value, " Not in schema")
+            #print("Skipping: ", key, " -> ", value, " Not in schema")
         super(BaseModel, self).__setitem__(key, value)
     
 
