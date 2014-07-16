@@ -21,6 +21,8 @@ import models.user as user
 import models.copow_log as copow_log
 
 import do_migrate
+from #APPNAME.models.user import User
+import #APPNAME.ext.user_management as umgmt
 
 from optparse import OptionParser
 
@@ -110,4 +112,8 @@ if __name__ == "__main__":
     ## setting up the user colelction with the std do_migrate
     do_migrate.do_migrate_to_direction("up")
 
-
+    print("creating the admin user. Username: admin, Password: admin")
+    u = User()
+    u.loginname = "admin"
+    u.password = umgmt.set_password("admin")
+    u.create()

@@ -30,8 +30,6 @@ class BaseModel(dict):
     #    super(BaseModel,self).__init__(*args, **kwargs)
     #    self.array = []
     #    self.is_array = False
-
-    
     def __setitem__(self, key, value):
         # optional processing here
         print("--> setitem: ", key,value)
@@ -48,6 +46,7 @@ class BaseModel(dict):
                     setattr(self,key, value)
         else:
             #print("Skipping: ", key, " -> ", value, " Not in schema")
+            pass
         super(BaseModel, self).__setitem__(key, value)
     
 

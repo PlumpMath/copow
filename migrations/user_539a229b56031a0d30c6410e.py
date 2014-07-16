@@ -20,7 +20,7 @@ migration = Migration()
 def up():
     """ up method will be executed when running do_migrate -d up"""
     user = User( schema  = { 
-           "name"         :      { "type" : "string" }, 
+           "loginname"    :      { "type" : "string" }, 
            "firstname"    :      { "type" : "string" },
            "lastname"     :      { "type" : "string" },
            "email"        :      { "type" : "string" },
