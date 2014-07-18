@@ -7,6 +7,10 @@
 # 
 # #DATE
 
+#
+# Validation is handled by cerberus, see: http://cerberus.readthedocs.org/en/latest/
+# 
+
 
 import sys
 import os
@@ -20,17 +24,25 @@ migration = Migration()
 def up():
     """ up method will be executed when running do_migrate -d up"""
     #MODELNAME = #UP_MODELNAME( schema  = {
-           #"title"      :      { "type" : "string" },   
-           #"author"     :      { "type" : "text" },
-           #"content"    :      { "type" : "text" },
-           #"tags"       :      { "type" : "set" }
-           #"a_more_complex_one"    :       { "type" : "text" , "index" : True, "default" : "something"}
+            #"title"      :   { "type" : "string", "empty" : False },   
+            #"author"     :   { "type" : "text" },
+            #"content"    :   { "type" : "text" },
+            #"tags"       :   { "type" : "set" },
+            #"email"      :   { "type" : "string", 'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'}
+
+            #"a_more_complex_one"    :       {   "type" : "string" , 
+            #                                    "index" : True, 
+            #                                    "default" : "copow",
+            #                                    "empty"   : False,
+            #                                    "minlength" : 8,
+            #                                    "maxlength" : 240
+            #                                   }
       } 
     )
 
     # creates the tabke (collection) and the schema in migrations/schemas/
     migration.create_table(#MODELNAME)
-    print("  Successfully migrated #MODELNAME -> mehtod: up()")
+    print("  Successfully migrated #MODELNAME -> method: up()")
     
 def down():
     """ down method will be executed when running do_migrate -d down"""

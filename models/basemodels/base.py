@@ -21,6 +21,7 @@ from #APPNAME.lib.powlib import _log
 import #APPNAME.config.settings as settings
 import #APPNAME.lib.custom_encoders as encoders
 
+
 tab = powlib.tab
 #reg = re.compile("[0-9]+")
 
@@ -32,7 +33,7 @@ class BaseModel(dict):
     #    self.is_array = False
     def __setitem__(self, key, value):
         # optional processing here
-        print("--> setitem: ", key,value)
+        #print("--> setitem: ", key,value)
         if key in self.schema.keys():
             curr_type = self.schema[key]["type"].lower()
             if curr_type in settings.schema_types.keys():
@@ -69,6 +70,10 @@ class BaseModel(dict):
                 pass
             else:
                 raise Exception("unknown relation: %s ") %(rel_model)
+    
+    def print_schema(self):
+        pp=pprint.PrettyPrinter(indent=4)
+        pp.pprint(self.schema)
 
     def load_schema(self):
         try:
@@ -145,7 +150,7 @@ class BaseModel(dict):
         #    ostr += key + " -> " + str(adict[key]) + os.linesep 
         #return ostr
         pp = pprint.PrettyPrinter(indent=4)
-        str(pp.pprint(self.to_json()))
+        str(pp.pprint(self.to_json(encoder="encode_str")))
         return ""
         
 
@@ -542,7 +547,8 @@ class BaseModel(dict):
             schema["last_updated"] = { "type" :  "date"  }
             #schema["created"] = { "type" :  "date"  }
             schema["_id"] = { "type" :  "ObjectId"  }
-            ostr += json.dumps(schema, indent=4) + os.linesep
+            #ostr += json.dumps(schema, indent=4) + os.linesep
+            ostr += str(schema) + os.linesep
             ostr += self.modelname + "_relations = "
             ostr += json.dumps(self.relations, indent=4)
             #print(ostr)

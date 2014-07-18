@@ -12,14 +12,10 @@
 #
 #
 import #APPNAME.lib.powlib
+import cerberus
 
-def length(val, min, max):
-    """ checks if a given value is in between the given from/to length 
-        boundaries.
-     """
-    if len(val) < min and len(val) > max:
-        return True
-    else:
-        return False
 
+def validate(model):
+    v = cerberus.Validator()
+    return v.validate(model.schema, model.to_json(encoder="encode_raw"))
 

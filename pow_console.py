@@ -3,9 +3,13 @@
 ##  http://code.activestate.com/recipes/355319/ (r1)
 ## eased my life. Console and the  recipe above ;)
 import code
-import sys,os, string, pdb
+import sys
+import os
+import string
+import pdb
 from bson.objectid import ObjectId
 import json
+import #APPNAME.lib.powlib
 
 APPNAME = "#APPNAME"
 
@@ -45,9 +49,12 @@ class Shell(code.InteractiveConsole):
         include_ext_list = [".py"]
         for adir in importdirs:
             sys.path.append(os.path.abspath(adir))
-            
+        
+        modellist = []
+        
         for path in importdirs:
             importlist = []
+            
             for elem in os.listdir(os.path.normpath(path)):
                 fname, fext = os.path.splitext(elem)
                 if fext in include_ext_list and not (fname.startswith("__") or fname.startswith("erased_")):
@@ -55,8 +62,11 @@ class Shell(code.InteractiveConsole):
                     print("executing statement: ", statement)
                     #exec statement
                     self.push(statement)
+                    if path == "./models":
+                        modellist.append(fname)
                 else:
-                    print("Skipping: ", fname )
+                    #print("Skipping: ", fname )
+                    pass
         std_imports = [
                 "from bson.objectid import ObjectId",
                 "import pprint",
@@ -72,7 +82,13 @@ class Shell(code.InteractiveConsole):
             if not stmt.startswith("print"):
                 print("executing statement: ", stmt)
             self.push(stmt)
-        print("You have a pretty printer pp.pprint(astr)")
+        print("*"*30)
+        print("* TOOLS")
+        print("*"*30)
+        print("You have a pretty printer:     pp.pprint(astr)")
+        print("You have a db connection:      db")
+        print("You have all your models:     ", [mod.capitalize() for mod in modellist])
+
         return
     
     def get_output(self): 

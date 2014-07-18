@@ -82,7 +82,7 @@ def p2c(name):
 
 def plural_to_classname(name):
     """ pluralname to classname. So posts becomes Post"""
-    return string.capitalize(singularize(name))
+    return singularize(name).capitalize()
 
 def load_class(path_to_module, cls):
     """

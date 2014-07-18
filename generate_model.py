@@ -146,14 +146,16 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["p
     ### generate BaseModel if neccessary
     # render_basemodel(baseclassname, modelname, collection_name, classname, output_path, parts_dir, properties)
 
+    #ef render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["parts_dir"], 
+    #             output_path="./models/", attributes=[], comment=""):
     # render the according migration (and schema)
-    generate_migration.render_migration( modelname, comment="", col_defs = None, 
+    generate_migration.render_migration( modelname, comment=comment, col_defs = None, 
             parts_dir=settings.base["parts_dir"], prefix_dir = "./")
     
-    generate_controller.render_controller(  name=modelname, force=False,  
+    generate_controller.render_controller(  name=modelname, force=force,  
             parts_dir=settings.base["parts_dir"], zero_tornado=False, prefix_path="./")
     
-    generate_scaffold.generate_scaffold( modelname, force=False)
+    generate_scaffold.generate_scaffold( modelname, force=force)
     
     # render a basic testcase 
     render_test_stub(modelname, classname, parts_dir)
