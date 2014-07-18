@@ -1,12 +1,12 @@
 copow_log = {
     "time": {
-        "type": "date"
+        "type": "datetime"
     }, 
     "user  ": {
-        "type": "Text"
+        "type": "string"
     }, 
     "logstr": {
-        "type": "Text"
+        "type": "string"
     },
     "_id" :  { 
         "type" : "objectid"  

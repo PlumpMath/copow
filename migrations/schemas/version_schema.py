@@ -6,13 +6,13 @@
 # 
 
 version = {
-	"short_name"    :    { "type"    : "Text" },   
-    "long_name"     :    { "type"    : "Text" },
-    "environment"   :    { "type"    : "Text" },
-    "comment"       :    { "type"    : "Text" },
-    "version"       :    { "type"    : "int"  },
-    "last_updated"  :    { "type"    : "date" },
-    "_id"               :      { "type" : "objectid"  } 
+	"short_name"    :    { "type"    : "string" },   
+    "long_name"     :    { "type"    : "string" },
+    "environment"   :    { "type"    : "string" },
+    "comment"       :    { "type"    : "string" },
+    "version"       :    { "type"    : "integer"  },
+    "last_updated"  :    { "type"    : "datetime" },
+    "_id"           :    { "type" : "objectid"  } 
 }
 
 

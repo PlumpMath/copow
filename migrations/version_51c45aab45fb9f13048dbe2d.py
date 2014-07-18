@@ -20,10 +20,11 @@ migration = Migration()
 def up():
       """ up method will be executed when running do_migrate -d up"""
     version = Version( schema  = {
-            "short_name"     :      { "type" : "Text" },   
-            "long_name"      :      { "type" : "Text" },
-            "path"           :      { "type" : "Text" },
-            "comment"        :      { "type" : "Text" }
+            "short_name"     :      { "type" : "string" },   
+            "long_name"      :      { "type" : "string" },
+            "path"           :      { "type" : "string" },
+            "comment"        :      { "type" : "string" },
+            "version"        :      { "type" : "integer" }
             #"a_more_complex_one"    :       { "type" : "Text" , "index" : True, "default" : "something"}
         } 
     )

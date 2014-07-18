@@ -6,12 +6,12 @@
 # 
 
 app = {
-	"name"              :      { "type" : "Text", "default" : "#APPNAME" },   
-   	"path"              :      { "type" : "Text" },
-   	"lastversion"       :      { "type" : "int" },
-   	"currentversion"    :      { "type" : "int" },
-   	"maxversion"        :      { "type" : "int" },
-    "last_updated"      :      { "type" : "date" },
+	"name"              :      { "type" : "string", "default" : "#APPNAME" },   
+   	"path"              :      { "type" : "string" },
+   	"lastversion"       :      { "type" : "integer" },
+   	"currentversion"    :      { "type" : "integer" },
+   	"maxversion"        :      { "type" : "integer" },
+    "last_updated"      :      { "type" : "datetime" },
     "_id"               :      { "type" : "objectid"  } 
 }
 

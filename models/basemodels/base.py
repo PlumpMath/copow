@@ -544,9 +544,9 @@ class BaseModel(dict):
             ofile = open(filepath, "w")
             ostr = self.modelname + " = "
             schema = self.schema
-            schema["last_updated"] = { "type" :  "date"  }
+            schema["last_updated"] = { "type" :  "datetime"  }
             #schema["created"] = { "type" :  "date"  }
-            schema["_id"] = { "type" :  "ObjectId"  }
+            schema["_id"] = { "type" :  "objectid"  }
             #ostr += json.dumps(schema, indent=4) + os.linesep
             ostr += str(schema) + os.linesep
             ostr += self.modelname + "_relations = "

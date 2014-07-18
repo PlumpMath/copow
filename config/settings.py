@@ -5,6 +5,7 @@
 import os
 import os.path
 from bson.objectid import ObjectId
+import datetime
 import #APPNAME.uimodules.copow_ui_modules
 import #APPNAME.config.uimodules as uimodules
 from #APPNAME.lib.custom_encoders import *
@@ -17,7 +18,7 @@ base = {
     # Standard Directories
     "parts_dir"         :   "stubs/templates/",
     "view_parts_dir"    :   "stubs/views/",
-    "model_test_dir"    :  "test/models/",
+    "model_test_dir"    :   "test/models/",
     #authentication can be user or role (for now)
     "authentication"    :   "user",
     "default_encoding"  :   "utf-8"
@@ -45,29 +46,50 @@ webserver = {
 # defaults can be adjusted by giving a default attribuet in the schema.
 # Format type : ( default_value, form_uimodule, { custom_encoder, custom_decoder} )
 schema_types = {
-    "string"    :   ("", uimodules.modules["form_textinput"], {}),
-    "text"      :   ("", uimodules.modules["form_textarea"], {}),
-    "int"       :   (0, uimodules.modules["form_textinput"], {}),
-    "float"     :   (0.0, uimodules.modules["form_textinput"], {}),
-    "list"      :   ([], uimodules.modules["form_select"], {}),
-    "binary"    :   (None, uimodules.modules["form_fileselect"], {}),
-    "object"    :   (None, uimodules.modules["form_textinput"], {}),
-    "date"      :   (None, uimodules.modules["form_datepicker"], {}),
-    "objectid"  :   (ObjectId(), uimodules.modules["form_textinput"], 
-                            {   "encode_python"     :   #APPNAME.lib.custom_encoders.oid_encode_python,
-                                "encode_json"       :   #APPNAME.lib.custom_encoders.oid_encode_json,
-                                "encode_db"         :   #APPNAME.lib.custom_encoders.oid_encode_db
-                            }
+    "string"    :   (   "", 
+                        uimodules.modules["form_textinput"], 
+                        {}),
+    "text"      :   (   "", 
+                        uimodules.modules["form_textarea"],
+                        {}),
+    "integer"       :   (   0, 
+                        uimodules.modules["form_textinput"], 
+                        {}),
+    "float"     :   (   0.0, 
+                        uimodules.modules["form_textinput"], 
+                        {}),
+    "list"      :   (   [], 
+                        uimodules.modules["form_select"], 
+                        {}),
+    "binary"    :   (   None, 
+                        uimodules.modules["form_fileselect"], 
+                        {}),
+    "object"    :   (   None, 
+                        uimodules.modules["form_textinput"], 
+                        {}),
+    "datetime"  :   (   datetime.datetime.now(), 
+                        uimodules.modules["form_datepicker"], 
+                        {}),
+    "objectid"  :   (   ObjectId(), 
+                        uimodules.modules["form_textinput"], 
+                        {   "encode_python"     :   #APPNAME.lib.custom_encoders.oid_encode_python,
+                            "encode_json"       :   #APPNAME.lib.custom_encoders.oid_encode_json,
+                            "encode_db"         :   #APPNAME.lib.custom_encoders.oid_encode_db
+                        }
                     ),
-    "id"        :   (None, uimodules.modules["form_textinput"], {}),
-    "dict"      :   ({}, uimodules.modules["form_textarea"], {}),
-    "bool"      :   (False, uimodules.modules["form_checkbox"], {}),
-    "set"       :   (set(), uimodules.modules["form_textinput"], 
-                            {   "encode_python"     :   #APPNAME.lib.custom_encoders.set_encode_python,
-                                "encode_json"       :   #APPNAME.lib.custom_encoders.set_encode_json,
-                                "encode_db"       :   #APPNAME.lib.custom_encoders.set_encode_db,
-                                "encode_str"       :   #APPNAME.lib.custom_encoders.set_encode_str
-                            }
+    "dict"      :   (   {}, 
+                        uimodules.modules["form_textarea"], 
+                        {}),
+    "boolean"      :   (   False, 
+                        uimodules.modules["form_checkbox"], 
+                        {}),
+    "set"       :   (   set(), 
+                        uimodules.modules["form_textinput"], 
+                        {   "encode_python"     :   #APPNAME.lib.custom_encoders.set_encode_python,
+                            "encode_json"       :   #APPNAME.lib.custom_encoders.set_encode_json,
+                            "encode_db"         :   #APPNAME.lib.custom_encoders.set_encode_db,
+                            "encode_str"        :   #APPNAME.lib.custom_encoders.set_encode_str
+                        }
                     )   
 }
 

@@ -18,7 +18,7 @@ user = {
         "type": "string"
     }, 
     "last_updated": {
-        "type": "date"
+        "type": "datetime"
     }
 }
 

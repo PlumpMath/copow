@@ -20,9 +20,9 @@ migration = Migration()
 def up():
     """ up method will be executed when running do_migrate -d up"""
     copow_log = Copow_log( schema  = {
-           "time"       :      { "type" : "date" },   
-           "logstr"     :      { "type" : "Text" },
-           "user  "     :      { "type" : "Text" }
+           "time"       :      { "type" : "datetime" },   
+           "logstr"     :      { "type" : "string" },
+           "user  "     :      { "type" : "string" }
            #"a_more_complex_one"    :       { "type" : "Text" , "index" : True, "default" : "something"}
       } 
     )
