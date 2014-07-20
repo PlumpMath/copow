@@ -1,6 +1,6 @@
 copow_log = {
     "time": {
-        "type": "datetime"
+        "type": "date"
     }, 
     "user  ": {
         "type": "string"

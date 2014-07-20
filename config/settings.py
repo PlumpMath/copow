@@ -67,7 +67,7 @@ schema_types = {
     "object"    :   (   None, 
                         uimodules.modules["form_textinput"], 
                         {}),
-    "datetime"  :   (   datetime.datetime.now(), 
+    "date"      :   (   datetime.datetime.now(), 
                         uimodules.modules["form_datepicker"], 
                         {}),
     "objectid"  :   (   ObjectId(), 

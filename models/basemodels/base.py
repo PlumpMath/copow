@@ -346,8 +346,19 @@ class BaseModel(dict):
         return self.set_values(json_data)
 
     def to_mongo(self):
+        self.last_updated = powlib.get_time()
         return self.to_json(encoder="encode_db")
         
+    def to_dict(self):
+        d = {}
+        print("  -- converting to dict() ")
+        for column in list(self.schema.keys()):
+            curr_type = self.schema[column]["type"].lower()
+            #print("column: ", column, " curr_type: ", curr_type)
+            if curr_type in settings.schema_types.keys():
+                d[column] = getattr(self, column)
+                print("    + ",column, "type: ", type(d[column]))
+        return d
 
     def to_json(self, encoder="encode_json"):
         """ returns a json representation of the schema"""
@@ -544,7 +555,7 @@ class BaseModel(dict):
             ofile = open(filepath, "w")
             ostr = self.modelname + " = "
             schema = self.schema
-            schema["last_updated"] = { "type" :  "datetime"  }
+            schema["last_updated"] = { "type" :  "date"  }
             #schema["created"] = { "type" :  "date"  }
             schema["_id"] = { "type" :  "objectid"  }
             #ostr += json.dumps(schema, indent=4) + os.linesep
