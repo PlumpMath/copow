@@ -44,11 +44,17 @@
                     console.log(msg);
                     //var payload = JSON.parse(msg.responseText);
                     console.log(msg["data"]);
-                    $("#flash_message").text("sucess:" + msg["data"] );
+                    $("#flash_message").text("sucess:" + JSON.stringify(msg["data"]) );
                     $("#flash_message_div").attr("class",
                         "alert alert-success alert-dismissible"
                      );
                     $("#flash_message_div").show();
+                    var base_curl = "curl -H 'Content-Type: application/json' -X POST -d '";
+                    base_curl = base_curl + (JSON.stringify($('#update_form').serializeJSON()));
+                    base_curl = base_curl + "' http://localhost:8000/post/"+ msg["data"]["_id"] +"/update"
+                    $("#code").text(base_curl);
+                    $("#code_intro").show();
+                    $("#code_outro").show();
 
                 })
                 .fail(function( msg ) {
@@ -108,7 +114,7 @@
                 
             </form>
             
-            <button id="test" class="btn btn-warning">Test</button>
+            <button id="test" class="btn btn-warning">hide flash</button>
 
             <button id="submit" class="btn btn-primary">Submit</button>
 
@@ -116,12 +122,17 @@
             
             {% module form_select(model=result, attribute="title") %}
             
-            To get this by using curl just cut and paste the snippet below to the command line:
+            <div id="code_intro" style="display: none;">
+                To get this by using curl just cut and paste the snippet below to the command line:
+            </div>
+            <hr>
             <pre>
-                <code>
-                curl -i -X POST --data "id=1234"  --header "Content-Type:application/json"  http://{{server}}:{{port}}/{{result.modelname}}/{{result._id}}/update
+                <code id="code">
                 </code>
             </pre>
+            <div id="code_outro" style="display: none;">
+                This not just an example but represents the actual code used to create this model. You can use it to test the REST interface with cut and paste.
+            </div>
         </div>
     </div>
 {% end %}

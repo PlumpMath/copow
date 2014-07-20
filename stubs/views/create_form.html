@@ -43,7 +43,7 @@
                     console.log(msg);
                     //var payload = JSON.parse(msg.responseText);
                     console.log(msg["data"]);
-                    $("#flash_message").text("sucess:" + msg["data"]);
+                    $("#flash_message").text("sucess:" + JSON.stringify(msg["data"]));
                     $("#flash_message_div").attr("class",
                         "alert alert-success alert-dismissible"
                      );
@@ -111,7 +111,7 @@
                 
             </form>
             <p>
-            <button id="test" class="btn btn-warning">Test</button>
+            <button id="test" class="btn btn-warning">hide flash</button>
 
             <button id="submit" class="btn btn-primary">Submit</button>
             </p>
@@ -125,7 +125,7 @@
             </pre>
             <div id="code_outro" style="display: none;">
                 This not just an example but represents the actual code used to create this model. You can use it to test the REST interface with cut and paste.
-            <code>
+            </div>
         </div>
     </div>
 {% end %}
