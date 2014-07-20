@@ -77,7 +77,12 @@
 </script>
 
 
-
+    <!-- an optional flash-message -->
+    <div class="" role="alert"  style="display: none;" id="flash_message_div">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">
+            &times;</span><span class="sr-only">Close</span></button>
+        <strong>Info:</strong> <span id="flash_message"></span>
+    </div>
 
     <div class="panel panel-default">
     <!-- Default panel contents -->
@@ -85,13 +90,6 @@
             <a href="/{{model.modelname}}">show {{model.modelname}} list</a>
         </div>
         
-        <!-- an optional flash-message -->
-        <div class="" role="alert"  style="display: none;" id="flash_message_div">
-            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">
-                &times;</span><span class="sr-only">Close</span></button>
-            <strong>Info:</strong> <span id="flash_message"></span>
-        </div>
-
         <div class="panel-body">
             <p>&nbsp;</p>
             <form id="update_form" class="form-horizontal" role="form">
