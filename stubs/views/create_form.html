@@ -51,8 +51,14 @@
                     var base_curl = "curl -H 'Content-Type: application/json' -X PUT -d '";
                     base_curl = base_curl + (JSON.stringify($('#create_form').serializeJSON()));
                     base_curl = base_curl + "' http://localhost:8000/post/create"
-                    $("#code").text(base_curl);
+                    $("#code_unix_curl").text(base_curl);
+                    var base_curl = "curl --header \"Content-Type:application/json\" -X PUT -d \"";
+                    base_curl = base_curl + (JSON.stringify($('#create_form').serializeJSON())).replace(/\"/g,'\\"');
+                    base_curl = base_curl + "\" http://localhost:8000/post/create"
+                    $("#code_windows_curl").text(base_curl);
                     $("#code_intro").show();
+                    $("#div_unix_curl").show();
+                    $("#div_windows_curl").show();
                     $("#code_outro").show();
 
                 })
@@ -119,10 +125,20 @@
                 To get this by using curl just cut and paste the snippet below to the command line:
             </div>
             <hr>
-            <pre>
-                <code id="code">
-                </code>
-            </pre>
+            <div id="div_unix_curl" style="display: none;">
+                For UNIX, Linux, MAC:
+                <pre>
+                    <code id="code_unix_curl" >
+                    </code>
+                </pre>
+            </div>
+            <div id="div_windows_curl" style="display: none;">
+                For Windows:
+                <pre>
+                    <code id="code_windows_curl">
+                    </code>
+                </pre>
+            </div>
             <div id="code_outro" style="display: none;">
                 This not just an example but represents the actual code used to create this model. You can use it to test the REST interface with cut and paste.
             </div>
