@@ -31,6 +31,12 @@ def main():
                        """, 
                        default ="None")
 
+    parser.add_option( "-m", "--model-only",
+                       action="store_true",
+                       dest="model_only",
+                       help="only create the model. No controller, No scaffoldings.",
+                       default=False)
+
     parser.add_option( "-f", "--force",
                        action="store_true",
                        dest="force",
@@ -88,7 +94,7 @@ def main():
         start = datetime.datetime.now()
         render_model( modelname=modelname, force=options.force, 
                       parts_dir=parts_dir, output_path=output_path,
-                      attributes=attribute_list
+                      attributes=attribute_list, model_only = options.model_only
                     )
         end = datetime.datetime.now()
         duration = None
@@ -101,17 +107,18 @@ def main():
 
     
 def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["parts_dir"], 
-                 output_path="./models/", attributes=[], comment=""):
+                 output_path="./models/", attributes=[], comment="", model_only=False):
     """
     Renders the generated Model Class in path/models.
     Renders the according BaseModel in path/models/basemodels.
     Renders a basic test in tests dierctory.
     Uses the stubs from stubs/partials.
     """
+    print("-"*50)
     print("generate_model: " + modelname)
+    print("-"*50)
     # new model filename
    
-
     collection_name = powlib.pluralize(modelname)
     classname = str.capitalize(modelname)  
     baseclassname = "Base" + classname
@@ -149,13 +156,15 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["p
     #ef render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["parts_dir"], 
     #             output_path="./models/", attributes=[], comment=""):
     # render the according migration (and schema)
+    
     generate_migration.render_migration( modelname, comment=comment, col_defs = None, 
             parts_dir=settings.base["parts_dir"], prefix_dir = "./")
     
-    generate_controller.render_controller(  name=modelname, force=force,  
+    if not model_only:
+        generate_controller.render_controller(  name=modelname, force=force,  
             parts_dir=settings.base["parts_dir"], zero_tornado=False, prefix_path="./")
     
-    generate_scaffold.generate_scaffold( modelname, force=force)
+        generate_scaffold.generate_scaffold( modelname, force=force)
     
     # render a basic testcase 
     render_test_stub(modelname, classname, parts_dir)

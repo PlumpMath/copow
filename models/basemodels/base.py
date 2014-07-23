@@ -529,7 +529,7 @@ class BaseModel(dict):
             not neccessary in mongoDB"""
         #db.createCollection(name, {capped: <boolean>, autoIndexId: <boolean>, size: <number>, max: <number>} )
         # exmaple: db.createCollection("log", { capped : true, size : 5242880, max : 5000 } )
-        return self.db.create_collection(self.collection_name, *args, **kwargs)
+        return self.db.create_collection(self.collection_name + kwargs.get("postfix", ""), *args, **kwargs)
 
     def drop_table(self):
         """ drops this collection / table """

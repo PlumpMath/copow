@@ -11,7 +11,7 @@
 import sys
 import os
 
-import ##APPNAME.lib.powlib
+import #APPNAME.lib.powlib
 from #APPNAME.lib.pow_objects import Migration
 from #APPNAME.models.app import App
 

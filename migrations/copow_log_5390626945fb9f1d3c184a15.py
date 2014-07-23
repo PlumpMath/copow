@@ -11,9 +11,9 @@
 import sys
 import os
 
-import atest.lib.powlib
-from atest.lib.pow_objects import Migration
-from atest.models.copow_log import Copow_log
+import #APPNAME.lib.powlib
+from #APPNAME.lib.pow_objects import Migration
+from #APPNAME.models.copow_log import Copow_log
 
 migration = Migration()
 
@@ -30,7 +30,8 @@ def up():
     # creates the tabke (collection) and the schema in migrations/schemas/
     # creates a collection named log with a maximum size of 5 megabytes and a maximum of 5000 documents.
     # See: http://docs.mongodb.org/manual/reference/method/db.createCollection/
-    migration.create_table(copow_log, capped=True, size=5242880, max=5000  )
+    #migration.create_table(copow_log, capped=True, size=5242880, max=5000, postfix="_#APPNAME"  )
+    migration.create_table(copow_log, capped=True, size=5242880, max=5000 )
     
     print("  Successfully migrated copow_log -> mehtod: up()")
     

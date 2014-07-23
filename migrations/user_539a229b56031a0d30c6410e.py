@@ -11,9 +11,9 @@
 import sys
 import os
 
-import atest.lib.powlib
-from atest.lib.pow_objects import Migration
-from atest.models.user import User
+import #APPNAME.lib.powlib
+from #APPNAME.lib.pow_objects import Migration
+from #APPNAME.models.user import User
 
 migration = Migration()
 

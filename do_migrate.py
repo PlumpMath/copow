@@ -98,7 +98,7 @@ def main():
 
 def load_func( filename, function_name):
     print("  Trying to load: ", filename, " -> ", function_name)
-    module = __import__("atest"+".migrations." + filename, globals(), locals(), [function_name], 0)        
+    module = __import__("#APPNAME"+".migrations." + filename, globals(), locals(), [function_name], 0)        
     module = imp.reload(module)
     #schema = reload(schema_module)
     #print(module.__dict__)

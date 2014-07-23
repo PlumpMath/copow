@@ -8,19 +8,19 @@
 
 import os
 import sys
-import lib.powlib
-import lib.db_conn as db_conn
-import config.db
-import config.settings as settings
-import config.db as dbconfig
+import #APPNAME.lib.powlib
+import #APPNAME.lib.db_conn as db_conn
+import #APPNAME.config.db
+import #APPNAME.config.settings as settings
+import #APPNAME.config.db as dbconfig
 
 
-import models.app as app
-import models.version as version
-import models.user as user
-import models.copow_log as copow_log
+import #APPNAME.models.app as app
+import #APPNAME.models.version as version
+import #APPNAME.models.user as user
+import #APPNAME.models.copow_log as copow_log
 
-import do_migrate
+import #APPNAME.do_migrate as do_migrate
 from #APPNAME.models.user import User
 import #APPNAME.ext.user_management as umgmt
 

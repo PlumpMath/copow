@@ -50,9 +50,10 @@ def init_controllers(app):
 			# create RESTful routes for each controller.
 			# 1. load the controller
 			# convention for the controller module name is: name_controller
-			controller_name = fname.split("_")[0].capitalize()+"Controller"
-			controller = fname.split("_")[0]
-			import_module_str = "atest.controllers." + fname
+			controller_name = fname.split("_controller")[0].capitalize()+"Controller"
+			controller = fname.split("_controller")[0]
+			print("managing controller: ", fname, " controller_name: ", controller_name, "  controller: ", controller)
+			import_module_str = "#APPNAME.controllers." + fname
 			#print(import_module_str)
 			con = importlib.import_module(import_module_str)
 			#print(con)
