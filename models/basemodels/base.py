@@ -233,7 +233,7 @@ class BaseModel(dict):
         """
         #print("args: ", *args)
         #print("kwargs: ", **kwargs)
-        cursor = self.collection.find(*args, as_class=self.__class__, **kwargs)
+        cursor = self.__class__.collection.find(*args, as_class=self.__class__, **kwargs)
 
         if limit:
             print("limit:", limit)
@@ -260,8 +260,8 @@ class BaseModel(dict):
         """ Updates this(self) object directly.
             returns self (NOT a dict)
         """
-        #ret = self.collection.find_one(*args, as_class=self.__class__, **kwargs)
-        ret = self.collection.find_one(*args, **kwargs)
+        #ret = self.__class__.collection.find_one(*args, as_class=self.__class__, **kwargs)
+        ret = self.__class__.collection.find_one(*args, **kwargs)
         if ret:
             self.set_values(ret)
         return self
@@ -298,7 +298,7 @@ class BaseModel(dict):
         d = self.to_mongo()
         #print(self)
         d["last_updated"] = powlib.get_time()
-        self._id = self.collection.save(d,  safe=safe)
+        self._id = self.__class__.collection.save(d,  safe=safe)
         print("saved: ", self.modelname, " id: ",str(self._id))
         #self._id = self.insert(safe=safe)
         return self._id
@@ -310,7 +310,7 @@ class BaseModel(dict):
         d["last_updated"] = powlib.get_time()
         #d["created"] = powlib.get_time()
         del d["_id"]
-        self._id = self.collection.insert(d, safe=safe)
+        self._id = self.__class__.collection.insert(d, safe=safe)
         print("inserted: ", self.modelname, " id: ", str(self._id))
         return self._id
         
@@ -321,8 +321,8 @@ class BaseModel(dict):
     def update(self, *args, safe=True, multi=False, **kwargs):
         """  Pure: pymongo update. Can update any document in the collection (not only self)
             Syntax: db.test.update({"x": "y"}, {"$set": {"a": "c"}}) """
-        #ret = self.collection.update(*args, **kwargs)
-        ret = self.collection.update({"_id": self._id}, self.to_mongo(), safe=safe, multi=False )
+        #ret = self.__class__.collection.update(*args, **kwargs)
+        ret = self.__class__.collection.update({"_id": self._id}, self.to_mongo(), safe=safe, multi=False )
         print("updated: ", self.modelname, " id: ", str(self._id))
         return ret
 
@@ -333,7 +333,7 @@ class BaseModel(dict):
             for more information see: 
                 http://docs.mongodb.org/manual/tutorial/remove-documents/
         """
-        return self.collection.remove(*args, **kwargs)
+        return self.__class__.collection.remove(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """ removes this instances document representation in the db 
@@ -494,27 +494,27 @@ class BaseModel(dict):
             This might take some time in large collectgions since all docs are touched.
         """
         print("Apennding column to table: %s" % (self.modelname))
-        return self.collection.update({},{"$set" : {name: attrs["default"]}},{ "multi": True })
+        return self.__class__.collection.update({},{"$set" : {name: attrs["default"]}},{ "multi": True })
 
     def add_index(self, *args, **kwargs):
         """ adds an index to a column 
             example: coll.create_index("title", name="title_index_khz", unique=True)
         """
-        return self.collection.ensure_index(*args, **kwargs)
+        return self.__class__.collection.ensure_index(*args, **kwargs)
 
     def remove_column(self, name, filter={}):
         """ removes a column 
             see: http://docs.mongodb.org/manual/core/update/#Updating-%24unset
         """
-        return self.collection.update(filter, { "$unset": { name : 1 }}, { "multi": True })
+        return self.__class__.collection.update(filter, { "$unset": { name : 1 }}, { "multi": True })
 
     def remove_index(self, name):
         """ removes an index"""
-        return self.collection.drop_index({name : 1})
+        return self.__class__.collection.drop_index({name : 1})
 
     def rename_column(self, name, new_name, filter={}):
         """ renames a column """
-        self.collection.update( filter, { "$rename": { name : new_name }}, { "multi": True } )
+        self.__class__.collection.update( filter, { "$rename": { name : new_name }}, { "multi": True } )
 
     def alter_column_name(self, colname, newname):
          """ alters a column name.
@@ -529,15 +529,15 @@ class BaseModel(dict):
             not neccessary in mongoDB"""
         #db.createCollection(name, {capped: <boolean>, autoIndexId: <boolean>, size: <number>, max: <number>} )
         # exmaple: db.createCollection("log", { capped : true, size : 5242880, max : 5000 } )
-        return self.db.create_collection(self.collection_name + kwargs.get("postfix", ""), *args, **kwargs)
+        return self.__class__.db.create_collection(self.__class__.collection_name + kwargs.get("postfix", ""), *args, **kwargs)
 
     def drop_table(self):
         """ drops this collection / table """
-        return self.db.drop_collection(self.collection_name)
+        return self.__class__.db.drop_collection(self.__class__.collection_name)
 
     def index_information():
         """Get information on this collections indexes."""
-        return self.collection.index_information()
+        return self.__class__.collection.index_information()
     
     def create_schema(self, prefix_output_path=""):
         """ create a schema for this model

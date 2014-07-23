@@ -1,27 +1,35 @@
 #
 #
 # Model Version
-# automatically created: 2013/07/06 22:16:03 by copow
+# automatically created: 2014/07/24 00:30:18 by copow
 # 
 #
 
-from #APPNAME.lib.db_conn import DBConn
-from #APPNAME.migrations.schemas.version_schema import version as schema
-from #APPNAME.models.basemodels.base import BaseModel
-import #APPNAME.lib.powlib as powlib
+from atest.lib.db_conn import DBConn
+from atest.migrations.schemas.version_schema import version as schema
+#from atest.models.basemodels.baseversion import BaseVersion
+from atest.models.basemodels.base import BaseModel
+#import atest.lib.powlib
+from atest.lib import powlib
+
+from atest.ext.paginate import will_paginate
 
 class Version(BaseModel):
-    
-    def __init__(self, *args, data=None, schema={}, **kwargs):
+    db_conn = DBConn()
+    db = db_conn.get_db()
+    collection_name = "versions"
+    collection = db[collection_name]
+    def __init__(self, *args, data={}, schema={}, **kwargs):
         #super(Version, self).__init__(data)
         """ Basic instance setup"""
-        super(Version,self).__init__(*args, **kwargs)
-        self.collection_name = "versions"
+        #super(Version,self).__init__(*args, **kwargs)
+        #print("created a new Version, id:", id(self))
+        #self.collection_name = "versions"
         self.modelname = "version"
         self.modelname_plural = powlib.pluralize(self.modelname)
-        self._db_conn = DBConn()
-        self.db = self._db_conn.get_db()
-        self.collection = self.db[self.collection_name]
+        #self._db_conn = DBConn()
+        #self.db = self._db_conn.get_db()
+        #self.collection = self.db[self.collection_name]
         #self.related_models = {}
         if schema:
             self.schema = schema
@@ -35,6 +43,10 @@ class Version(BaseModel):
         #print self.schema
         #print dir(self)
         if data:
-            self.set_data(data)
+            self.set_values(data)
 
-
+    # example for extension use
+    # @will_paginate(per_page=10)
+    # also look at the import above
+    def find(self, *args, sort=False, **kwargs):
+        return super(Version,self).find(*args,**kwargs)

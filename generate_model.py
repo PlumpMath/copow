@@ -42,6 +42,7 @@ def main():
                        dest="force",
                        help="forces overrides of existing files",
                        default=False)
+    
     # attributes are in the form:
     # name:type,name1:type1,....
     # attributes are later converted to a list of tuples:
@@ -157,10 +158,10 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["p
     #             output_path="./models/", attributes=[], comment=""):
     # render the according migration (and schema)
     
-    generate_migration.render_migration( modelname, comment=comment, col_defs = None, 
-            parts_dir=settings.base["parts_dir"], prefix_dir = "./")
-    
     if not model_only:
+        generate_migration.render_migration( modelname, comment=comment, col_defs = None, 
+            parts_dir=settings.base["parts_dir"], prefix_dir = "./")
+
         generate_controller.render_controller(  name=modelname, force=force,  
             parts_dir=settings.base["parts_dir"], zero_tornado=False, prefix_path="./")
     

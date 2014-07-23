@@ -1,28 +1,35 @@
 #
 #
 # Model User
-# automatically created: 2014/06/05 14:32:45 by copow
+# automatically created: 2014/07/24 00:30:37 by copow
 # 
 #
 
-from #APPNAME.lib.db_conn import DBConn
-from #APPNAME.migrations.schemas.user_schema import user as schema
-#from #APPNAME.models.basemodels.baseuser import BaseUser
-from #APPNAME.models.basemodels.base import BaseModel
-#import #APPNAME.lib.powlib
-from #APPNAME.lib import powlib
+from atest.lib.db_conn import DBConn
+from atest.migrations.schemas.user_schema import user as schema
+#from atest.models.basemodels.baseuser import BaseUser
+from atest.models.basemodels.base import BaseModel
+#import atest.lib.powlib
+from atest.lib import powlib
+
+from atest.ext.paginate import will_paginate
 
 class User(BaseModel):
-    
-    def __init__(self, data=None, schema={}):
+    db_conn = DBConn()
+    db = db_conn.get_db()
+    collection_name = "users"
+    collection = db[collection_name]
+    def __init__(self, *args, data={}, schema={}, **kwargs):
         #super(User, self).__init__(data)
         """ Basic instance setup"""
-        self.collection_name = "users"
+        #super(User,self).__init__(*args, **kwargs)
+        #print("created a new User, id:", id(self))
+        #self.collection_name = "users"
         self.modelname = "user"
         self.modelname_plural = powlib.pluralize(self.modelname)
-        self._db_conn = DBConn()
-        self.db = self._db_conn.get_db()
-        self.collection = self.db[self.collection_name]
+        #self._db_conn = DBConn()
+        #self.db = self._db_conn.get_db()
+        #self.collection = self.db[self.collection_name]
         #self.related_models = {}
         if schema:
             self.schema = schema
@@ -36,6 +43,10 @@ class User(BaseModel):
         #print self.schema
         #print dir(self)
         if data:
-            self.set_data(data)
+            self.set_values(data)
 
-
+    # example for extension use
+    # @will_paginate(per_page=10)
+    # also look at the import above
+    def find(self, *args, sort=False, **kwargs):
+        return super(User,self).find(*args,**kwargs)
