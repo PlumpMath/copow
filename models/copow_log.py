@@ -5,14 +5,14 @@
 # 
 #
 
-from atest.lib.db_conn import DBConn
-from atest.migrations.schemas.copow_log_schema import copow_log as schema
-#from atest.models.basemodels.basecopow_log import BaseCopow_log
-from atest.models.basemodels.base import BaseModel
-#import atest.lib.powlib
-from atest.lib import powlib
+from #APPNAME.lib.db_conn import DBConn
+from #APPNAME.migrations.schemas.copow_log_schema import copow_log as schema
+#from #APPNAME.models.basemodels.basecopow_log import BaseCopow_log
+from #APPNAME.models.basemodels.base import BaseModel
+#import #APPNAME.lib.powlib
+from #APPNAME.lib import powlib
 
-from atest.ext.paginate import will_paginate
+from #APPNAME.ext.paginate import will_paginate
 
 class Copow_log(BaseModel):
     db_conn = DBConn()
