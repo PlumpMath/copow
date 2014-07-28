@@ -41,6 +41,9 @@ class BaseController(tornado.web.RequestHandler):
     def __init__(self, *args, **kwargs):
         super(BaseController,self).__init__(*args,**kwargs)
 
+    def get_json_data(self, request):
+        return json.loads(request.body.decode(settings.base["default_encoding"]))
+
     def get_format_and_charset(self, format):
         # typical example with charset: ["applicatio/json; charset=UTF-8"]
         # typical example without charset: ["text/html"]

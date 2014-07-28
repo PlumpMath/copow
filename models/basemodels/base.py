@@ -19,6 +19,7 @@ from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.lib import powlib
 from #APPNAME.lib.powlib import _log
 import #APPNAME.config.settings as settings
+import #APPNAME.config.copow_types as types_and_formats
 import #APPNAME.lib.custom_encoders as encoders
 
 
@@ -36,13 +37,13 @@ class BaseModel(dict):
         #print("--> setitem: ", key,value)
         if key in self.schema.keys():
             curr_type = self.schema[key]["type"].lower()
-            if curr_type in settings.schema_types.keys():
-                if "encode_python" in settings.schema_types[curr_type][2]:
+            if curr_type in types_and_formats.schema_types.keys():
+                if "encode_python" in types_and_formats.schema_types[curr_type][2]:
                     #
                     # if this type has a custom_encoder, then use it
                     #
-                    setattr(self, key, settings.schema_types[curr_type][2]["encode_python"](value))
-                    #print ("custom encoded for: ", curr_type, " value: ", value, "  -> with: ", settings.schema_types[curr_type][2]["encode_python"])
+                    setattr(self, key, types_and_formats.schema_types[curr_type][2]["encode_python"](value))
+                    #print ("custom encoded for: ", curr_type, " value: ", value, "  -> with: ", types_and_formats.schema_types[curr_type][2]["encode_python"])
                 else:
                     setattr(self,key, value)
         else:
@@ -97,16 +98,16 @@ class BaseModel(dict):
             #print("column : %s" % (column))
             #type = string.lower(attrs["type"])
             att_type = attrs["type"].lower()
-            if att_type in settings.schema_types:
+            if att_type in types_and_formats.schema_types:
                 #print "setting up property for: %s" % (column)
                 #
                 # setting the according attribute and the default value, if any.
                 #
                 # default_value:
-                setattr(self, column, settings.schema_types[att_type][0])
+                setattr(self, column, types_and_formats.schema_types[att_type][0])
                 # set the conveniance att_type attribute
                 setattr(self, column+"_type", att_type)
-                setattr(self, column+"_uimodule", settings.schema_types[att_type][1])
+                setattr(self, column+"_uimodule", types_and_formats.schema_types[att_type][1])
             else:
                 raise Exception("no or unknown type given in schema: version_schema.py. Type was: ", att_type)
             if "index" in attrs:
@@ -160,9 +161,9 @@ class BaseModel(dict):
             if as_str:
                 curr_type = self.schema[attribute_name]["type"].lower()
                 #print("column: ", column, " curr_type: ", curr_type)
-                if curr_type in settings.schema_types.keys():
-                    if "encode_str" in settings.schema_types[curr_type][2]:
-                        retval = settings.schema_types[curr_type][2]["encode_str"](getattr(self,attribute_name))
+                if curr_type in types_and_formats.schema_types.keys():
+                    if "encode_str" in types_and_formats.schema_types[curr_type][2]:
+                        retval = types_and_formats.schema_types[curr_type][2]["encode_str"](getattr(self,attribute_name))
                         print("get as_str custom encoding: value = ", retval)
                         return retval
                     else:
@@ -286,8 +287,8 @@ class BaseModel(dict):
         """
         for elem in self.schema.keys():
             # get the according default type for the attribute 
-            # See: settings.schema_types
-            default_value = settings.schema_types[self.schema[elem]["type"].lower()][0]
+            # See: types_and_formats.schema_types
+            default_value = types_and_formats.schema_types[self.schema[elem]["type"].lower()][0]
             setattr(self, elem, default_value)
         print("erased values: ", self.to_json())
         return
@@ -355,7 +356,7 @@ class BaseModel(dict):
         for column in list(self.schema.keys()):
             curr_type = self.schema[column]["type"].lower()
             #print("column: ", column, " curr_type: ", curr_type)
-            if curr_type in settings.schema_types.keys():
+            if curr_type in types_and_formats.schema_types.keys():
                 d[column] = getattr(self, column)
                 print("    + ",column, "type: ", type(d[column]))
         return d
@@ -367,13 +368,13 @@ class BaseModel(dict):
         for column in list(self.schema.keys()):
             curr_type = self.schema[column]["type"].lower()
             #print("column: ", column, " curr_type: ", curr_type)
-            if curr_type in settings.schema_types.keys():
-                if encoder in settings.schema_types[curr_type][2]:
+            if curr_type in types_and_formats.schema_types.keys():
+                if encoder in types_and_formats.schema_types[curr_type][2]:
                     #
                     # if this type has a custom_encoder, then use it
                     #
-                    d[column] = settings.schema_types[curr_type][2][encoder](getattr(self, column))
-                    #print ("custom encoded for: ", column, " with: ", settings.schema_types[curr_type][2][encoder])
+                    d[column] = types_and_formats.schema_types[curr_type][2][encoder](getattr(self, column))
+                    #print ("custom encoded for: ", column, " with: ", types_and_formats.schema_types[curr_type][2][encoder])
                 else:
                     d[column] = getattr(self, column)
                     #print ("standard encoded for: ", column)

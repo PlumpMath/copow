@@ -35,22 +35,18 @@ def main():
                        help="defines the model for this migration.", 
                        default ="None")
     parser.add_option( "-c", "--comment",  
-                       action="store", 
+                       action="store",
                        type="string", 
                        dest="comment", 
                        help="defines a comment for this migration.", 
                        default ="No Comment")
-    parser.add_option( "-j", "--job",  
-                       action="store_true", 
-                       dest="job", 
-                       help="creates migration job, e.g for backups, restores etc.",
-                       default=False)
-    parser.add_option( "-t", "--table",  
+    parser.add_option( "-n", "--name",  
                        action="store", 
-                       type="string", 
-                       dest="table", 
-                       help="set table for migration_job",
-                       default="None")
+                       type="string",
+                       dest="name", 
+                       help="Set the name for this migration",
+                       default=False)
+    
     
     start = None
     end = None 
@@ -84,13 +80,8 @@ def main():
         print("generated_migration in("+ str(duration) +")")
         return        
             
-    else:
-        # we got a model or job.
-        if options.job:
-            render_migration_job(options.job, options.table)
-        else: 
-            print("    --- for model: %s" % (options.model))
-            render_migration(options.model, options.comment)
+    print("    --- for model: %s" % (options.model))
+    render_migration(options.model, options.comment, options.name)
     
     end = datetime.datetime.now()
     duration = None
@@ -147,7 +138,7 @@ def render_relation_migration(name, parts_dir=PARTS_DIR , prefix_dir = "./"):
     return
     
 
-def write_migration(name, comment, prefix_dir="./", ostr=""):
+def write_migration(name, filename, comment, prefix_dir="./", ostr=""):
     """
     Writes a new migration.
     It generates a new version, constructs the correct filename and path
@@ -161,7 +152,7 @@ def write_migration(name, comment, prefix_dir="./", ostr=""):
     
     # will be saved in the versions table and used to load the module by do_migrate
     #long_name =str(oid) + "_" + name 
-    long_name = name + "_" + str(oid)
+    long_name = filename + "_" + str(oid)
     filename = long_name + ".py"
     
     #update the app table with the new version
@@ -205,7 +196,7 @@ def update_app_and_version(short_name, long_name, oid, comment="" ):
     
     return 
     
-def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = None,
+def render_migration( modelname="NO_MODEL_GIVEN", comment="", name=None, col_defs = None,
                       parts_dir=PARTS_DIR, prefix_dir = "./"):
     """
     Renders a database migration file.
@@ -216,6 +207,11 @@ def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = None,
     :param prefix_dir:  A prefix path to be added to migrations making prefix_dir/migrations the target dir
     """
     
+    if name:
+        filename = name
+    else:
+        filename = modelname
+
     # add the auto generated (but can be safely edited) warning to the outputfile
     #print os.path.normpath(parts_dir + "migration.py")
     infile = open (os.path.normpath(parts_dir + "migration.py"), "r")
@@ -245,7 +241,7 @@ def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = None,
     print("generate_migration for model: " + modelname)
     print("-"*50)
     # really write the migration now
-    write_migration(modelname, comment, prefix_dir, ostr)
+    write_migration(modelname, filename, comment, prefix_dir, ostr)
 
     return
 

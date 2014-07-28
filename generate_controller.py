@@ -35,7 +35,7 @@ def main():
     parser.add_option("-m", "--model",  
                         action="store", 
                         type="string", 
-                        dest="model", 
+                        dest="model_name", 
                         help="defines the model for this controller.", 
                         default ="None")
     parser.add_option("-f", "--force",  
@@ -48,7 +48,13 @@ def main():
                         dest="zero", 
                         help="forces a controller withoujt any tornado inheritance",
                         default=False)
-    
+
+    parser.add_option("-o", "--minimal-only",  
+                        action="store_true",  
+                        dest="minimal", 
+                        help="forces a controller withoujt any tornado inheritance",
+                        default=False)
+
     controller_name = "None"
     controller_model = "None"
     start = None
@@ -57,17 +63,17 @@ def main():
     
     (options, args) = parser.parse_args()
     #print options        
-    if options.model == "None":
+    if options.name == "None":
         if len(args) > 0:
             # if no option flag (like -m) is given, it is assumed that 
             # the first argument is the model. (representing -m arg1)
-            options.model = args[0]
+            options.name = args[0]
         else:
             parser.error("You must at least specify an controllername by giving -n <name>.")
             
-    controller_name = options.model
+    #controller_name = options.name
     parts_dir = settings.base["parts_dir"]
-    render_controller(controller_name, options.force, parts_dir, options.zero)
+    render_controller(options.name, options.model_name, options.force, parts_dir, options.zero, options.minimal )
 
     end = datetime.datetime.now()
     duration = None
@@ -76,8 +82,8 @@ def main():
     print()
     return
     
-def render_controller(  name="NO_NAME_GIVEN", force=False,  parts_dir="", 
-                        zero_tornado=False, prefix_path="./"):
+def render_controller(  controller_name="NO_NAME_GIVEN", model_name="None", force=False,  parts_dir="", 
+                        zero_tornado=False, minimal=False, prefix_path="./"):
     
     """ generates a controller according to the given options
         @param name: name prefix of the Controller fullname NameController
@@ -89,6 +95,8 @@ def render_controller(  name="NO_NAME_GIVEN", force=False,  parts_dir="",
     # add the auto generated warning to the outputfile
     if zero_tornado:
         infile = open (os.path.normpath( os.path.join(parts_dir +  "zero_tornado_controller.py")), "r")
+    elif minimal:
+        infile = open (os.path.normpath( os.path.join(parts_dir +  "mini_controller.py")), "r")
     else:
         infile = open (os.path.normpath( os.path.join(parts_dir +  "controller.py")), "r")
 
@@ -97,14 +105,16 @@ def render_controller(  name="NO_NAME_GIVEN", force=False,  parts_dir="",
     
     #pluralname = powlib.plural(model)
     ostr = ostr.replace( "#DATE", str(datetime.date.today()) )  
-    
-    ostr = ostr.replace("#CONTROLLER_CAPITALIZED_NAME", name.capitalize())
-    ostr = ostr.replace("#CONTROLLER_LOWER_NAME", name)
-    ostr = ostr.replace("#MODELNAME_PLURAL", powlib.pluralize(name))
-    ostr = ostr.replace("#MODELCLASSNAME", name.capitalize())
-    ostr = ostr.replace("#MODELNAME", name)
+    if model_name == "None":
+        model_name = controller_name
+
+    ostr = ostr.replace("#CONTROLLER_CAPITALIZED_NAME", controller_name.capitalize())
+    ostr = ostr.replace("#CONTROLLER_LOWER_NAME", controller_name)
+    ostr = ostr.replace("#MODELNAME_PLURAL", powlib.pluralize(model_name))
+    ostr = ostr.replace("#MODELCLASSNAME", model_name.capitalize())
+    ostr = ostr.replace("#MODELNAME", model_name)
     filename = os.path.normpath ( 
-        os.path.join( prefix_path + "./controllers/",  name + "_controller.py" ) )
+        os.path.join( prefix_path + "./controllers/",  controller_name + "_controller.py" ) )
     
     if os.path.isfile( os.path.normpath(filename) ):
         if not force:
