@@ -1,11 +1,11 @@
-3#!python
+#!python
 # do_migrate
 # execute db migrations and jobs.
 # also modify migrations (erase, set version etc)
 #
 #
 
-import os
+import os, os.path
 from optparse import OptionParser
 import sys
 import datetime
@@ -29,6 +29,7 @@ def main():
                       dest="direction",
                       help="migrate [up | down]",
                       default="None")
+    
     parser.add_option("-v", "--version",
                       action="store",
                       type="string",
@@ -57,11 +58,19 @@ def main():
                       action="store",
                       type="string",
                       dest="erase",
-                      help="Erases all versions, schemas and migrations to the given version.",
+                      help="""Erases all versions, schemas and migrations <from>,<to> version. 
+                        Two parameters. Usage: do_migrate -e 5,7 """,
+                      default="None")
+
+    parser.add_option("-r", "--reversion",
+                      action="store",
+                      type="string",
+                      dest="reversion",
+                      help="make version x = version y",
                       default="None")
 
     (options, args) = parser.parse_args()
-    #print options
+    print(options)
     
 
     start = None
@@ -74,7 +83,20 @@ def main():
         show_info()
     elif options.erase != "None":
         # erase the given version
-        erase_version(int(options.version))
+        #erase_version(int(options.version))
+        print ("options.erase: ", options.erase)
+        from_version,to_version = options.erase.split(",")
+        print(" This will erase all version ")
+        print("   -- from version: ",from_version)
+        print("   -- to version: ",to_version)
+        choice = input("Are you sure ? (n for NO or Any other key to say yes.)")
+        if choice == "n":
+            print ("Phew ... relax and rethink ..")
+            sys.exit()
+        else:
+            erase_version(int(from_version), int(to_version))
+
+
     elif options.set_curr_version != "None":
         # only set the current version 
         set_currentversion(options.set_curr_version)
@@ -108,33 +130,70 @@ def load_func( filename, function_name):
     return func
 
 
-def erase_version(ver):
+def erase_version(from_version, to_version):
     """ erase the given version from version collection. Also remove the schema and migration.
         The model file will be renamed to model_erased.py.
     """
+    print("-"*40)
+    print("erasing migrations and versions")
     v = version.Version()
     a = app.App()
     a.find_one()
+    #
+    # deletes all version from from_version to to_version
+    # including the two themselves. so 5,8 erases: 5,6,7,8 
+    #
+    for elem in range(from_version, to_version + 1):
+        v_to = v.find_by("version", elem)
+        print("  handling version: ", v_to.version)
+        print("-"*40)
+        del_migration = os.path.abspath(
+            os.path.normpath(os.path.join("./migrations", v_to.long_name + ".py"))
+        )
+        del_schema=os.path.abspath(
+            os.path.normpath(os.path.join("./migrations/schemas/", v_to.short_name + "_schema.py"))
+        )
+        print("  deleting: ", del_migration)
+        try: 
+            os.remove(del_migration)
+        except:
+            pass
+        print("  deleting: ", del_schema)
+        try:
+            os.remove(del_schema)
+        except:
+            pass    
+        ren_model_from = os.path.abspath(
+            os.path.normpath(os.path.join("./models/", v_to.short_name + ".py"))
+        )
+        ren_model_to = os.path.abspath(
+            os.path.normpath(os.path.join("./models/", "erased_" + v_to.short_name + ".py"))
+        )
+        print("  renaming the model : ", ren_model_from, " to: ", ren_model_to)
+        try:
+            os.rename(ren_model_from, ren_model_to)
+        except:
+            pass
+        v_to.delete()
+    #
+    # reversion all versions greater than to version.
+    # 
+    print("-"*40)
+    print("  re aranging the versions")
+    print("-"*40)
+    current_version = v_to.version
+    for elem in v.find({"version" : {"$gt" : to_version}}):
+        reversion(ele.version, current_version)
+        current_version += 1
 
-    v_to_erase = v.find_by("version", ver)
-    del_one = os.path.abspath(
-        os.path.normpath(os.path.join("./migrations", v_to_erase.long_name + ".py"))
-    )
-    del_two=os.path.abspath(
-        os.path.normpath(os.path.join("./migrations/schemas/", v_to_erase.short_name + "_schema.py"))
-    )
-    print("  deleting: ", del_one)
-    os.remove(del_one)
-    print("  deleting: ", del_two)
-    os.remove(del_two)
-    ren_one = path.abspath(
-        os.path.normpath(os.path.join("./models/", v_to_erase.short_name + ".py"))
-    )
-    ren_two=path.abspath(
-        os.path.normpath(os.path.join("./models/", "erased_" + v_to_erase.short_name + ".py"))
-    )
-    print("  renaming: ", ren_one, " to: ", ren_two)
-    os.rename(ren_one, ren_two)
+def reversion(old, new):
+    """ make v.version old = v.version new 
+        Only the version attributes, NOT The whole objects or models
+    """
+    v = Version()
+    ver = v.find({"version" : old})
+    ver.version = new
+
 
 def do_migrate_to_direction(to_direction):
     #powlib.load_module("App")

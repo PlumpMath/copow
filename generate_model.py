@@ -162,7 +162,7 @@ def render_model(modelname="NONE_GIVEN", force=False, parts_dir=settings.base["p
         generate_migration.render_migration( modelname, comment=comment, col_defs = None, 
             parts_dir=settings.base["parts_dir"], prefix_dir = "./")
 
-        generate_controller.render_controller(  name=modelname, force=force,  
+        generate_controller.render_controller(  controller_name=modelname, force=force,  
             parts_dir=settings.base["parts_dir"], zero_tornado=False, prefix_path="./")
     
         generate_scaffold.generate_scaffold( modelname, force=force)

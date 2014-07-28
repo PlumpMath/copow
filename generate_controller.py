@@ -90,7 +90,7 @@ def render_controller(  controller_name="NO_NAME_GIVEN", model_name="None", forc
         @param force: if true: forces overwrtiting existing controllers"""
     width=50
     print("-"*width)
-    print("generate_controller: ", name )
+    print("generate_controller: ", controller_name )
     print("-"*width)
     # add the auto generated warning to the outputfile
     if zero_tornado:

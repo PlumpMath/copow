@@ -5,7 +5,6 @@ import os
 import os.path
 from bson.objectid import ObjectId
 import datetime
-import #APPNAME.uimodules.copow_ui_modules
 import #APPNAME.config.uimodules as uimodules
 
 

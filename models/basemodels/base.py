@@ -19,7 +19,7 @@ from #APPNAME.lib.db_conn import DBConn
 from #APPNAME.lib import powlib
 from #APPNAME.lib.powlib import _log
 import #APPNAME.config.settings as settings
-import #APPNAME.config.copow_types as types_and_formats
+import #APPNAME.config.types_and_formats as types_and_formats
 import #APPNAME.lib.custom_encoders as encoders
 
 
