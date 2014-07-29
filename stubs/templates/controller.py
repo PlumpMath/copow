@@ -17,6 +17,7 @@ import os
 from #APPNAME.controllers.base_controller import BaseController
 from  #APPNAME.models.#MODELNAME import #MODELCLASSNAME
 import #APPNAME.config.settings as settings
+import #APPNAME.config.types_and_formats as types_and_formats
 from bson.objectid import ObjectId
 import datetime
 
@@ -265,7 +266,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         # if result.count()=1 self.model ist automatically set to result[0]
         if result.count() == 1:
             return self.render("#CONTROLLER_LOWER_NAME_update_form.html", request=self.request, 
-                result=result[0], types=settings.schema_types
+                result=result[0], types=types_and_formats.schema_types
             )
         else:
             self.set_status(501)

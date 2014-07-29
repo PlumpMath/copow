@@ -4,6 +4,7 @@
 import tornado.web
 import os
 import #APPNAME.config.settings as settings
+import #APPNAME.config.types_and_formats as types_and_formats
 
 
 class BaseController(tornado.web.RequestHandler):
@@ -86,7 +87,7 @@ class BaseController(tornado.web.RequestHandler):
         #
         # unsupported format request, returning default:
         #
-        return settings.data_formats["default_format"]
+        return types_and_formats.data_formats["default_format"]
 
     @tornado.web.removeslash
     def get(self, *args, **kwargs):
@@ -109,7 +110,7 @@ class BaseController(tornado.web.RequestHandler):
         print("self.method_get: ", self.method_get)
         print("self.params: ", self.params)
         # Which Output formats do we support ?
-        supported_formats = settings.data_formats["accept_formats"]
+        supported_formats = types_and_formats.data_formats["accept_formats"]
         # Which Output formats does the client accept ?
         requested_formats = self.request.headers.get("Accept").split(",")
         
@@ -132,7 +133,7 @@ class BaseController(tornado.web.RequestHandler):
         print("self.method_post: ", self.method_post)
         print("self.params: ", self.params)
         # Which Output formats do we support ?
-        supported_formats = settings.data_formats["content_type_formats"]
+        supported_formats = types_and_formats.data_formats["content_type_formats"]
         # Which Output formats does the client accept ?
         requested_formats = self.request.headers.get("Content-Type").split(",")
     
@@ -158,7 +159,7 @@ class BaseController(tornado.web.RequestHandler):
         print("self.method_put: ", self.method_put)
         print("self.params: ", self.params)
         # Which Output formats do we support ?
-        supported_formats = settings.data_formats["content_type_formats"]
+        supported_formats = types_and_formats.data_formats["content_type_formats"]
         requested_formats = self.request.headers.get("Content-Type").split(",")
         
         format = self.get_preferred_format(requested_formats, supported_formats)

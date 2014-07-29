@@ -23,7 +23,12 @@ schema_types = {
                         {}),
     "list"      :   (   [], 
                         uimodules.modules["form_select"], 
-                        {}),
+                        {   "encode_python"     :   #APPNAME.lib.custom_encoders.list_encode_python,
+                            "encode_json"       :   #APPNAME.lib.custom_encoders.list_encode_json,
+                            "encode_db"         :   #APPNAME.lib.custom_encoders.list_encode_db,
+                            "encode_str"        :   #APPNAME.lib.custom_encoders.list_encode_str
+                        }
+                    ),
     "binary"    :   (   None, 
                         uimodules.modules["form_fileselect"], 
                         {}),
