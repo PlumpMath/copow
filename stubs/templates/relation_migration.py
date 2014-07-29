@@ -12,12 +12,11 @@ import sys
 import os
 
 import #APPNAME.lib.powlib
-import #APPNAME.lib.migration
-from #APPNAME.lib.migration import Column
+from #APPNAME.lib.pow_objects import Migration
 from #APPNAME.models.#MODEL1 import #UPMODEL1 
 from #APPNAME.models.#MODEL2 import #UPMODEL2
 
-def up(self):
+def up():
     """ up method will be executed when running do_migrate -d up"""
     
     # below you can see an example of a typical relation migratio.

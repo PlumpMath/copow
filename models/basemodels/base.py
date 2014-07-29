@@ -189,7 +189,7 @@ class BaseModel(dict):
         mstr = ""
         method_name = "add_"+ rel_model_name
         tmp_meth_name = "foo"
-        mstr +=     "def foo(self, model):" + newline
+        mstr +=     "def foo(self, model):" + os.linesep
         mstr += tab + "self." + powlib.pluralize(rel_model_name) +".append(model._id) "+ os.linesep
         mstr += tab + "self." + powlib.pluralize(rel_model_name) +"_full.append(model) "+ os.linesep
 
@@ -205,7 +205,7 @@ class BaseModel(dict):
         method_name = "get_"+ powlib.pluralize(rel_model_name)
 
         tmp_meth_name = "foo"
-        mstr +=     "def foo(self):" + newline
+        mstr +=     "def foo(self):" + os.linesep
         mstr += tab + "return self." + powlib.pluralize(rel_model_name) +"_full" + os.linesep
         #print mstr
         exec(mstr,globals())
@@ -271,9 +271,9 @@ class BaseModel(dict):
         #print ("set_values: ", dictionary)
         if isinstance(val, self.__class__):
             self = val
-            print("set self = val", type(val))
+            #print("set self = val", type(val))
         elif isinstance(val, dict):
-            print("setting self = dict")
+            #print("setting self = dict")
             for elem in val:
                 self.__setitem__(elem, val[elem])
         else:
@@ -303,7 +303,13 @@ class BaseModel(dict):
         print("saved: ", self.modelname, " id: ",str(self._id))
         #self._id = self.insert(safe=safe)
         return self._id
+    
+    def save_relations(self):
+        for elem in self.relations:
+            print("relation: ", elem)
 
+
+    
     def insert(self, safe=True):
         """ Uses pymongo insert directly"""
         d = self.to_json()
@@ -421,7 +427,7 @@ class BaseModel(dict):
         # 2. add list of related model to relations
         print(" creating the according object attributes:")
         print("-"*50)
-        print("  ++ attribute for a 1:n relation : ", self.modelname + "." + rel_modelname + " type: []")
+        print("  ++ attribute for a 1:n relation : ", self.modelname + "." + rel_modelname + " type: list []")
         self.relations[powlib.plural(rel_modelname)] = "has_many"
         self.schema[powlib.plural(rel_modelname)] = { "type" : "list" }
         try:
@@ -536,11 +542,16 @@ class BaseModel(dict):
         """ drops this collection / table """
         return self.__class__.db.drop_collection(self.__class__.collection_name)
 
-    def index_information():
+    def index_information(self):
         """Get information on this collections indexes."""
         return self.__class__.collection.index_information()
     
-    def create_schema(self, prefix_output_path=""):
+    def erase_schema(self):
+        self.schema = {}
+        self.relations = {}
+        self.create_schema(erase=True)
+
+    def create_schema(self, erase=False, prefix_output_path=""):
         """ create a schema for this model
             Automatically add the following column:
 
@@ -556,9 +567,10 @@ class BaseModel(dict):
             ofile = open(filepath, "w")
             ostr = self.modelname + " = "
             schema = self.schema
-            schema["last_updated"] = { "type" :  "date"  }
-            #schema["created"] = { "type" :  "date"  }
-            schema["_id"] = { "type" :  "objectid"  }
+            if not erase:
+                schema["last_updated"] = { "type" :  "date"  }
+                #schema["created"] = { "type" :  "date"  }
+                schema["_id"] = { "type" :  "objectid"  }
             #ostr += json.dumps(schema, indent=4) + os.linesep
             ostr += str(schema) + os.linesep
             ostr += self.modelname + "_relations = "

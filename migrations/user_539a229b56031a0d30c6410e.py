@@ -19,14 +19,15 @@ migration = Migration()
 
 def up():
     """ up method will be executed when running do_migrate -d up"""
-    user = User( schema  = { 
-           "loginname"    :      { "type" : "string" }, 
-           "firstname"    :      { "type" : "string" },
-           "lastname"     :      { "type" : "string" },
-           "email"        :      { "type" : "string" },
-           "password"     :      { "type" : "string" }
+    user = User( schema  = {
+           "loginname"      :       { "type"    : "string" },
+           "firstname"      :       { "type"    : "string" },
+           "lastname"       :       { "type"    : "string" },
+           "email"          :       { "type"    : "string" },
+           "password"       :       { "type"    : "string" },
+           "salt"           :       { "type"    : "string" }
            #"a_more_complex_one"    :       { "type" : "Text" , "index" : True, "default" : "something"}
-      } 
+      }
     )
 
     # creates the tabke (collection) and the schema in migrations/schemas/

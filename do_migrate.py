@@ -51,7 +51,14 @@ def main():
                       action="store",
                       type="string",
                       dest="set_curr_version",
-                      help="sets cuurentversion to given version ver",
+                      help="sets curentversion to given version ver",
+                      default="None")
+    
+    parser.add_option("-m", "--set-maxversion",
+                      action="store",
+                      type="string",
+                      dest="set_max_version",
+                      help="sets the max version to given version ver",
                       default="None")
 
     parser.add_option("-e", "--erase",
@@ -85,6 +92,7 @@ def main():
         # erase the given version
         #erase_version(int(options.version))
         print ("options.erase: ", options.erase)
+        
         from_version,to_version = options.erase.split(",")
         print(" This will erase all version ")
         print("   -- from version: ",from_version)
@@ -95,14 +103,19 @@ def main():
             sys.exit()
         else:
             erase_version(int(from_version), int(to_version))
-
-
+    
     elif options.set_curr_version != "None":
         # only set the current version 
         set_currentversion(options.set_curr_version)
+    
+    elif options.set_max_version != "None":
+        # only set the current version 
+        set_maxversion(options.set_max_version)
+    
     elif options.direction != "None":
         # migrate into direction
         do_migrate_to_direction(options.direction)
+    
     elif options.version != "None":
         # migrate to version
         ver = int(options.version)
@@ -181,19 +194,28 @@ def erase_version(from_version, to_version):
     print("-"*40)
     print("  re aranging the versions")
     print("-"*40)
-    current_version = v_to.version
+    current_version = from_version
     for elem in v.find({"version" : {"$gt" : to_version}}):
-        reversion(ele.version, current_version)
+        reversion(elem.version, current_version)
+        print("")
         current_version += 1
+    
+    a = app.App()
+    a.currentversion = current_version
+    a.maxversion = current_version
+    a.update()
+
 
 def reversion(old, new):
     """ make v.version old = v.version new 
         Only the version attributes, NOT The whole objects or models
     """
-    v = Version()
-    ver = v.find({"version" : old})
-    ver.version = new
-
+    print("  re versioning: ", old, "  to: ", new)
+    v = version.Version()
+    ver = v.find_one({"version" : old})
+    if ver:
+        ver.version = new
+        ver.update()
 
 def do_migrate_to_direction(to_direction):
     #powlib.load_module("App")
@@ -268,18 +290,39 @@ def do_migrate_to_version(to_version):
 
 
 def set_currentversion(ver):
-    print("  migrating ")
+    """ Set the app.currentversion to the given on including some simple checks"""
+    print("  migrating, setting app.currentversion to: ", ver)
     v = version.Version()
     a = app.App()
     a.find_one()
-
+    ver = int(ver)
     if ver <= a.maxversion and ver > MINVERSION:
         # set the given version
         a.currentversion = ver
     else:
         print("  -- cannot migrate above maxversion: ", str(a.maxversion), " or MINVERSION: ", str(MINVERSION))
 
-    return
+
+def set_maxversion(ver):
+    """ Set the app.maxversion to the given on including some simple checks"""
+    print("  migrating, setting app.maxersion to: ", ver)
+    v = version.Version()
+    a = app.App()
+    a.find_one()
+    ver = int(ver)
+    max = v.find().sort("version",-1).limit(1)
+    if max:
+        max = max[0]
+        print("max version according to versions available is:", max.version)
+        if ver <= max.version:
+            # set the given version
+            a.maxversion = ver
+            a.update()
+            return    
+        else:
+            print("  -- cannot migrate above maxversion: ", str(max) )
+    else:
+        print("  -- No version fonund! This shpuld never happen !! ", str(max) )
 
 
 def show_info():

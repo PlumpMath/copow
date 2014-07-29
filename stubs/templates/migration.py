@@ -24,11 +24,11 @@ migration = Migration()
 def up():
     """ up method will be executed when running do_migrate -d up"""
     #MODELNAME = #UP_MODELNAME( schema  = {
-            #"title"      :   { "type" : "string", "empty" : False },   
-            #"author"     :   { "type" : "text" },
-            #"content"    :   { "type" : "text" },
-            #"tags"       :   { "type" : "set" },
-            #"email"      :   { "type" : "string", 'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'}
+            #"title"        :   { "type"    : "string", "empty" : False },   
+            #"author"       :   { "type"    : "text" },
+            #"content"      :   { "type"    : "text" },
+            #"tags"         :   { "type"    : "set" },
+            #"email"        :   { "type"    : "string", 'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'}
 
             #"a_more_complex_one"    :       {   "type" : "string" , 
             #                                    "index" : True, 

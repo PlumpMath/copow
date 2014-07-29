@@ -21,8 +21,18 @@ def set_password(raw_password):
     return (hexhash ,salt)
 
 
-def check_password(raw_password, check_hexhash, salt):
-    hexhash = hashlib.sha512(raw_password + salt).hexdigest()
+def check_password(user, password):
+    u = User()
+    res = False
+    res = u.find_one({ "_id" : user._id })
+    if res:
+        print("password check for user: ", user.loginname)
+        return check_password_internal(password, user.password, user.salt)
+    else:
+        return False
+
+def check_password_internal(raw_password, check_hexhash, salt):
+    hexhash = hashlib.sha512(raw_password.encode(base["default_encoding"]) + salt.encode(base["default_encoding"])).hexdigest()
     if hexhash == check_hexhash:
        return True
     else:

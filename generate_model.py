@@ -34,7 +34,7 @@ def main():
     parser.add_option( "-m", "--model-only",
                        action="store_true",
                        dest="model_only",
-                       help="only create the model. No controller, No scaffoldings.",
+                       help="only create the model. No controller, No scaffoldings. No Migration.",
                        default=False)
 
     parser.add_option( "-f", "--force",

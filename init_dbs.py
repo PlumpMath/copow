@@ -58,13 +58,12 @@ if __name__ == "__main__":
         if options.force:
             print(" Dropping database: ", dbname)
             conn.drop_database(dbname)
-            print(" Now recreating Database: ", dbname )
         else:
             print(" ERROR! Database %s exists ....")
             print(" use init_db.py -f to force dropping and recreating it.")
             sys.exit(0)
 
-
+    print(" Now recreating Database: ", dbname )
     #
     # setting up the version information
     #
@@ -115,5 +114,5 @@ if __name__ == "__main__":
     print("creating the admin user. Username: admin, Password: admin")
     u = User()
     u.loginname = "admin"
-    u.password = umgmt.set_password("admin")
+    u.password, u.salt = umgmt.set_password("admin")
     u.create()

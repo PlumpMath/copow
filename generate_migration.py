@@ -20,9 +20,7 @@ import #APPNAME.config.settings as settings
 
 from bson.objectid import ObjectId
 
-
 PARTS_DIR = settings.base["parts_dir"]
-
     
 def main():
     """ Executes the render methods to generate a migration according to the given options """
@@ -57,7 +55,7 @@ def main():
     #print options
     #TODO: reorg and optimize the section below. more structure.
     #
-    if options.model == "None" and not options.job:
+    if options.model == "None":
         # no model- or job flag given
         if len(args) == 0:
             parser.error("You must at least specify an migration name by giving -n <name>.")
@@ -66,13 +64,14 @@ def main():
             #that the first argument is the model. (representing -m arg1)
         else:
             options.model = args[0]
+            options.name = options.model
             
-    if options.model.startswith("rel_") and ( options.model.count("_") == 2 ):
+    if options.name.startswith("rel_") and ( options.name.count("_") == 2 ):
         # if the name is of the form: rel_name1_name2 it is assumed that you want to
         # generate a relation between name1 and name2. So the mig is especially customized for that.
         print("assuming you want to create a relation migration...")
         
-        render_relation_migration(options.model, parts_dir)
+        render_relation_migration(options.name, options.model,  PARTS_DIR)
         end = datetime.datetime.now()
         duration = None
         duration = end - start 
@@ -91,7 +90,7 @@ def main():
     print()
     return
 
-def render_relation_migration(name, parts_dir=PARTS_DIR , prefix_dir = "./"):
+def render_relation_migration(name, model, parts_dir=PARTS_DIR , prefix_dir = "./"):
     """
     renders a migration for a relational link between tables / models
     Typical examples are A.has_many(B) and B.belongs_to(A)
@@ -103,7 +102,7 @@ def render_relation_migration(name, parts_dir=PARTS_DIR , prefix_dir = "./"):
     :param prefix_dir:  A prefix path to be added to migrations making prefix_dir/migrations the target dir
     """
 
-    splittxt = string.split(name, "_")
+    splittxt = name.split("_")
     model1 = splittxt[1]
     model2 = splittxt[2]
     
@@ -130,6 +129,7 @@ def render_relation_migration(name, parts_dir=PARTS_DIR , prefix_dir = "./"):
     ostr = ostr.replace( "#MODEL2", model2)
     
     filename = write_migration( name, 
+                                name,
                                 "relation between %s and %s" % (model1, model2),
                                 prefix_dir,
                                 ostr
