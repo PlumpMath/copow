@@ -3,9 +3,11 @@
 # 
 import tornado.web
 import os
+import json
 import #APPNAME.config.settings as settings
 import #APPNAME.config.types_and_formats as types_and_formats
-
+import #APPNAME.ext.user_management as umgmt
+import #APPNAME.models.user as user
 
 class BaseController(tornado.web.RequestHandler):
     """ copow base controller 
@@ -40,9 +42,10 @@ class BaseController(tornado.web.RequestHandler):
     """
     
     def __init__(self, *args, **kwargs):
+        self.current_user = None
         super(BaseController,self).__init__(*args,**kwargs)
 
-    def get_json_data(self, request):
+    def get_request_body_json_data(self, request):
         return json.loads(request.body.decode(settings.base["default_encoding"]))
 
     def get_format_and_charset(self, format):
@@ -208,9 +211,23 @@ class BaseController(tornado.web.RequestHandler):
                              </body>
                            </html>""" % (error, error, 
                                         trace_info, request_info))
+    def set_current_user(self, loginname, password):
+        u = user.User()
+        res = u.find_one( { "loginname" : loginname })
+        print("set_current_user:", res)
+        if res:
+            if umgmt.check_password( res, password ):
+                self.current_user = res
+                return True    
+        return False
 
     def get_current_user(self):
-        return None
+        if self.current_user:
+            return True
+        else:
+            return False
+
+        
 
     def get_current_user_role(self):
         return None

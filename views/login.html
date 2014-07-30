@@ -70,7 +70,10 @@
 
     <form class="form-horizontal" role="form" id="loginform">
         <h2 class="form-signin-heading">Welcome to #APPNAME, please sign in:</h2>
+        
         <input type="text" id="loginname" name="loginname" class="form-control" placeholder="login" required>
+
+        <input type="password" id="password" name="password" class="form-control" placeholder="password" required>
         <span>&nbsp;</span>     
     </form>
     <button href class="btn btn-lg btn-success btn-block" id="khz"  onclick="check_login('{{model._id}}')">

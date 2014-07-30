@@ -32,8 +32,8 @@ class LoginController(BaseController):
         """
         print("args: ", args, "  kwargs: ", kwargs)
         print("i am in initialize")
-        print(self.request)
-        print(self.request.body)
+        #print(self.request)
+        #print(self.request.body)
         
 
     def get(self, *args, **kwargs):
@@ -48,9 +48,23 @@ class LoginController(BaseController):
         # below you can find some sample code 
         # data must be json
         # 
-        print(self.request)
-        data = get_request_body_json_data(self.request)    
-        self.set_status(200)
-        self.write(json.dumps({ "data" : "Succesfully returned" }))
+        #print(self.request)
+        data = self.get_request_body_json_data(self.request)    
+        print("body data: ", data)
+        loginname = data.get("loginname", None)
+        password = data.get("password", None)
+        if loginname and password:
+            #
+            # check login
+            # 
+            if self.set_current_user(loginname, password):
+                self.set_status(200)
+                self.write(json.dumps({ "data" : "Succesfully returned" }))
+            else:
+                self.set_status(500)
+                self.write(json.dumps({ "data" : "Username and Password mismatch" }))
+        else:
+            self.set_status(500)
+            self.write(json.dumps({ "data" : "No such user" }))
         #self.set_secure_cookie("username", self.get_argument("username"))
         #self.redirect("/")
