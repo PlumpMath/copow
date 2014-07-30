@@ -8,12 +8,12 @@ from bson.objectid import ObjectId
 import datetime
 import #APPNAME.config.settings as settings
 from #APPNAME.controllers.base_controller import BaseController
-from  #APPNAME.models.#MODELNAME import #MODELCLASSNAME
+#from  #APPNAME.models.#MODELNAME import #MODELCLASSNAME
 
 class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
     
     def __init__(self, *args, **kwargs):
-        self.model = #MODELCLASSNAME()
+        #self.model = #MODELCLASSNAME()
         super(#CONTROLLER_CAPITALIZED_NAMEController,self).__init__(*args,**kwargs)
 
     def prepare(self):

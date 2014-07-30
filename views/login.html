@@ -1,51 +1,88 @@
+<!-- copow / pythononwheels list template -->
+<!-- for scaffolding views -->
+<!-- www.pythononwheels.org -->
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
+{% extends "layouts/main_layout.html" %}
 
-    <title>Signin Template for Bootstrap</title>
+{# this will be rendered in the content block of main.html view view #}
 
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href={{ static_url("bootstrap/css/bootstrap.min.css") }} >
+{% block content %}
+{% import atest.config.settings as settings %}
+{% set model=result %}
+{% set server = settings.base["server"] %}
+{% set port  = settings.base["port"] %}
 
-    <!-- Custom styles for this template -->
-    <link href={{ static_url("css/login.css") }} rel="stylesheet">
+<!-- Custom styles for this template -->
+<link href={{ static_url("css/login.css") }} rel="stylesheet">
 
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+<script>
+    var del;
+    check_login = function(id) {
+            console.log("check button clicked", id);
+            console.log("data: " +(JSON.stringify($('#swbform').serializeJSON())))
+            $.ajax( 
+                {
+                    type: 'POST',
+                    url: "/login",
+                    data: (JSON.stringify($('#loginform').serializeJSON())),
+                    contentType: "application/json",
+                    dataType: "json"
+                }
+            )
+            .done(function(msg) {
+                //alert( "success" );
+                console.log(msg);
+                //var payload = JSON.parse(msg.responseText);
+                var url = msg["data"];
+                console.log("redirecting to: ", url);
+                window.location.replace(url);
+                               
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
+            })
+            .fail(function( msg ) {
+                //alert( "error" );
+                console.log(msg);
+                var payload = JSON.parse(msg.responseText);
+                console.log(payload["data"]);
+                $("#flash_message").text("Error :" + payload["data"]);
+                 $("#flash_message_div").attr("class",
+                    "alert alert-danger alert-dismissible"
+                 )
+                $("#flash_message_div").show();
+            })
+            .always(function() {
+                //alert( "complete" );
+                console.log("complete")
+            });
+        };
+</script>
 
-  <body>
+<!-- an optional flash-message -->
+    <div class="" role="alert"  style="display: none;" id="flash_message_div">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">
+            &times;</span><span class="sr-only">Close</span></button>
+        <strong>Info:</strong> <span id="flash_message"></span>
+    </div>
 
-    <div class="container">
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
 
-      <form class="form-signin" role="form">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="email" class="form-control" placeholder="Email address" required autofocus>
-        <input type="password" class="form-control" placeholder="Password" required>
-        <label class="checkbox">
-          <input type="checkbox" value="remember-me"> Remember me
-        </label>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-      </form>
+    <form class="form-horizontal" role="form" id="loginform">
+        <h2 class="form-signin-heading">Welcome to #APPNAME, please sign in:</h2>
+        <input type="text" id="loginname" name="loginname" class="form-control" placeholder="login" required>
+        <span>&nbsp;</span>     
+    </form>
+    <button href class="btn btn-lg btn-success btn-block" id="khz"  onclick="check_login('{{model._id}}')">
+            login
+    </button>  
+    
+    
 
-    </div> <!-- /container -->
 
+  </div>
+  <div class="col-md-4"></div>
+     
+</div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-  </body>
-</html>
+{% end %}

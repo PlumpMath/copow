@@ -68,12 +68,13 @@ rest_routes = [
 
 # www.pythononwheels.org/copow/documentation/routes
 handlers = [
-        (r'/welcome', #APPNAME.controllers.welcome_controller.WelcomeController),
-        (r'/features', #APPNAME.controllers.welcome_controller.WelcomeController),
-        (r'/next-steps', #APPNAME.controllers.welcome_controller.WelcomeController),
-        (r'/twitter', #APPNAME.controllers.welcome_controller.WelcomeController),
-        (r'/login', #APPNAME.controllers.login_controller.LoginController),
-        (r'/logout', #APPNAME.controllers.logout_controller.LogoutController),
+        (r'/welcome',           #APPNAME.controllers.welcome_controller.WelcomeController),
+        (r'/features',          #APPNAME.controllers.welcome_controller.WelcomeController),
+        (r'/next-steps',        #APPNAME.controllers.welcome_controller.WelcomeController),
+        (r'/twitter',           #APPNAME.controllers.welcome_controller.WelcomeController),
+        (r'/login',             #APPNAME.controllers.login_controller.LoginController),
+        (r'/logout',            #APPNAME.controllers.logout_controller.LogoutController),
+        (r'/',                  #APPNAME.controllers.login_controller.LoginController),
         #
         # REST Handling via Dispatcher
         #
@@ -82,5 +83,5 @@ handlers = [
         #
         # Anything else => ERROR
         #
-        #(r'.*', #APPNAME.controllers.welcome_controller.WelcomeController)
+        (r'.*', #APPNAME.controllers.login_controller.LoginController)
         ]
