@@ -41,15 +41,22 @@
           <a class="navbar-brand" href="#">#APPNAME</a>
         </div>
         <div class="navbar-collapse collapse">
+        {% if not loginname  %}
           <form class="navbar-form navbar-right" role="form" action="/login" method="POST">
             <div class="form-group">
-              <input type="text" placeholder="email" id="email" class="form-control">
+              <input type="text" placeholder="loginname" name="loginname" id="loginname" class="form-control">
             </div>
             <div class="form-group">
-              <input type="password" placeholder="password" id="password" class="form-control">
+              <input type="password" placeholder="password" name="password" id="password" class="form-control">
             </div>
             <button type="submit" class="btn btn-success">Sign in</button>
           </form>
+        {% else %}
+            <form class="navbar-form navbar-right" role="form" action="/logout" method="POST">
+                <span>{{loginname}}:&nbsp;</span>
+                <button type="submit" class="btn btn-success">log out</button>
+            </form>
+        {% end %}
         </div><!--/.navbar-collapse -->
       </div>
     </div>
@@ -63,7 +70,12 @@
       <hr>
 
       <footer>
-        <p>&copy; khz 2014</p>
+        <p>&copy; khz 2014
+            {% if loginname %}
+                User: {{loginname}}
+            {% end %}
+        </p>
+
       </footer>
     </div> <!-- /container -->
 

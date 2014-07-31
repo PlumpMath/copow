@@ -72,8 +72,21 @@ handlers = [
         (r'/features',          #APPNAME.controllers.welcome_controller.WelcomeController),
         (r'/next-steps',        #APPNAME.controllers.welcome_controller.WelcomeController),
         (r'/twitter',           #APPNAME.controllers.welcome_controller.WelcomeController),
-        (r'/login',             #APPNAME.controllers.login_controller.LoginController),
-        (r'/logout',            #APPNAME.controllers.logout_controller.LogoutController),
+        (r'/login',             #APPNAME.controllers.login_controller.LoginController,
+                                dict(   method_get="show", 
+                                        method_post="check_login", 
+                                        method_put=None, 
+                                        method_delete=None, 
+                                        params=["email", "password"])
+
+                ),
+        (r'/logout',            #APPNAME.controllers.logout_controller.LogoutController,
+                                dict(   method_get=None, 
+                                        method_post="logout", 
+                                        method_put=None, 
+                                        method_delete=None, 
+                                        params=[])
+                ),
         (r'/',                  #APPNAME.controllers.welcome_controller.WelcomeController),
         #
         # REST Handling via Dispatcher

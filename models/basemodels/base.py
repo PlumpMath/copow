@@ -560,6 +560,7 @@ class BaseModel(dict):
             _id             ->      by mongodb
 
         """
+        print("  creating schema: ", self.modelname)
         try:
             filepath = prefix_output_path + "./migrations/schemas/" + self.modelname + "_schema.py"
             filepath = os.path.abspath(os.path.normpath(filepath))

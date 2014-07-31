@@ -218,12 +218,14 @@ class BaseController(tornado.web.RequestHandler):
         if res:
             if umgmt.check_password( res, password ):
                 self.current_user = res
+                if not self.get_secure_cookie("loginname"):
+                    self.set_secure_cookie("loginname", loginname)
                 return True    
         return False
 
     def get_current_user(self):
         if self.current_user:
-            return True
+            return self.current_user
         else:
             return False
 

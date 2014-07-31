@@ -72,11 +72,12 @@ data_formats = {
     # Only applies to methods that return values (show, list) ;)
     # Order of the Accepted incoming HTTP-Header counts (1st come 1st served)
 
+    #get
     "accept_formats"        :   {   
                                 "text/html"         :       "_html",
                                 "application/json"  :       "_json"
                             },
-
+    #post,put
     "content_type_formats"  :  {   
                                 "application/x-www-form-urlencoded"         :       "_html",
                                 "application/json"                          :       "_json",

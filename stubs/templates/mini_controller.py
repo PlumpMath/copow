@@ -20,7 +20,11 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """ called before any http get/pust method is called """
         pass
 
-    def initialize(self, *args,**kwargs):
+    def initialize(self,    method_get=None, 
+                            method_put=None,
+                            method_post=None,
+                            method_delete=None,
+                            params=[]):
         """
             The paramter method is set to the value defined in the dict
             in routes->rest_routes.
@@ -29,17 +33,20 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             which is specified as the 3rd parameter in rest_routes.
             
         """
-        print("args: ", args, "  kwargs: ", kwargs)
-        print("i am in initialize")
-        print(self.request)
-        print(self.request.body)
+        self.method_get = method_get
+        self.method_put = method_put
+        self.method_post = method_post
+        self.method_delete = method_delete
+        self.params = params
+        #print("self.method: ", self.method, "  ->  ", self.params)
         
 
     def get(self, *args, **kwargs):
         #
         # below you can find some sample code 
         #
-        self.render('login.html', result=self.model, request=self.request)
+        print(self.request)
+        #self.render('apage.html', result=self.model, request=self.request)
     
 
     def post(self, *args, **kwargs):
@@ -48,8 +55,7 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         # data must be json
         # 
         print(self.request)
-        data = get_request_body_json_data(self.request)    
-        self.set_status(200)
-        self.write(json.dumps({ "data" : "Succesfully returned" }))
-        #self.set_secure_cookie("username", self.get_argument("username"))
-        #self.redirect("/")
+        
+
+
+

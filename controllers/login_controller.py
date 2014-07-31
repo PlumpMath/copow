@@ -21,7 +21,11 @@ class LoginController(BaseController):
         """ called before any http get/pust method is called """
         pass
 
-    def initialize(self, *args,**kwargs):
+    def initialize(self,    method_get=None, 
+                            method_put=None,
+                            method_post=None,
+                            method_delete=None,
+                            params=[]):
         """
             The paramter method is set to the value defined in the dict
             in routes->rest_routes.
@@ -30,49 +34,57 @@ class LoginController(BaseController):
             which is specified as the 3rd parameter in rest_routes.
             
         """
-        print("args: ", args, "  kwargs: ", kwargs)
-        print("i am in initialize")
-        print("-"*50)
-        print(self.request)
-        print("-"*50)
-        print(self.request.body)
-        print("-"*50)
+        self.method_get = method_get
+        self.method_put = method_put
+        self.method_post = method_post
+        self.method_delete = method_delete
+        self.params = params
+        #print("self.method: ", self.method, "  ->  ", self.params)
         
-
-    def get(self, *args, **kwargs):
+    #
+    # called on get request (text/html)
+    #
+    def show_html(self, *args, **kwargs):
         #
         # below you can find some sample code 
         #
         self.render('login.html', result=self.model, request=self.request)
     
 
-    def post(self, *args, **kwargs):
-        #
-        # below you can find some sample code 
-        # data must be json
-        # 
-        print("args:", args)
-        print("kwargs:", kwargs)
+    #
+    # called on post requests application/json
+    #
+    def check_login_json(self, *args, **kwargs):
+        print("LoginController: check_login_json!")
+        return
+
+    #
+    # called on post requests application/x-www-form-urlencoded
+    #
+    def check_login_html(self, *args, **kwargs):
         print("this is login controller POST:")
-        print(self.request.body)
-        print("email:", self.get_argument("email"))
-        print("password:", self.get_argument("password"))
-        #data = self.get_request_body_json_data(self.request)    
-        #print("body data: ", data)
-        loginname = data.get("loginname", None)
-        password = data.get("password", None)
+        loginname = self.get_argument("loginname",None)
+        password = self.get_argument("password", None)
+        print("loginname:", loginname)
+        print("password:", password)
+        
         if loginname and password:
             #
             # check login
             # 
             if self.set_current_user(loginname, password):
                 self.set_status(200)
-                self.write(json.dumps({ "data" : "Succesfully returned" }))
+                #self.redirect("/", loginname=loginname)
+                self.render("welcome.html", argslist=self.path_args, kwargslist=self.path_kwargs, 
+                    request=self.request, loginname=loginname)
             else:
                 self.set_status(500)
-                self.write(json.dumps({ "data" : "Username and Password mismatch" }))
+                self.redirect("/login")
         else:
             self.set_status(500)
-            self.write(json.dumps({ "data" : "No such user" }))
+            self.redirect("/login")
         #self.set_secure_cookie("username", self.get_argument("username"))
         #self.redirect("/")
+
+
+
