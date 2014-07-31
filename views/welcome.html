@@ -1,24 +1,72 @@
-{% extends "layouts/main.html" %}
+{% extends "layouts/jumbotron_layout.html" %}
 
 {# is rendered in the content block of main.html view view #}
 {% block content %}
-<div class="inner cover">
-    <h2 class="cover-heading">copow == asynchronous PythonOnWheels.</h2>
-    <p class="lead">
-        <a href="http://www.pythononwheels.org">PyhtonOnWheels</a> is a small and (hopefully) straight forward rapid web development framework for pyhton. It is based on MVC and the handling principles from the brilliant <a href="http://www.rubyonrails.org/">ruby on rails.</a>
+<!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Hello, nice to meet you!</h1>
+        <h3>Welcome to your new PythonOnWheels/copow App: #APPNAME</h3>
+        <p>
+            You can watch the 10 Minute intro video or follow the 3 step
+            quickstart documentation below.
+        </p>
+        <p><a href="http://youtu.be/YxpJPyOKuYA" class="btn btn-primary btn-lg" role="button">Watch  video &raquo;</a></p>
+      </div>
+    </div>
 
-        {#
-            <h2> Argument List: </h2>
-            {{ argslist }}
-            <hr>
-            {{ kwargslist }}
-            <hr>
-            {{ request }}
-        #}
-    </p>
-    <a href="/features" role="button" class="btn btn-success btn-lg">
-        <span class="glyphicon glyphicon-hand-right"></span> Learn more
-    </a>
-</div>
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Quick Start</h2>
+          <p>Generate you first model (including controller and scaffolding) by:"
+            <p>
+              
+                    <b>python generate_model.py modelname</b>
+              
+            </p>
+            This will yutomatically produce a model, the according controler, the scaffolding 
+            as well as the REST-reoutes to access it.
+          </p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+    
+        <div class="col-md-4">
+          <h2>Edit your schema and migrate the db:</h2>
+          <p>
+            <ul>
+                <li>open migrations/modelname_id.py</li>
+                <li>edit it according tio your needs</li>
+                <li>run:
+                    <p>
+                        <b>python do_migrate -d up</b>
+                    </p>
+                </li>
+            </ul>
+          </p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+       </div>
+    
+        <div class="col-md-4">        
+          <h2>Test and Enjoy</h2>
+          <p>
+            <ul>
+                <li> <p>
+                    <b>python server.py</b>
+                    </p>
+                </li>
+                <li>open a browser and go to 
+                    <p>
+                    <b>localhost:8000/modelname</b>
+                    </p>
+                </li>
+                <li>You should see the <b>list</b> action of the <b>controller</b></li>
+            </ul>
+          </p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+      </div>
+    </div>
 {% end %}
 

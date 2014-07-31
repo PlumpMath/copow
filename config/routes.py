@@ -74,7 +74,7 @@ handlers = [
         (r'/twitter',           #APPNAME.controllers.welcome_controller.WelcomeController),
         (r'/login',             #APPNAME.controllers.login_controller.LoginController),
         (r'/logout',            #APPNAME.controllers.logout_controller.LogoutController),
-        (r'/',                  #APPNAME.controllers.login_controller.LoginController),
+        (r'/',                  #APPNAME.controllers.welcome_controller.WelcomeController),
         #
         # REST Handling via Dispatcher
         #
@@ -83,5 +83,5 @@ handlers = [
         #
         # Anything else => ERROR
         #
-        (r'.*', #APPNAME.controllers.login_controller.LoginController)
+        (r'.*', #APPNAME.controllers.welcome_controller.WelcomeController)
         ]

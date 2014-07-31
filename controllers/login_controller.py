@@ -32,8 +32,11 @@ class LoginController(BaseController):
         """
         print("args: ", args, "  kwargs: ", kwargs)
         print("i am in initialize")
-        #print(self.request)
-        #print(self.request.body)
+        print("-"*50)
+        print(self.request)
+        print("-"*50)
+        print(self.request.body)
+        print("-"*50)
         
 
     def get(self, *args, **kwargs):
@@ -48,9 +51,14 @@ class LoginController(BaseController):
         # below you can find some sample code 
         # data must be json
         # 
-        #print(self.request)
-        data = self.get_request_body_json_data(self.request)    
-        print("body data: ", data)
+        print("args:", args)
+        print("kwargs:", kwargs)
+        print("this is login controller POST:")
+        print(self.request.body)
+        print("email:", self.get_argument("email"))
+        print("password:", self.get_argument("password"))
+        #data = self.get_request_body_json_data(self.request)    
+        #print("body data: ", data)
         loginname = data.get("loginname", None)
         password = data.get("password", None)
         if loginname and password:

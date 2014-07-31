@@ -22,6 +22,8 @@ class WelcomeController(BaseController):
             self.render("twitter.html")
         elif uri == "/next-steps":
             self.render("next-steps.html")
+        else:
+            self.render("welcome.html", argslist=self.path_args, kwargslist=self.path_kwargs, request=self.request)
 
 
 
