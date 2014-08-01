@@ -56,7 +56,21 @@ class LoginController(BaseController):
     #
     def check_login_json(self, *args, **kwargs):
         print("LoginController: check_login_json!")
-        return
+        data = self.get_request_body_json_data(self.request)
+        print("    --> data: ", data)
+        loginname = data.get("loginname", None)
+        password = data.get("password", None)
+        print("loginname:", loginname)
+        print("password:", password)
+        if self.set_current_user(loginname, password):
+            self.set_status(200)
+            #self.redirect("/", loginname=loginname)
+            self.write( json.dumps({ "data" : "/"}))
+            self.finish()
+        else:
+            self.set_status(500)
+            self.write( json.dumps({ "data" : "/login"}))
+            self.finish()
 
     #
     # called on post requests application/x-www-form-urlencoded
@@ -67,7 +81,10 @@ class LoginController(BaseController):
         password = self.get_argument("password", None)
         print("loginname:", loginname)
         print("password:", password)
-        
+        return self.react(loginname, password)
+
+
+    def react(self, loginname, password):
         if loginname and password:
             #
             # check login
