@@ -10,11 +10,12 @@
 import functools
 import sys
 import os
+import #APPNAME.config.settings
 
 sys.path.append(os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../config" )))
 sys.path.append(os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../lib" )))
 
-def will_paginate(per_page=5):
+def will_paginate():
     def paginate(func):
         """ 
             pagination decorator
@@ -29,9 +30,18 @@ def will_paginate(per_page=5):
             # put your implementation right here. 
             # 
             print("In will_paginate decorator")
-            print("  -- per_page: ", per_page)
             print("args: ", args)
             print("kwargs: ",kwargs)
+            per_page = #APPNAME.config.settings.pagination["per_page"]
+            print("  -- per_page: ", per_page)
+            page = 0
+            if args[1]:
+                page = args[1]
+            kwargs["limit"] = per_page
+            kwargs["skip"] = page * per_page
+            kwargs["current_page"] = page 
+            kwargs["num_pages"] = kwargs["model"].find().count()
+            print(kwargs)
             func(*args,**kwargs)
         return wrapper
     return paginate

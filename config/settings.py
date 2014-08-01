@@ -22,11 +22,15 @@ base = {
     "default_encoding"  :   "utf-8"
 }
 
+
+pagination = {
+    "per_page"      :   100
+}
+
 # for the webserver_settings
 # See: http://www.tornadoweb.org/en/stable/web.html 
 # section: Application configuration
 # 
-
 webserver = {
     #  Setting debug=True is equivalent to autoreload=True, compiled_template_cache=False, 
     #                     static_hash_cache=False, serve_traceback=True.

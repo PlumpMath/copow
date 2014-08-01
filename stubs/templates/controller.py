@@ -21,6 +21,8 @@ import #APPNAME.config.types_and_formats as types_and_formats
 from bson.objectid import ObjectId
 import datetime
 
+import #APPNAME.ext.paginate 
+
 class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
 
     """     All copow Controllers are tornado.web.RequestHandlers
@@ -151,18 +153,16 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         # remove trailing comma before sending.
         self.write( res_list[:-1] )
 
+    @#APPNAME.ext.paginate.will_paginate(model=self.model)
     def list_html(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/GET /#CONTROLLERNAME
             CRUD: READ
             show all #MODELNAME_PLURAL
         """
-        current_page=None
-        if args:
-            current_page = args[0]
-        result = self.model.find_all()
+        result = self.model.find_all(*args, **kwargs)
         return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result_model=self.model, 
-                result=result, page=current_page)
+                result=result, current_page=kwargs["current_page"], num_pages=kwargs["num_pages"])
 
     def create(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
