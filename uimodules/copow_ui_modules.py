@@ -6,6 +6,21 @@
 # remark: wheneer I say "nice" in this module it's purely subjective to me ;)
 #
 import tornado.web
+import atest.config.settings 
+
+class SimplePagination(tornado.web.UIModule):
+    """
+        Renders a nice html selection list from
+        given model entries
+
+        Shows the specified model.attribute as selector.
+        Default is _id (Which is probably something you want to change ;)
+    """
+
+    def render(self, model=None, page=None, count=None):
+        pages = count / atest.config.settings.pagination["per_page"]
+        return self.render_string(
+            "uimodules/simple_pagination.html", model=model, current_page=page, num_pages=num_pages)
 
 class FormSelect(tornado.web.UIModule):
     """

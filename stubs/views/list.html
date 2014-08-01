@@ -68,6 +68,10 @@
         };
 </script>
 
+
+    {% module simple_pagination(model=result_model, page=current_page, count=result.count()) %}
+
+
     <!-- an optional flash-message -->
     <div class="" role="alert"  style="display: none;" id="flash_message_div">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">

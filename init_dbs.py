@@ -10,18 +10,16 @@ import os
 import sys
 import #APPNAME.lib.powlib
 import #APPNAME.lib.db_conn as db_conn
-import #APPNAME.config.db
-import #APPNAME.config.settings as settings
+import #APPNAME.config.settings
 import #APPNAME.config.db as dbconfig
 
 
 import #APPNAME.models.app as app
 import #APPNAME.models.version as version
-import #APPNAME.models.user as user
 import #APPNAME.models.copow_log as copow_log
+from #APPNAME.models.user import User
 
 import #APPNAME.do_migrate as do_migrate
-from #APPNAME.models.user import User
 import #APPNAME.ext.user_management as umgmt
 
 from optparse import OptionParser
@@ -51,7 +49,7 @@ if __name__ == "__main__":
     
     # check if db exists and drop it, if its already there
     conn = db_conn.DBConn().get_client()
-    dbname = getattr(dbconfig, settings.base["environment"])["database"]
+    dbname = getattr(dbconfig, atest.config.settings.base["environment"])["database"]
     print("dbnames: ", conn.database_names(), "dbname to create: ", dbname)
     
     if dbname in conn.database_names():

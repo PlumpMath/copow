@@ -10,5 +10,6 @@ modules = {
             "form_textinput"    	:   #APPNAME.uimodules.copow_ui_modules.FormTextArea,
             "form_fileselect"     	:   #APPNAME.uimodules.copow_ui_modules.FormFileSelect,
             "form_datepicker"     	:   #APPNAME.uimodules.copow_ui_modules.FormDatePicker,
-            "form_checkbox"     	:   #APPNAME.uimodules.copow_ui_modules.FormCheckBox
+            "form_checkbox"     	:   #APPNAME.uimodules.copow_ui_modules.FormCheckBox,
+            "simple_pagnation"      :   #APPNAME.uimodules.copow_ui_modules.SimplePagination
 }

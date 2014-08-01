@@ -157,8 +157,12 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
             CRUD: READ
             show all #MODELNAME_PLURAL
         """
+        current_page=None
+        if args:
+            current_page = args[0]
         result = self.model.find_all()
-        return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result_model=self.model, result=result)
+        return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result_model=self.model, 
+                result=result, page=current_page)
 
     def create(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
