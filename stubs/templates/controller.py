@@ -56,25 +56,6 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         """ called before any http get/pust method is called """
         pass
 
-    def initialize(self,    method_get=None, 
-                            method_put=None,
-                            method_post=None,
-                            method_delete=None,
-                            params=[]):
-        """
-            The paramter method is set to the value defined in the dict
-            in routes->rest_routes.
-            You can define your own parameters there.
-            This is specifically used to route the request (call the following method in the controller)
-            which is specified as the 3rd parameter in rest_routes.
-            
-        """
-        self.method_get = method_get
-        self.method_put = method_put
-        self.method_post = method_post
-        self.method_delete = method_delete
-        self.params = params
-        #print("self.method: ", self.method, "  ->  ", self.params)
 
     def get(self, *args, **kwargs):
         #print("self.method: ", method)

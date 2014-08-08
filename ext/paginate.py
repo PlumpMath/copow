@@ -45,3 +45,19 @@ def will_paginate():
             func(*args,**kwargs)
         return wrapper
     return paginate
+
+
+def paginate(res, *args, **kwargs):
+    print("In paginate function")
+    print("args: ", args)
+    print("kwargs: ",kwargs)
+    per_page = #APPNAME.config.settings.pagination["per_page"]
+    print("  -- per_page: ", per_page)
+    page = 0
+    if args[1]:
+        page = args[1]
+    limit = per_page
+    skip = page * per_page
+    # from: http://docs.mongodb.org/manual/reference/method/cursor.skip/
+    return res.skip(page > 0 ? ((page-1)*per_page) : 0).limit(per_page)
+    

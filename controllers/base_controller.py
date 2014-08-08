@@ -43,10 +43,25 @@ class BaseController(tornado.web.RequestHandler):
     
     def __init__(self, *args, **kwargs):
         self.current_user = None
+        self.data = None
         super(BaseController,self).__init__(*args,**kwargs)
 
     def get_request_body_json_data(self, request):
         return json.loads(request.body.decode(settings.base["default_encoding"]))
+
+
+    def convert_html_to_json(self, request):
+        """ converts incoming html-form-data to json 
+            it is important that the params returned as json are only
+            those which you defoied in config/routes for the according request.
+
+            example: params_post =["login", "password"] 
+        """
+        params = getattr(self, "params_" + self.request.method.lower())
+        d = {}
+        for param in params:
+            d[param] = self.get_argument(param, None)
+        return d
 
     def get_format_and_charset(self, format):
         # typical example with charset: ["applicatio/json; charset=UTF-8"]
@@ -92,6 +107,29 @@ class BaseController(tornado.web.RequestHandler):
         #
         return types_and_formats.data_formats["default_format"]
 
+    def initialize(self,    method_get=None, params_get = None, 
+                            method_put=None, params_put = None,
+                            method_post=None, params_post = None,
+                            method_delete=None, params_delete = None
+                            ):
+        """
+            The paramter method is set to the value defined in the dict
+            in routes->rest_routes.
+            You can define your own parameters there.
+            This is specifically used to route the request (call the following method in the controller)
+            which is specified as the 3rd parameter in rest_routes.
+            
+        """
+        self.method_get = method_get
+        self.method_put = method_put
+        self.method_post = method_post
+        self.method_delete = method_delete
+        self.params_get = params_get
+        self.params_put = params_put
+        self.params_post = params_post
+        self.params_delete = params_delete
+        #print("self.method: ", self.method, "  ->  ", self.params)
+
     @tornado.web.removeslash
     def get(self, *args, **kwargs):
         """
@@ -110,14 +148,21 @@ class BaseController(tornado.web.RequestHandler):
         """
         print("get *args: ", args)
         print("get kwargs: ", kwargs)
-        print("self.method_get: ", self.method_get)
-        print("self.params: ", self.params)
+        print("self.method_get: ", self.kwargs.get("method_get", None))
+        print("self.params: ", self.kwargs.get("params_get", None))
         # Which Output formats do we support ?
         supported_formats = types_and_formats.data_formats["accept_formats"]
         # Which Output formats does the client accept ?
         requested_formats = self.request.headers.get("Accept").split(",")
         
         format = self.get_preferred_format(requested_formats, supported_formats)
+        if format != types_and_formats.data_formats["default_format"]:
+                    # 
+                    # convert any non default input formats to the default (which is json)
+                    # 
+                    self.data = getattr(self, "convert" + 
+                                types_and_formats.data_formats["accept_formats"][format] + "to" + 
+                                types_and_formats.data_formats["default_function"])
 
         return getattr(self,self.method_get + supported_formats[format])(*args, **kwargs)
         
@@ -141,12 +186,19 @@ class BaseController(tornado.web.RequestHandler):
         requested_formats = self.request.headers.get("Content-Type").split(",")
     
         format = self.get_preferred_format(requested_formats, supported_formats)
-        
-        return getattr(self,self.method_post + supported_formats[format])(*args, **kwargs)
-                
-        # if non supported format: raise Error 406
-        # raise tornado.web.HTTPError(406)
-        self.send_error(status_code=406, **kwargs)
+        if format != types_and_formats.data_formats["default_format"]:
+                    # 
+                    # convert any non default input formats to the default (which is json)
+                    # 
+                    self.data = getattr(self, "convert" + 
+                                types_and_formats.data_formats["content_type_formats"][format] + "to" + 
+                                types_and_formats.data_formats["default_function"])
+        try:
+            return getattr(self,self.method_post + supported_formats[format])(*args, **kwargs)
+        except:    
+            # if non supported format: raise Error 406
+            # raise tornado.web.HTTPError(406)
+            self.send_error(status_code=406, **kwargs)
 
     @tornado.web.removeslash
     #@tornado.web.asynchronous
@@ -166,12 +218,19 @@ class BaseController(tornado.web.RequestHandler):
         requested_formats = self.request.headers.get("Content-Type").split(",")
         
         format = self.get_preferred_format(requested_formats, supported_formats)
-
-        return getattr(self,self.method_put + supported_formats[format])(*args, **kwargs)
-        
-        # if non supported format: raise Error 406
-        # raise tornado.web.HTTPError(406)
-        self.send_error(status_code=406, **kwargs)
+        if format != types_and_formats.data_formats["default_format"]:
+                    # 
+                    # convert any non default input formats to the default (which is json)
+                    # 
+                    self.data = getattr(self, "convert" + 
+                                types_and_formats.data_formats["content_type_formats"][format] + "to" + 
+                                types_and_formats.data_formats["default_function"])
+        try:
+            return getattr(self,self.method_put + supported_formats[format])(*args, **kwargs)
+        except:
+            # if non supported format: raise Error 406
+            # raise tornado.web.HTTPError(406)
+            self.send_error(status_code=406, **kwargs)
     
     @tornado.web.removeslash
     @tornado.web.asynchronous
@@ -183,11 +242,23 @@ class BaseController(tornado.web.RequestHandler):
             HTTP DELETE     => will call controller.delete_all()
                             => delete_all is not implemented yet.
         """
-        print("delete *args: ", args)
-        print("delete kwargs: ", kwargs)
-        print("self.method_delete: ", self.method_delete)
-        print("self.params: ", self.params)
-        return self.delete(*args, **kwargs)
+        supported_formats = types_and_formats.data_formats["content_type_formats"]
+        requested_formats = self.request.headers.get("Content-Type").split(",")
+        
+        format = self.get_preferred_format(requested_formats, supported_formats)
+        if format != types_and_formats.data_formats["default_format"]:
+                    # 
+                    # convert any non default input formats to the default (which is json)
+                    # 
+                    self.data = getattr(self, "convert" + 
+                                types_and_formats.data_formats["content_type_formats"][format] + "to" + 
+                                types_and_formats.data_formats["default_function"])
+        try:
+            return getattr(self,self.method_delete + supported_formats[format])(*args, **kwargs)
+        except:
+            # if non supported format: raise Error 406
+            # raise tornado.web.HTTPError(406)
+            self.send_error(status_code=406, **kwargs)
 
     ## error handler taken from: https://github.com/CarlosGabaldon/tornado_alley/blob/master/chasing_tornado.py
     def write_error(self, status_code, **kwargs):

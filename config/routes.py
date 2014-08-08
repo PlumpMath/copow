@@ -25,41 +25,56 @@ import #APPNAME.controllers.logout_controller
 import #APPNAME.controllers.error_controller
 
 
-# default RESTful routes 
+#  default RESTful routes 
 #  #controller will be replaced by the controllername for any controller in ./controllers
 #  #controller_cls will be replaced by the actual class like:
-#    .#APPNAME.controllers.controllername_python.ClassName
+#  #APPNAME.controllers.controllername_python.ClassName
 
 rest_routes = [
-        (r"/#controller/echo"                           ,     ("#controller_cls", dict(  method_get="echo", 
+        (r"/#controller/echo"                           ,     ("#controller_cls", dict( method_get="echo", 
+                                                                                        params_get=None,
                                                                                         method_post=None, 
+                                                                                        params_post=None,
                                                                                         method_put=None, 
-                                                                                        method_delete=None, 
-                                                                                        params=[]))
+                                                                                        params_put=None,
+                                                                                        method_delete=None,
+                                                                                        params_delete=None
+                                                                                        ))
         ),
-        (r"/#controller(?:/([0-9]*))?"                  ,     ("#controller_cls", dict(  method_get="list", 
+        (r"/#controller(?:/([0-9]*))?"                  ,     ("#controller_cls", dict( method_get="list", 
+                                                                                        params_get=["page"]
                                                                                         method_post=None, 
+                                                                                        params_post=None
                                                                                         method_put=None, 
-                                                                                        method_delete=None, 
-                                                                                        params=["page"]))
+                                                                                        params_put=None
+                                                                                        method_delete=None,
+                                                                                        params_delete=None
+                                                                                        )
         ),
-        (r"/#controller/create"                         ,     ("#controller_cls", dict(  method_get="create_form", 
+        (r"/#controller/create"                         ,     ("#controller_cls", dict( method_get="create_form", 
                                                                                         method_post=None, 
                                                                                         method_put="create", 
-                                                                                        method_delete=None, 
-                                                                                        params=[]))
+                                                                                        method_delete=None
+                                                                                        ))
         ),
-        (r"/#controller/([0-9a-zA-Z]+)"                 ,     ("#controller_cls", dict(  method_get="show", 
+        (r"/#controller/([0-9a-zA-Z]+)"                 ,     ("#controller_cls", dict( method_get="show", 
+                                                                                        params_get=["id"],
                                                                                         method_post="update", 
+                                                                                        params_post=["id"],
                                                                                         method_put="create", 
-                                                                                        method_delete="delete", 
-                                                                                        params=["id"]))
+                                                                                        params_put=["id"],
+                                                                                        method_delete="delete",
+                                                                                        params_delete=["id"]
+                                                                                        ))
         ),
-        (r"/#controller/([0-9a-zA-Z]+)/update"          ,     ("#controller_cls", dict(  method_get="update_form", 
+        (r"/#controller/([0-9a-zA-Z]+)/update"          ,     ("#controller_cls", dict( method_get="update_form", 
+                                                                                        params_get=["id"]
                                                                                         method_post="update", 
+                                                                                        params_post=["id"]
                                                                                         method_put=None, 
                                                                                         method_delete=None, 
-                                                                                        params=["id"]))
+                                                                                        params_delete=None
+                                                                                        ))
         )
 ]
 
@@ -75,9 +90,10 @@ handlers = [
         (r'/login',             #APPNAME.controllers.login_controller.LoginController,
                                 dict(   method_get="show", 
                                         method_post="check_login", 
+                                        params_post=["email", "password"],
                                         method_put=None, 
                                         method_delete=None, 
-                                        params=["email", "password"])
+                                        )
 
                 ),
         (r'/logout',            #APPNAME.controllers.logout_controller.LogoutController,
