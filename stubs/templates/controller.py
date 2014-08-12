@@ -134,16 +134,14 @@ class #CONTROLLER_CAPITALIZED_NAMEController(BaseController):
         # remove trailing comma before sending.
         self.write( res_list[:-1] )
 
-    @#APPNAME.ext.paginate.will_paginate(model=self.model)
     def list_html(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:
             REST: HTTP/GET /#CONTROLLERNAME
             CRUD: READ
             show all #MODELNAME_PLURAL
         """
-        result = self.model.find_all(*args, **kwargs)
-        return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result_model=self.model, 
-                result=result, current_page=kwargs["current_page"], num_pages=kwargs["num_pages"])
+        result = self.model.find_all()
+        return self.render("#CONTROLLER_LOWER_NAME_list.html", request=self.request, result_model=self.model, result=result)
 
     def create(self, *args, **kwargs):
         """ respresents the folowing REST/CRUD Terminology:

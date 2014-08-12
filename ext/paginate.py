@@ -59,5 +59,11 @@ def paginate(res, *args, **kwargs):
     limit = per_page
     skip = page * per_page
     # from: http://docs.mongodb.org/manual/reference/method/cursor.skip/
-    return res.skip(page > 0 ? ((page-1)*per_page) : 0).limit(per_page)
+    # the below code represents this semantics:
+    # return res.skip(page > 0 ? ((page-1)*per_page) : 0).limit(per_page)
+    if page > 0:
+        from_val = ((page-1)*per_page) 
+    else:
+        from_val = 0
+    return res.skip(from_val).limit(per_page)
     

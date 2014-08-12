@@ -42,14 +42,14 @@ rest_routes = [
                                                                                         ))
         ),
         (r"/#controller(?:/([0-9]*))?"                  ,     ("#controller_cls", dict( method_get="list", 
-                                                                                        params_get=["page"]
+                                                                                        params_get=["page"],
                                                                                         method_post=None, 
-                                                                                        params_post=None
+                                                                                        params_post=None,
                                                                                         method_put=None, 
-                                                                                        params_put=None
+                                                                                        params_put=None,
                                                                                         method_delete=None,
                                                                                         params_delete=None
-                                                                                        )
+                                                                                        ))
         ),
         (r"/#controller/create"                         ,     ("#controller_cls", dict( method_get="create_form", 
                                                                                         method_post=None, 
@@ -68,9 +68,9 @@ rest_routes = [
                                                                                         ))
         ),
         (r"/#controller/([0-9a-zA-Z]+)/update"          ,     ("#controller_cls", dict( method_get="update_form", 
-                                                                                        params_get=["id"]
+                                                                                        params_get=["id"],
                                                                                         method_post="update", 
-                                                                                        params_post=["id"]
+                                                                                        params_post=["id"],
                                                                                         method_put=None, 
                                                                                         method_delete=None, 
                                                                                         params_delete=None

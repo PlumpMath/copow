@@ -103,11 +103,21 @@ def init_controllers(app):
 	print(""*width)
 	for route in routes.rest_routes:
 		for method in ["GET", "POST", "PUT", "DELETE"]:
+		 	meth  = None
+		 	try:
+		 		meth = str(route[1][1]["method_"+method.lower()])
+		 	except KeyError:
+		 		meth = None 
+		 	params = None
+		 	try:
+		 		params = str(route[1][1]["params_"+method.lower()])
+		 	except KeyError:
+		 		params = None
 		 	print('{0:40} {1:8} {2:15} {3:15}'.format(
 		 			route[0],
 		 			str(method),
-		 			str(route[1][1]["method_"+method.lower()]),
-		 			str(route[1][1]["params"])	
+		 			meth,
+		 			params	
 		 		)
 		 	)
 	print("-"*width)

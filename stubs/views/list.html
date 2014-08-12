@@ -17,10 +17,10 @@
 
 
 {% block content %}
-{% import atest.config.settings as settings %}
+{% import #APPNAME.config.settings %}
 {% set model = result_model %}
-{% set server = settings.base["server"] %}
-{% set port  = settings.base["port"] %}
+{% set server = #APPNAME.config.settings.base["server"] %}
+{% set port  = #APPNAME.config.settings.base["port"] %}
 
 <script>
     var del;
@@ -69,7 +69,7 @@
 </script>
 
 
-    {% module simple_pagination(model=result_model, page=current_page, count=result.count()) %}
+    {# % module simple_pagination(model=result_model, page=current_page, count=result.count()) % #}
 
 
     <!-- an optional flash-message -->

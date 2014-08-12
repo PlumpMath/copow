@@ -49,7 +49,7 @@ if __name__ == "__main__":
     
     # check if db exists and drop it, if its already there
     conn = db_conn.DBConn().get_client()
-    dbname = getattr(dbconfig, atest.config.settings.base["environment"])["database"]
+    dbname = getattr(dbconfig, #APPNAME.config.settings.base["environment"])["database"]
     print("dbnames: ", conn.database_names(), "dbname to create: ", dbname)
     
     if dbname in conn.database_names():

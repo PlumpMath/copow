@@ -6,7 +6,7 @@
 # remark: wheneer I say "nice" in this module it's purely subjective to me ;)
 #
 import tornado.web
-import atest.config.settings 
+import #APPNAME.config.settings 
 
 class SimplePagination(tornado.web.UIModule):
     """

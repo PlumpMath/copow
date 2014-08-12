@@ -130,6 +130,17 @@ class BaseController(tornado.web.RequestHandler):
         self.params_delete = params_delete
         #print("self.method: ", self.method, "  ->  ", self.params)
 
+    def set_parameters(self, args, params):
+        """ gets a list of parameters apllied to this call (in routes)
+            and gets the accorgin value from the args tupel
+            fills the self.parameters dictionary with the according key, value pairs.
+        """
+        num = 0
+        for elem in params:
+            print("setting parameter: ", elem)
+            self.parameters[elem] = args[num]
+            num += 1
+
     @tornado.web.removeslash
     def get(self, *args, **kwargs):
         """
@@ -148,8 +159,8 @@ class BaseController(tornado.web.RequestHandler):
         """
         print("get *args: ", args)
         print("get kwargs: ", kwargs)
-        print("self.method_get: ", self.kwargs.get("method_get", None))
-        print("self.params: ", self.kwargs.get("params_get", None))
+        print("self.method_get: ", self.method_get)
+        print("self.params: ", self.params_get)
         # Which Output formats do we support ?
         supported_formats = types_and_formats.data_formats["accept_formats"]
         # Which Output formats does the client accept ?
@@ -161,9 +172,10 @@ class BaseController(tornado.web.RequestHandler):
                     # convert any non default input formats to the default (which is json)
                     # 
                     self.data = getattr(self, "convert" + 
-                                types_and_formats.data_formats["accept_formats"][format] + "to" + 
+                                types_and_formats.data_formats["accept_formats"][format] + "_to" + 
                                 types_and_formats.data_formats["default_function"])
 
+        self.set_parameters(args, self.params_get)
         return getattr(self,self.method_get + supported_formats[format])(*args, **kwargs)
         
         #raise tornado.web.HTTPError(406)
@@ -179,7 +191,7 @@ class BaseController(tornado.web.RequestHandler):
         print("post *args: ", args)
         print("post kwargs: ", kwargs)
         print("self.method_post: ", self.method_post)
-        print("self.params: ", self.params)
+        print("self.params: ", self.params_post)
         # Which Output formats do we support ?
         supported_formats = types_and_formats.data_formats["content_type_formats"]
         # Which Output formats does the client accept ?
@@ -191,8 +203,10 @@ class BaseController(tornado.web.RequestHandler):
                     # convert any non default input formats to the default (which is json)
                     # 
                     self.data = getattr(self, "convert" + 
-                                types_and_formats.data_formats["content_type_formats"][format] + "to" + 
+                                types_and_formats.data_formats["content_type_formats"][format] + "_to" + 
                                 types_and_formats.data_formats["default_function"])
+        
+        self.set_parameters(args, self.params_get)
         try:
             return getattr(self,self.method_post + supported_formats[format])(*args, **kwargs)
         except:    
@@ -212,7 +226,7 @@ class BaseController(tornado.web.RequestHandler):
         print("put *args: ", args)
         print("put kwargs: ", kwargs)
         print("self.method_put: ", self.method_put)
-        print("self.params: ", self.params)
+        print("self.params: ", self.params_put)
         # Which Output formats do we support ?
         supported_formats = types_and_formats.data_formats["content_type_formats"]
         requested_formats = self.request.headers.get("Content-Type").split(",")
@@ -223,8 +237,10 @@ class BaseController(tornado.web.RequestHandler):
                     # convert any non default input formats to the default (which is json)
                     # 
                     self.data = getattr(self, "convert" + 
-                                types_and_formats.data_formats["content_type_formats"][format] + "to" + 
+                                types_and_formats.data_formats["content_type_formats"][format] + "_to" + 
                                 types_and_formats.data_formats["default_function"])
+        
+        self.set_parameters(args, self.params_get)
         try:
             return getattr(self,self.method_put + supported_formats[format])(*args, **kwargs)
         except:
@@ -253,6 +269,8 @@ class BaseController(tornado.web.RequestHandler):
                     self.data = getattr(self, "convert" + 
                                 types_and_formats.data_formats["content_type_formats"][format] + "to" + 
                                 types_and_formats.data_formats["default_function"])
+        
+        self.set_parameters(args, self.params_get)
         try:
             return getattr(self,self.method_delete + supported_formats[format])(*args, **kwargs)
         except:

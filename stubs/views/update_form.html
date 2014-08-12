@@ -9,10 +9,10 @@
 {# this will be rendered in the content block of main.html view view #}
 
 {% block content %}
-{% import atest.config.settings as settings %}
+{% import #APPNAME.config.settings %}
 {% set model = result %}
-{% set server = settings.base["server"] %}
-{% set port  = settings.base["port"] %}
+{% set server = #APPNAME.config.settings.base["server"] %}
+{% set port  = #APPNAME.config.settings.base["port"] %}
 
 <script type="text/javascript" src="{{ static_url("js/copow.js")}}"></script>
 
